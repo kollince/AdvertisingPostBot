@@ -1,7 +1,7 @@
 package com.advertisingpost.bot.config;
 
 
-import com.advertisingpost.bot.controllers.TelegramBot;
+import com.advertisingpost.bot.controller.TelegramBot;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
