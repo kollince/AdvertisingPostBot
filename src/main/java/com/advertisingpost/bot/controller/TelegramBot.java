@@ -3,11 +3,13 @@ package com.advertisingpost.bot.controller;
 import com.advertisingpost.bot.config.BotConfig;
 import com.advertisingpost.bot.service.*;
 import com.advertisingpost.bot.service.interfaces.Action;
+import com.vdurmont.emoji.EmojiParser;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -21,14 +23,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Log4j
 public class TelegramBot extends TelegramLongPollingBot {
     private final Map<Long, String> bindingBy = new ConcurrentHashMap<>();
-    private final Map<String, Action> actions;
     private String greeting = "Привет! Что умеет этот бот";
     private String textCreatePost;
     final UpdatingBot updatingBot;
     final BotConfig config;
     public TelegramBot(@Value("${bot.token}") String token, Map<String, Action> actions, UpdatingBot updatingBot, BotConfig config){
         super(token);
-        this.actions = actions;
         this.updatingBot = updatingBot;
         this.config = config;
     }
@@ -42,10 +42,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         long chatId = update.getMessage().getChatId();
         log.debug(update.getMessage().getText());
-//        var actions = Map.of("/start", new InfoAction(List.of("/start - Команды бота", "/echo - Ввод данных для команды", "/new - Регистрация пользователя"))
-//        );
-//        Map actions = Map.of("/start", new InfoAction(List.of("/start - Команды бота", "/echo - Ввод данных для команды", "/new - Регистрация пользователя"))
-//        );
         ArrayList<String> list = new ArrayList<>();
         list.add("/start - Команды бота");
         list.add( "/echo - Ввод данных для command");
@@ -62,29 +58,30 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         //advPostCreate(chatId);
         //firstMessage(chatId,greeting);
+
         if (update.hasMessage()) {
-            var key = update.getMessage().getText();
+            String key = update.getMessage().getText();
             if (map.containsKey(key)) {
-                var msg = map.get(key).handle(update);
+                BotApiMethod msg = map.get(key).handle(update);
                 bindingBy.put(chatId, key);
                 send(msg);
             } else if (bindingBy.containsKey(chatId)) {
-                var msg = map.get(bindingBy.get(chatId)).callback(update);
+                BotApiMethod msg = map.get(bindingBy.get(chatId)).callback(update);
                 bindingBy.remove(chatId);
                 send(msg);
             }
         }
     }
 
-//    private void executeNewMethod(SendMessage message) {
-//        try{
-//            if (message != null) {
-//                execute(message);
-//            }
-//        } catch (TelegramApiException e){
-//            log.debug(e);
-//        }
-//    }
+    private void executeNewMethod(SendMessage message) {
+        try{
+            if (message != null) {
+                execute(message);
+            }
+        } catch (TelegramApiException e){
+            log.debug(e);
+        }
+    }
     private void send(BotApiMethod msg) {
         try {
             execute(msg);

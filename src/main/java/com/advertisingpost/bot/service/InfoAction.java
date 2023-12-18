@@ -20,7 +20,6 @@ public class InfoAction implements Action {
         out.append("Выберите действие:").append("\n");
         for (String action : actions) {
             out.append(action).append("\n");
-            System.out.println(out.append(action));
         }
         return new SendMessage(chatId, out.toString());
     }
