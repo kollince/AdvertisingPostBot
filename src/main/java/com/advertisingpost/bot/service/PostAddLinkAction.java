@@ -1,10 +1,11 @@
 package com.advertisingpost.bot.service;
 
 import com.advertisingpost.bot.service.interfaces.Action;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-
+@Component
 public class PostAddLinkAction implements Action {
     @Override
     public BotApiMethod handle(Update update) {
