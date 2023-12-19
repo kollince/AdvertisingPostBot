@@ -59,6 +59,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         map.put("/postaddlink", new PostAddLinkAction());
         map.put("/postpreview", new PostPreviewAction());
 
+
         if (update.hasMessage()) {
             String key = update.getMessage().getText();
             if (map.containsKey(key)) {
@@ -76,20 +77,18 @@ public class TelegramBot extends TelegramLongPollingBot {
             long chatId1 = update.getCallbackQuery().getMessage().getChatId();
             if(callbackData.equals("INPUT_TEXT")){
                 String text = "/postbody";
+
+                //BotApiMethod msg = map.get(text).handle(update);
+                //bindingBy.put(chatId, text);
+                //send(msg);
                 SendMessage message = new SendMessage();
                 message.setChatId(chatId1);
                 message.setText(text);
                 executeNewMethod(message);
+                System.out.println(message);
                 String key = text;
-                if (map.get("/postbody").equals(text)){
-                    BotApiMethod msg = map.get(key).handle(update);
-                    bindingBy.put(chatId, key);
-                    send(msg);
-                }else if (bindingBy.containsKey(chatId)) {
-                    BotApiMethod msg = map.get(bindingBy.get(chatId)).callback(update);
-                    bindingBy.remove(chatId);
-                    send(msg);
-                }
+
+                 //send(msg);
                 System.out.println(key);
             }
         }
