@@ -22,24 +22,23 @@ public class PostHeaderAction implements Action {
 //    }
 
     @Override
-    public BotApiMethod handle(Update update) {
-        var msg = update.getMessage();
-        var chatId = msg.getChatId().toString();
-        var text = "Введите заголовок для нового поста:";
+    public SendMessage handle(Update update) {
+        var chatId = update.getMessage().getChatId().toString();
+        var text = "Введите заголовок для нового поста2:";
         return new SendMessage(chatId, text);
     }
 
     @Override
     public BotApiMethod callback(Update update) {
-        var msg = update.getMessage();
-        var chatId = msg.getChatId().toString();
-        var headerText = msg.getText();
+        var chatId = update.getMessage().getChatId().toString();
+        var headerText = update.getMessage().getText();
         String nameButton = "Перейти к вводу текста";
         String callbackName = "INPUT_TEXT";
         var text = "Заголовок " + headerText + " добавлен, выполните команду: /postbody ";
         //transmission(chatId, text, nameButton, callbackName);
         return inputData.transmission(chatId, text, nameButton, callbackName);
     }
+
 //        private SendMessage transmission(String chatId, String text, String nameButton, String callbackName){
 //            List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
 //            List<InlineKeyboardButton> rowInline = new ArrayList<>();

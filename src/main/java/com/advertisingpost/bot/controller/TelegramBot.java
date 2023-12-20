@@ -45,51 +45,61 @@ public class TelegramBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         long chatId = 0;
         if (update.hasMessage()){
-            chatId = update.getMessage().getChatId();
+            //chatId = update.getMessage().getChatId();
         }
         ArrayList<String> list = new ArrayList<>();
         list.add("/start - Команды бота");
         list.add( "/echo - Ввод данных для command");
         list.add( "/postheader - Создание рекламного поста");
         Map<String, Action> map = new HashMap<>();
-        map.put("/start", new InfoAction(list));
+        map.put("/start", new InfoAction(list,inputData));
         map.put("/postheader", new PostHeaderAction(inputData));
         map.put("/postbody", new PostBodyAction());
         map.put("/postimage", new PostImageAction());
         map.put("/postaddlink", new PostAddLinkAction());
         map.put("/postpreview", new PostPreviewAction());
+        map.put("CREATE_HEADER", new PostHeaderAction(inputData));
 
 
         if (update.hasMessage()) {
             String key = update.getMessage().getText();
+            chatId = update.getMessage().getChatId();
             if (map.containsKey(key)) {
-                BotApiMethod msg = map.get(key).handle(update);
+                SendMessage msg = map.get(key).handle(update);
                 bindingBy.put(chatId, key);
+                log.debug(chatId+", "+key);
                 send(msg);
             } else if (bindingBy.containsKey(chatId)) {
                 BotApiMethod msg = map.get(bindingBy.get(chatId)).callback(update);
+                log.debug("1 "+chatId+", "+bindingBy);
                 bindingBy.remove(chatId);
+                log.debug("2 "+chatId+", "+bindingBy);
                 send(msg);
             }
 
         } else if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
-            long chatId1 = update.getCallbackQuery().getMessage().getChatId();
-            if(callbackData.equals("INPUT_TEXT")){
-                String text = "/postbody";
-
-                //BotApiMethod msg = map.get(text).handle(update);
-                //bindingBy.put(chatId, text);
-                //send(msg);
+            long chatCallId = update.getCallbackQuery().getMessage().getChatId();
+            //Здесь ошибка
+//            if (map.containsKey(callbackData)){
+//                SendMessage msg = map.get(callbackData).handle(update);
+//                bindingBy.put(chatId, callbackData);
+//                log.debug(chatId+", "+callbackData);
+//                send(msg);
+//            }
+            if(callbackData.equals("CREATE_HEADER")){
+                String text = "Введите заголовок для нового поста:";
                 SendMessage message = new SendMessage();
-                message.setChatId(chatId1);
+                message.setChatId(chatCallId);
                 message.setText(text);
                 executeNewMethod(message);
-                System.out.println(message);
-                String key = text;
-
-                 //send(msg);
-                System.out.println(key);
+                log.debug(update.getCallbackQuery());
+            } else if (callbackData.equals("CREATE_BODY")) {
+                String text = "Введите рекламный текст:";
+                SendMessage message = new SendMessage();
+                message.setChatId(chatCallId);
+                message.setText(text);
+                executeNewMethod(message);
             }
         }
 

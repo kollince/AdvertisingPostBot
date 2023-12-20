@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 public class PostImageAction implements Action {
     @Override
-    public BotApiMethod handle(Update update) {
+    public SendMessage handle(Update update) {
         var msg = update.getMessage();
         var chatId = msg.getChatId().toString();
         var text = "Загрузите изображение: ";
