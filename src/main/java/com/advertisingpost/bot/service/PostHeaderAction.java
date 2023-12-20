@@ -23,17 +23,30 @@ public class PostHeaderAction implements Action {
 
     @Override
     public SendMessage handle(Update update) {
-        var chatId = update.getMessage().getChatId().toString();
+        String chatId;
+        if (update.hasMessage()){
+            chatId = update.getMessage().getChatId().toString();
+        } else {
+            chatId = update.getCallbackQuery().getMessage().getChatId().toString();
+        }
+
         var text = "Введите заголовок для нового поста2:";
         return new SendMessage(chatId, text);
     }
 
     @Override
     public BotApiMethod callback(Update update) {
-        var chatId = update.getMessage().getChatId().toString();
-        var headerText = update.getMessage().getText();
+        String chatId;
+        String headerText;
+        if (update.hasMessage()){
+            chatId = update.getMessage().getChatId().toString();
+            headerText = update.getMessage().getText();
+        }else {
+            chatId = update.getCallbackQuery().getMessage().getChatId().toString();
+            headerText = update.getCallbackQuery().getMessage().getText();
+        }
         String nameButton = "Перейти к вводу текста";
-        String callbackName = "INPUT_TEXT";
+        String callbackName = "CREATE_BODY";
         var text = "Заголовок " + headerText + " добавлен, выполните команду: /postbody ";
         //transmission(chatId, text, nameButton, callbackName);
         return inputData.transmission(chatId, text, nameButton, callbackName);

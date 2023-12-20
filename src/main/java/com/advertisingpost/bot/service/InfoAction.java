@@ -46,4 +46,19 @@ public class InfoAction implements Action {
         //transmission(chatId, text, nameButton, callbackName);
         return inputData.transmission(chatId, text, nameButton, callbackName);
     }
+//    private SendMessage handleCallback(Update update) {
+//        var msg = update.getCallbackQuery().getChatInstance();
+//        var chatId = msg.getChatId().toString();
+//        var out = new StringBuilder();
+//        out.append("Выберите действие:").append("\n");
+//        for (String action : actions) {
+//            out.append(action).append("\n");
+//        }
+//        String nameButton = "Приступить к созданию";
+//        String callbackName = "CREATE_HEADER";
+//        var text = "Этот бот создает рекламные посты.\n"+out;
+//        //transmission(chatId, text, nameButton, callbackName);
+//        return inputData.transmission(chatId, text, nameButton, callbackName);
+//        //return new SendMessage(chatId, out.toString());
+//    }
 }

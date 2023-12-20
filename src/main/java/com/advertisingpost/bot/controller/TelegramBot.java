@@ -59,6 +59,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         map.put("/postaddlink", new PostAddLinkAction());
         map.put("/postpreview", new PostPreviewAction());
         map.put("CREATE_HEADER", new PostHeaderAction(inputData));
+        map.put("CREATE_BODY", new PostBodyAction());
 
 
         if (update.hasMessage()) {
@@ -81,19 +82,20 @@ public class TelegramBot extends TelegramLongPollingBot {
             String callbackData = update.getCallbackQuery().getData();
             long chatCallId = update.getCallbackQuery().getMessage().getChatId();
             //Здесь ошибка
-//            if (map.containsKey(callbackData)){
-//                SendMessage msg = map.get(callbackData).handle(update);
-//                bindingBy.put(chatId, callbackData);
-//                log.debug(chatId+", "+callbackData);
-//                send(msg);
-//            }
+            if (map.containsKey(callbackData)){
+                SendMessage msg = map.get(callbackData).handle(update);
+                bindingBy.put(chatId, callbackData);
+                log.debug(chatId+", "+callbackData);
+                send(msg);
+            }
             if(callbackData.equals("CREATE_HEADER")){
                 String text = "Введите заголовок для нового поста:";
                 SendMessage message = new SendMessage();
                 message.setChatId(chatCallId);
                 message.setText(text);
-                executeNewMethod(message);
-                log.debug(update.getCallbackQuery());
+                //executeNewMethod(message);
+                log.debug("1 "+update.getCallbackQuery().getChatInstance());
+                log.debug("2 "+update.getCallbackQuery().getMessage().getChatId());
             } else if (callbackData.equals("CREATE_BODY")) {
                 String text = "Введите рекламный текст:";
                 SendMessage message = new SendMessage();
