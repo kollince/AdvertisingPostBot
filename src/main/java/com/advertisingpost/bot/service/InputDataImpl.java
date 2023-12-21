@@ -22,7 +22,6 @@ public class InputDataImpl implements InputData {
         rowsInline.add(rowInline);
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.setKeyboard(rowsInline);
-        // userRepository.save(new User(email));
         SendMessage message = new SendMessage(chatId, text);
         message.setReplyMarkup(markup);
         return message;

@@ -14,12 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Component
 @AllArgsConstructor
 public class PostHeaderAction implements Action {
-    //@Autowired
     private InputData inputData;
-
-//    public PostHeaderAction(InputData inputData) {
-//        this.inputData = inputData;
-//    }
 
     @Override
     public SendMessage handle(Update update) {
@@ -30,44 +25,24 @@ public class PostHeaderAction implements Action {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
 
-        var text = "Введите заголовок для нового поста2:";
+        var text = "Введите заголовок для нового поста:";
         return new SendMessage(chatId, text);
     }
 
     @Override
     public BotApiMethod callback(Update update) {
         String chatId;
-        String headerText;
+        String messageText;
         if (update.hasMessage()){
             chatId = update.getMessage().getChatId().toString();
-            headerText = update.getMessage().getText();
+            messageText = update.getMessage().getText();
         }else {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
-            headerText = update.getCallbackQuery().getMessage().getText();
+            messageText = update.getCallbackQuery().getMessage().getText();
         }
         String nameButton = "Перейти к вводу текста";
         String callbackName = "CREATE_BODY";
-        var text = "Заголовок " + headerText + " добавлен, выполните команду: /postbody ";
-        //transmission(chatId, text, nameButton, callbackName);
+        var text = "Заголовок " + messageText + " добавлен, выполните команду: /postbody ";
         return inputData.transmission(chatId, text, nameButton, callbackName);
     }
-
-//        private SendMessage transmission(String chatId, String text, String nameButton, String callbackName){
-//            List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
-//            List<InlineKeyboardButton> rowInline = new ArrayList<>();
-//            var linkButton = new InlineKeyboardButton();
-//            linkButton.setText(nameButton);
-//            linkButton.setCallbackData(callbackName);
-//            //linkButton.setUrl("/postbody");
-//            rowInline.add(linkButton);
-//            rowsInline.add(rowInline);
-//            InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-//            markup.setKeyboard(rowsInline);
-//            // userRepository.save(new User(email));
-//            SendMessage message = new SendMessage(chatId, text);
-//            message.setReplyMarkup(markup);
-//            return message;
-//        }
-
-
 }

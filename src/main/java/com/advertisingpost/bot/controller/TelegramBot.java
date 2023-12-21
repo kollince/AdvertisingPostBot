@@ -54,12 +54,16 @@ public class TelegramBot extends TelegramLongPollingBot {
         Map<String, Action> map = new HashMap<>();
         map.put("/start", new InfoAction(list,inputData));
         map.put("/postheader", new PostHeaderAction(inputData));
-        map.put("/postbody", new PostBodyAction());
-        map.put("/postimage", new PostImageAction());
-        map.put("/postaddlink", new PostAddLinkAction());
-        map.put("/postpreview", new PostPreviewAction());
+        map.put("/postbody", new PostBodyAction(inputData));
+        map.put("/postimage", new PostImageAction(inputData));
+        map.put("/postaddlink", new PostAddLinkAction(inputData));
+        map.put("/postpreview", new PostPreviewAction(inputData));
         map.put("CREATE_HEADER", new PostHeaderAction(inputData));
-        map.put("CREATE_BODY", new PostBodyAction());
+        map.put("CREATE_BODY", new PostBodyAction(inputData));
+        map.put("CREATE_IMAGE", new PostImageAction(inputData));
+        map.put("CREATE_ADD_LINK", new PostAddLinkAction(inputData));
+        map.put("CREATE_PREVIEW", new PostPreviewAction(inputData));
+
 
 
         if (update.hasMessage()) {
@@ -80,29 +84,31 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         } else if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
-            long chatCallId = update.getCallbackQuery().getMessage().getChatId();
-            //Здесь ошибка
+            chatId = update.getCallbackQuery().getMessage().getChatId();
             if (map.containsKey(callbackData)){
                 SendMessage msg = map.get(callbackData).handle(update);
                 bindingBy.put(chatId, callbackData);
                 log.debug(chatId+", "+callbackData);
                 send(msg);
+            } else if (bindingBy.containsKey(chatId)) {
+                log.debug(bindingBy);
+                BotApiMethod msg = map.get(bindingBy.get(chatId)).callback(update);
+                log.debug(msg);
+                log.debug("1 "+chatId+", "+bindingBy);
+                bindingBy.remove(chatId);
+                log.debug("2 "+chatId+", "+bindingBy);
+                send(msg);
             }
-            if(callbackData.equals("CREATE_HEADER")){
-                String text = "Введите заголовок для нового поста:";
+            if(callbackData.equals("CREATE_SUCCESSFUL")) {
+                String text = "Пост успешно создан";
                 SendMessage message = new SendMessage();
-                message.setChatId(chatCallId);
-                message.setText(text);
-                //executeNewMethod(message);
-                log.debug("1 "+update.getCallbackQuery().getChatInstance());
-                log.debug("2 "+update.getCallbackQuery().getMessage().getChatId());
-            } else if (callbackData.equals("CREATE_BODY")) {
-                String text = "Введите рекламный текст:";
-                SendMessage message = new SendMessage();
-                message.setChatId(chatCallId);
+                message.setChatId(update.getCallbackQuery().getMessage().getChatId());
                 message.setText(text);
                 executeNewMethod(message);
+                log.debug("1 " + update.getCallbackQuery().getChatInstance());
+                log.debug("2 " + update.getCallbackQuery().getMessage().getChatId());
             }
+
         }
 
     }

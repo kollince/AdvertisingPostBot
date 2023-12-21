@@ -31,9 +31,7 @@ public class InfoAction implements Action {
         String nameButton = "Приступить к созданию";
         String callbackName = "CREATE_HEADER";
         var text = "Этот бот создает рекламные посты.\n"+out;
-        //transmission(chatId, text, nameButton, callbackName);
         return inputData.transmission(chatId, text, nameButton, callbackName);
-        //return new SendMessage(chatId, out.toString());
     }
 
     @Override
