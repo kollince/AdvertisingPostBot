@@ -10,6 +10,8 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.ArrayList;
+
 @Log4j
 @Component
 @AllArgsConstructor
@@ -17,7 +19,7 @@ public class PostHeaderAction implements Action {
     private InputData inputData;
 
     @Override
-    public SendMessage handle(Update update) {
+    public SendMessage handle(Update update,  ArrayList<String> textCreatePost) {
         String chatId;
         if (update.hasMessage()){
             chatId = update.getMessage().getChatId().toString();
@@ -43,6 +45,7 @@ public class PostHeaderAction implements Action {
         String nameButton = "Перейти к вводу текста";
         String callbackName = "CREATE_BODY";
         var text = "Заголовок " + messageText + " добавлен, выполните команду: /postbody ";
-        return inputData.transmission(chatId, text, nameButton, callbackName);
+        log.debug(messageText);
+        return inputData.transmission(chatId, text, nameButton, callbackName, null);
     }
 }

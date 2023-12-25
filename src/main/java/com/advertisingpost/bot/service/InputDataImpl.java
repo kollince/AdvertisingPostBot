@@ -11,13 +11,15 @@ import java.util.List;
 @Component
 public class InputDataImpl implements InputData {
     @Override
-    public SendMessage transmission(String chatId, String text, String nameButton, String callbackName) {
+    public SendMessage transmission(String chatId, String text, String nameButton, String callbackName,String link) {
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
         List<InlineKeyboardButton> rowInline = new ArrayList<>();
         var linkButton = new InlineKeyboardButton();
         linkButton.setText(nameButton);
         linkButton.setCallbackData(callbackName);
-        //linkButton.setUrl("/postbody");
+        if (link != null){
+            linkButton.setUrl(link);
+        }
         rowInline.add(linkButton);
         rowsInline.add(rowInline);
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();

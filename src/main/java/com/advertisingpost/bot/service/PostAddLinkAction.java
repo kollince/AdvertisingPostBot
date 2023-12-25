@@ -8,13 +8,16 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+
+import java.util.ArrayList;
+
 @Log4j
 @AllArgsConstructor
 @Component
 public class PostAddLinkAction implements Action {
     private InputData inputData;
     @Override
-    public SendMessage handle(Update update) {
+    public SendMessage handle(Update update, ArrayList<String> textCreatePost) {
         String chatId;
         if (update.hasMessage()){
             chatId = update.getMessage().getChatId().toString();
@@ -39,7 +42,7 @@ public class PostAddLinkAction implements Action {
         String nameButton = "Открыть рекламный пост";
         String callbackName = "CREATE_PREVIEW";
         var text = "Ссылка " + messageText + " добавлена, выполните команду: /postpreview";
-        return inputData.transmission(chatId, text, nameButton, callbackName);
+        return inputData.transmission(chatId, text, nameButton, callbackName, null);
     }
 
 }

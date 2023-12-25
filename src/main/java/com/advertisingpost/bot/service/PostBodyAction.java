@@ -8,13 +8,16 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+
+import java.util.ArrayList;
+
 @Log4j
 @Component
 @AllArgsConstructor
 public class PostBodyAction implements Action {
     private InputData inputData;
     @Override
-    public SendMessage handle(Update update) {
+    public SendMessage handle(Update update, ArrayList<String> textCreatePost) {
         String chatId;
         if (update.hasMessage()){
             chatId = update.getMessage().getChatId().toString();
@@ -39,6 +42,6 @@ public class PostBodyAction implements Action {
         String nameButton = "Перейти к загрузке изображения";
         String callbackName = "CREATE_IMAGE";
         var text = "Текст добавлен, выполните команду: /postimage ";
-        return inputData.transmission(chatId, text, nameButton, callbackName);
+        return inputData.transmission(chatId, text, nameButton, callbackName, null);
     }
 }

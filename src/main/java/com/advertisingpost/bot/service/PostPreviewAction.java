@@ -8,6 +8,11 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Log4j
 @AllArgsConstructor
@@ -15,15 +20,34 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class PostPreviewAction implements Action {
     private InputData inputData;
     @Override
-    public SendMessage handle(Update update) {
+    public SendMessage handle(Update update, ArrayList<String> textCreatePost) {
+        String text = "" ;
         String chatId;
         if (update.hasMessage()){
             chatId = update.getMessage().getChatId().toString();
         } else {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
-        var text = "Здесь будет отображаться рекламный пост. Бла бла бла...";
-        return new SendMessage(chatId, text);
+
+        text = textCreatePost.get(0)+"\n"+textCreatePost.get(1)+"\n"+textCreatePost.get(2);
+        String link = textCreatePost.get(3);
+        log.debug(text);
+        //var text = "Здесь будет отображаться рекламный пост. Бла бла бла...";
+//        List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
+//        List<InlineKeyboardButton> rowInline = new ArrayList<>();
+//        var linkButton = new InlineKeyboardButton();
+//        linkButton.setText("Перейти");
+//        linkButton.setUrl(textCreatePost.get(3));
+//        rowInline.add(linkButton);
+//        rowsInline.add(rowInline);
+//        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+//        markup.setKeyboard(rowsInline);
+//        SendMessage message = new SendMessage(chatId, text);
+//        message.setReplyMarkup(markup);
+        String nameButton = "Перейти";
+        String callbackName = "Перейти";
+
+        return inputData.transmission(chatId,text, nameButton, callbackName, link);
     }
 
     @Override
@@ -42,6 +66,8 @@ public class PostPreviewAction implements Action {
 //        String callbackName = "CREATE_SUCCESSFUL";
 //        var text = "Пост создан успешно!";
 //        return inputData.transmission(chatId, text, nameButton, callbackName);
-        return handle(update);
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("0");
+        return handle(update,temp);
     }
 }

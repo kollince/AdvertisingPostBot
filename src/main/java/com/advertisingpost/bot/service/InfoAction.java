@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.ArrayList;
 import java.util.List;
 @Log4j
 @Component
@@ -20,7 +21,7 @@ public class InfoAction implements Action {
 //        this.actions = actions;
 //    }
     @Override
-    public SendMessage handle(Update update) {
+    public SendMessage handle(Update update, ArrayList<String> textCreatePost) {
         var msg = update.getMessage();
         var chatId = msg.getChatId().toString();
         var out = new StringBuilder();
@@ -31,7 +32,7 @@ public class InfoAction implements Action {
         String nameButton = "Приступить к созданию";
         String callbackName = "CREATE_HEADER";
         var text = "Этот бот создает рекламные посты.\n"+out;
-        return inputData.transmission(chatId, text, nameButton, callbackName);
+        return inputData.transmission(chatId, text, nameButton, callbackName, null);
     }
 
     @Override
@@ -42,7 +43,7 @@ public class InfoAction implements Action {
         String callbackName = "CREATE_BODY";
         var text = "Заголовок " + headerText + " добавлен, выполните команду: /postbody ";
         //transmission(chatId, text, nameButton, callbackName);
-        return inputData.transmission(chatId, text, nameButton, callbackName);
+        return inputData.transmission(chatId, text, nameButton, callbackName, null);
     }
 //    private SendMessage handleCallback(Update update) {
 //        var msg = update.getCallbackQuery().getChatInstance();

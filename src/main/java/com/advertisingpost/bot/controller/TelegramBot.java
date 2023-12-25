@@ -27,9 +27,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TelegramBot extends TelegramLongPollingBot {
     private final Map<Long, String> bindingBy = new ConcurrentHashMap<>();
     private String greeting = "Привет! Что умеет этот бот";
-    private String textCreatePost;
+    private ArrayList<String> textCreatePost = new ArrayList<>();
     @Autowired
     private InputData inputData;
+
     final BotConfig config;
     public TelegramBot(@Value("${bot.token}") String token, Map<String, Action> actions, UpdatingBot updatingBot, BotConfig config){
         super(token);
@@ -64,6 +65,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         map.put("CREATE_ADD_LINK", new PostAddLinkAction(inputData));
         map.put("CREATE_PREVIEW", new PostPreviewAction(inputData));
 
+
 //        ArrayList<BotApiMethod> advList = new ArrayList<>();
 //        BotApiMethod header = "Заголовок";
 //        BotApiMethod body = "Текст";
@@ -77,33 +79,30 @@ public class TelegramBot extends TelegramLongPollingBot {
             chatId = update.getMessage().getChatId();
             var images = update.getMessage().getPhoto();
             if (map.containsKey(key)) {
-                SendMessage msg = map.get(key).handle(update);
+                SendMessage msg = map.get(key).handle(update,  textCreatePost);
                 bindingBy.put(chatId, key);
-                //log.debug(chatId+", "+key);
                 send(msg);
             } else if (bindingBy.containsKey(chatId)) {
                 BotApiMethod msg = map.get(bindingBy.get(chatId)).callback(update);
-                log.debug("1 "+chatId+", "+bindingBy);
+                textCreatePost.add(update.getMessage().getText());
                 bindingBy.remove(chatId);
-                //log.debug("2 "+chatId+", "+bindingBy);
                 send(msg);
+            }
+            if (update.getMessage().getText().equals("/start")){
+                textCreatePost.clear();
             }
 
         } else if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
             chatId = update.getCallbackQuery().getMessage().getChatId();
             if (map.containsKey(callbackData)){
-                SendMessage msg = map.get(callbackData).handle(update);
+                SendMessage msg = map.get(callbackData).handle(update, textCreatePost);
                 bindingBy.put(chatId, callbackData);
-                //log.debug(chatId+", "+callbackData);
                 send(msg);
             } else if (bindingBy.containsKey(chatId)) {
                 log.debug(bindingBy);
                 BotApiMethod msg = map.get(bindingBy.get(chatId)).callback(update);
-                //log.debug(msg);
-                //log.debug("1 "+chatId+", "+bindingBy);
                 bindingBy.remove(chatId);
-                //log.debug("2 "+chatId+", "+bindingBy);
                 send(msg);
             }
             if(callbackData.equals("CREATE_SUCCESSFUL")) {
@@ -112,8 +111,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                 message.setChatId(update.getCallbackQuery().getMessage().getChatId());
                 message.setText(text);
                 executeNewMethod(message);
-                //log.debug("1 " + update.getCallbackQuery().getChatInstance());
-                //log.debug("2 " + update.getCallbackQuery().getMessage().getChatId());
             }
 
         }
