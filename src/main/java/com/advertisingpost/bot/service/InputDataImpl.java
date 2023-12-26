@@ -22,6 +22,7 @@ public class InputDataImpl implements InputData {
         }
         rowInline.add(linkButton);
         rowsInline.add(rowInline);
+
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.setKeyboard(rowsInline);
         SendMessage message = new SendMessage(chatId, text);

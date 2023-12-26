@@ -12,12 +12,14 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -65,15 +67,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         map.put("CREATE_ADD_LINK", new PostAddLinkAction(inputData));
         map.put("CREATE_PREVIEW", new PostPreviewAction(inputData));
 
-
-//        ArrayList<BotApiMethod> advList = new ArrayList<>();
-//        BotApiMethod header = "Заголовок";
-//        BotApiMethod body = "Текст";
-//        BotApiMethod image = ;
-//        BotApiMethod link;
-
-
-
         if (update.hasMessage()) {
             String key = update.getMessage().getText();
             chatId = update.getMessage().getChatId();
@@ -84,7 +77,15 @@ public class TelegramBot extends TelegramLongPollingBot {
                 send(msg);
             } else if (bindingBy.containsKey(chatId)) {
                 BotApiMethod msg = map.get(bindingBy.get(chatId)).callback(update);
-                textCreatePost.add(update.getMessage().getText());
+                //List<PhotoSize> photo = new ArrayList<>();
+                String photo = null;
+                if (update.getMessage().hasPhoto()){
+                    photo = update.getMessage().getPhoto().get(0).getFileId();
+                    textCreatePost.add(photo);
+                    log.debug(photo);
+                } else {
+                    textCreatePost.add(update.getMessage().getText());
+                }
                 bindingBy.remove(chatId);
                 send(msg);
             }
