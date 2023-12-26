@@ -10,16 +10,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.PhotoSize;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -66,11 +65,10 @@ public class TelegramBot extends TelegramLongPollingBot {
         map.put("CREATE_IMAGE", new PostImageAction(inputData));
         map.put("CREATE_ADD_LINK", new PostAddLinkAction(inputData));
         map.put("CREATE_PREVIEW", new PostPreviewAction(inputData));
-
+        GetFile getFile = new GetFile();
         if (update.hasMessage()) {
             String key = update.getMessage().getText();
             chatId = update.getMessage().getChatId();
-            var images = update.getMessage().getPhoto();
             if (map.containsKey(key)) {
                 SendMessage msg = map.get(key).handle(update,  textCreatePost);
                 bindingBy.put(chatId, key);
@@ -81,15 +79,25 @@ public class TelegramBot extends TelegramLongPollingBot {
                 String photo = null;
                 if (update.getMessage().hasPhoto()){
                     photo = update.getMessage().getPhoto().get(0).getFileId();
-                    textCreatePost.add(photo);
-                    log.debug(photo);
+                    getFile = new GetFile(photo);
+                    textCreatePost.add(String.valueOf(getFile));
+                    log.debug(textCreatePost);
+                    log.debug(getFile);
                 } else {
                     textCreatePost.add(update.getMessage().getText());
                 }
                 bindingBy.remove(chatId);
                 send(msg);
+            } else if (update.getMessage().hasPhoto()){
+                SendPhoto sendPhoto = new SendPhoto();
+                sendPhoto.setChatId(chatId);
+                sendPhoto.setCaption("Caption");
+                String path = textCreatePost.get(2);
+                log.debug(getFile);
+                sendPhoto.setPhoto(new InputFile(getFile.getFileId()));
+                sendPhotoMethod(sendPhoto);
             }
-            if (update.getMessage().getText().equals("/start")){
+            if (update.getMessage().hasText() && update.getMessage().getText().equals("/start")){
                 textCreatePost.clear();
             }
 
@@ -129,6 +137,13 @@ public class TelegramBot extends TelegramLongPollingBot {
     private void send(BotApiMethod msg) {
         try {
             execute(msg);
+        } catch (TelegramApiException e) {
+            log.debug(e);
+        }
+    }
+    private void sendPhotoMethod(SendPhoto sendPhoto){
+        try {
+            execute(sendPhoto);
         } catch (TelegramApiException e) {
             log.debug(e);
         }

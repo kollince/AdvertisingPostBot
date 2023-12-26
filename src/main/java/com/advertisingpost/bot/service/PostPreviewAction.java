@@ -28,7 +28,7 @@ public class PostPreviewAction implements Action {
         } else {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
-
+       // String image = update.getMessage().getPhoto().get(0).getFileId();
         text = textCreatePost.get(0)+"\n"+textCreatePost.get(1)+"\n"+textCreatePost.get(2);
         String link = textCreatePost.get(3);
         log.debug(text);
