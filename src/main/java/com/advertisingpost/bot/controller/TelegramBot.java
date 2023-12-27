@@ -11,12 +11,22 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +41,8 @@ public class TelegramBot extends TelegramLongPollingBot {
     private ArrayList<String> textCreatePost = new ArrayList<>();
     @Autowired
     private InputData inputData;
-
+    @Value("${bot.token}")
+    String token;
     final BotConfig config;
     public TelegramBot(@Value("${bot.token}") String token, Map<String, Action> actions, UpdatingBot updatingBot, BotConfig config){
         super(token);
@@ -65,37 +76,62 @@ public class TelegramBot extends TelegramLongPollingBot {
         map.put("CREATE_IMAGE", new PostImageAction(inputData));
         map.put("CREATE_ADD_LINK", new PostAddLinkAction(inputData));
         map.put("CREATE_PREVIEW", new PostPreviewAction(inputData));
-        GetFile getFile = new GetFile();
         if (update.hasMessage()) {
             String key = update.getMessage().getText();
             chatId = update.getMessage().getChatId();
             if (map.containsKey(key)) {
-                SendMessage msg = map.get(key).handle(update,  textCreatePost);
+                SendMessage msg = null;
+                try {
+                    msg = map.get(key).handle(update,  textCreatePost);
+                } catch (MalformedURLException | URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
                 bindingBy.put(chatId, key);
                 send(msg);
             } else if (bindingBy.containsKey(chatId)) {
-                BotApiMethod msg = map.get(bindingBy.get(chatId)).callback(update);
+                BotApiMethod msg = null;
+                try {
+                    msg = map.get(bindingBy.get(chatId)).callback(update);
+                } catch (MalformedURLException | URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
                 //List<PhotoSize> photo = new ArrayList<>();
                 String photo = null;
                 if (update.getMessage().hasPhoto()){
-                    photo = update.getMessage().getPhoto().get(0).getFileId();
-                    getFile = new GetFile(photo);
-                    textCreatePost.add(String.valueOf(getFile));
-                    log.debug(textCreatePost);
-                    log.debug(getFile);
+                    GetFile getFile = new GetFile();
+                    getFile.setFileId(update.getMessage().getPhoto().get(3).getFileId());
+                    log.debug(update.getMessage().getPhoto().size());
+                    try {
+                         File file = execute(getFile);
+                        file.setFileSize(3000L);
+                        log.debug(file.getFileSize());
+                        URL url = new URL("https://api.telegram.org/file/bot" + token + "/" + file.getFilePath());
+                        BufferedImage img = ImageIO.read(url);
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        ImageIO.write(img, "jpg", baos);
+                        sendPhotoMethod(chatId, "https://api.telegram.org/file/bot" + token + "/" + file.getFilePath(), "Received photo:");
+                        textCreatePost.add(String.valueOf(url));
+                        log.debug(url);
+                    } catch (TelegramApiException | IOException e) {
+                        log.debug(e);
+                    }
+
                 } else {
                     textCreatePost.add(update.getMessage().getText());
                 }
                 bindingBy.remove(chatId);
                 send(msg);
             } else if (update.getMessage().hasPhoto()){
-                SendPhoto sendPhoto = new SendPhoto();
-                sendPhoto.setChatId(chatId);
-                sendPhoto.setCaption("Caption");
-                String path = textCreatePost.get(2);
-                log.debug(getFile);
-                sendPhoto.setPhoto(new InputFile(getFile.getFileId()));
-                sendPhotoMethod(sendPhoto);
+
+//
+//                SendPhoto sendPhoto = new SendPhoto();
+//                sendPhoto.setChatId(chatId);
+//                sendPhoto.setCaption("Caption");
+//                String path = textCreatePost.get(2);
+//                //log.debug(getFile);
+//
+//                //sendPhotoMethod(sendPhot);
+//                sendPhotoMethod(sendPhoto);
             }
             if (update.getMessage().hasText() && update.getMessage().getText().equals("/start")){
                 textCreatePost.clear();
@@ -105,12 +141,22 @@ public class TelegramBot extends TelegramLongPollingBot {
             String callbackData = update.getCallbackQuery().getData();
             chatId = update.getCallbackQuery().getMessage().getChatId();
             if (map.containsKey(callbackData)){
-                SendMessage msg = map.get(callbackData).handle(update, textCreatePost);
+                SendMessage msg = null;
+                try {
+                    msg = map.get(callbackData).handle(update, textCreatePost);
+                } catch (MalformedURLException | URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
                 bindingBy.put(chatId, callbackData);
                 send(msg);
             } else if (bindingBy.containsKey(chatId)) {
                 log.debug(bindingBy);
-                BotApiMethod msg = map.get(bindingBy.get(chatId)).callback(update);
+                BotApiMethod msg = null;
+                try {
+                    msg = map.get(bindingBy.get(chatId)).callback(update);
+                } catch (MalformedURLException | URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
                 bindingBy.remove(chatId);
                 send(msg);
             }
@@ -141,11 +187,20 @@ public class TelegramBot extends TelegramLongPollingBot {
             log.debug(e);
         }
     }
-    private void sendPhotoMethod(SendPhoto sendPhoto){
+    public void sendPhotoMethod(Long chatId, String photoUrl, String caption) {
         try {
+            URL url = new URL(photoUrl);
+            log.debug(url);
+            BufferedImage img = ImageIO.read(url);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(img, "jpg", baos);
+            SendPhoto sendPhoto = new SendPhoto();
+            sendPhoto.setChatId(chatId);
+            sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(baos.toByteArray()), "photo.jpg"));
+            sendPhoto.setCaption(caption);
             execute(sendPhoto);
-        } catch (TelegramApiException e) {
-            log.debug(e);
+        } catch (IOException | TelegramApiException e) {
+            e.printStackTrace();
         }
     }
 //        private void advPostCreate(long chatId) {

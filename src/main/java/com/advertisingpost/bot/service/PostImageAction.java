@@ -42,6 +42,6 @@ public class PostImageAction implements Action {
         String nameButton = "Добавить ссылку для кнопки";
         String callbackName = "CREATE_ADD_LINK";
         var text = "Изображение " + messageText + " добавлено, выполните команду: /postaddlink ";
-        return inputData.transmission(chatId, text, nameButton, callbackName, null);
+        return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
 }

@@ -32,7 +32,7 @@ public class InfoAction implements Action {
         String nameButton = "Приступить к созданию";
         String callbackName = "CREATE_HEADER";
         var text = "Этот бот создает рекламные посты.\n"+out;
-        return inputData.transmission(chatId, text, nameButton, callbackName, null);
+        return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class InfoAction implements Action {
         String callbackName = "CREATE_BODY";
         var text = "Заголовок " + headerText + " добавлен, выполните команду: /postbody ";
         //transmission(chatId, text, nameButton, callbackName);
-        return inputData.transmission(chatId, text, nameButton, callbackName, null);
+        return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
 //    private SendMessage handleCallback(Update update) {
 //        var msg = update.getCallbackQuery().getChatInstance();

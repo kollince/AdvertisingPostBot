@@ -42,7 +42,7 @@ public class PostAddLinkAction implements Action {
         String nameButton = "Открыть рекламный пост";
         String callbackName = "CREATE_PREVIEW";
         var text = "Ссылка " + messageText + " добавлена, выполните команду: /postpreview";
-        return inputData.transmission(chatId, text, nameButton, callbackName, null);
+        return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
 
 }

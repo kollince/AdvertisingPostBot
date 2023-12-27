@@ -42,6 +42,6 @@ public class PostBodyAction implements Action {
         String nameButton = "Перейти к загрузке изображения";
         String callbackName = "CREATE_IMAGE";
         var text = "Текст добавлен, выполните команду: /postimage ";
-        return inputData.transmission(chatId, text, nameButton, callbackName, null);
+        return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
 }

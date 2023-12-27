@@ -46,6 +46,6 @@ public class PostHeaderAction implements Action {
         String callbackName = "CREATE_BODY";
         var text = "Заголовок " + messageText + " добавлен, выполните команду: /postbody ";
         log.debug(messageText);
-        return inputData.transmission(chatId, text, nameButton, callbackName, null);
+        return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
 }
