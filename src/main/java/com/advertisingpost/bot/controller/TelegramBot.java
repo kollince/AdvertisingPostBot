@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
-import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.File;
@@ -41,11 +40,13 @@ public class TelegramBot extends TelegramLongPollingBot {
     private ArrayList<String> textCreatePost = new ArrayList<>();
     @Autowired
     private InputData inputData;
+
     @Value("${bot.token}")
     String token;
     final BotConfig config;
-    public TelegramBot(@Value("${bot.token}") String token, Map<String, Action> actions, UpdatingBot updatingBot, BotConfig config){
+    public TelegramBot(@Value("${bot.token}") String token, InputData inputData, BotConfig config){
         super(token);
+        this.inputData = inputData;
         this.config = config;
     }
 
@@ -102,7 +103,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     getFile.setFileId(update.getMessage().getPhoto().get(3).getFileId());
                     log.debug(update.getMessage().getPhoto().size());
                     try {
-                         File file = execute(getFile);
+                        File file = execute(getFile);
                         file.setFileSize(3000L);
                         log.debug(file.getFileSize());
                         URL url = new URL("https://api.telegram.org/file/bot" + token + "/" + file.getFilePath());
@@ -121,17 +122,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                 }
                 bindingBy.remove(chatId);
                 send(msg);
-            } else if (update.getMessage().hasPhoto()){
-
-//
-//                SendPhoto sendPhoto = new SendPhoto();
-//                sendPhoto.setChatId(chatId);
-//                sendPhoto.setCaption("Caption");
-//                String path = textCreatePost.get(2);
-//                //log.debug(getFile);
-//
-//                //sendPhotoMethod(sendPhot);
-//                sendPhotoMethod(sendPhoto);
             }
             if (update.getMessage().hasText() && update.getMessage().getText().equals("/start")){
                 textCreatePost.clear();

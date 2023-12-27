@@ -1,6 +1,7 @@
 package com.advertisingpost.bot.service;
 
 import com.advertisingpost.bot.service.interfaces.InputData;
+import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -10,6 +11,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 @Component
+@Log4j
 public class InputDataImpl implements InputData {
     @Override
     public SendMessage transmission(String chatId, String text, String nameButton, String callbackName, String link, URL url) {
@@ -23,7 +25,6 @@ public class InputDataImpl implements InputData {
         }
         rowInline.add(linkButton);
         rowsInline.add(rowInline);
-
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.setKeyboard(rowsInline);
         SendMessage message = new SendMessage(chatId, text);
