@@ -6,12 +6,17 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.Document;
+import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 
 @Log4j
@@ -30,24 +35,32 @@ public class PostImageAction implements Action {
         var text = "Загрузите изображение: ";
         return new SendMessage(chatId, text);
     }
-
     @Override
     public BotApiMethod callback(Update update) {
-        String chatId;
-        String messageText;
+        String chatId = "";
+        String messageText = "";
         if (update.hasMessage()){
             chatId = update.getMessage().getChatId().toString();
-            messageText = update.getMessage().getText();
-        }else {
+            if (update.getMessage().hasPhoto()){
+                GetFile getFile = new GetFile();
+                int el = update.getMessage().getPhoto().size() - 1;
+                messageText = "";
+            } else {
+                messageText = "";
+            }
+        } else if (update.hasCallbackQuery()){
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
-            messageText = update.getCallbackQuery().getMessage().getText();
+            messageText = update.getCallbackQuery().getMessage().getText()+" 2";
+        } else if (update.getMessage().hasPhoto()){
+            int el = update.getMessage().getPhoto().size() - 1;
+            messageText = update.getMessage().getPhoto().get(el).getFilePath();
         }
+
         String nameButton = "Добавить ссылку для кнопки";
         String callbackName = "CREATE_ADD_LINK";
         var text = "Изображение " + messageText + " добавлено, выполните команду: /postaddlink ";
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
-
     @Override
     public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException {
         return null;

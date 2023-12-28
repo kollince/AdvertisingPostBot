@@ -61,7 +61,7 @@ public class InputDataImpl implements InputData {
             sendPhoto.setChatId(chatId);
             sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(baos.toByteArray()), "photo.jpg"));
             sendPhoto.setCaption(text);
-            sendPhoto.setParseMode(ParseMode.MARKDOWNV2);
+            sendPhoto.setParseMode(ParseMode.MARKDOWN);
             sendPhoto.setReplyMarkup(markup);
         } catch (Exception e){
             log.debug(e);
