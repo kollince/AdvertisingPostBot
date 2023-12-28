@@ -7,8 +7,11 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 @Log4j
@@ -21,7 +24,7 @@ public class InfoAction implements Action {
 //        this.actions = actions;
 //    }
     @Override
-    public SendMessage handle(Update update, ArrayList<String> textCreatePost) {
+    public SendMessage handleText(Update update, ArrayList<String> textCreatePost) {
         var msg = update.getMessage();
         var chatId = msg.getChatId().toString();
         var out = new StringBuilder();
@@ -45,19 +48,11 @@ public class InfoAction implements Action {
         //transmission(chatId, text, nameButton, callbackName);
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
-//    private SendMessage handleCallback(Update update) {
-//        var msg = update.getCallbackQuery().getChatInstance();
-//        var chatId = msg.getChatId().toString();
-//        var out = new StringBuilder();
-//        out.append("Выберите действие:").append("\n");
-//        for (String action : actions) {
-//            out.append(action).append("\n");
-//        }
-//        String nameButton = "Приступить к созданию";
-//        String callbackName = "CREATE_HEADER";
-//        var text = "Этот бот создает рекламные посты.\n"+out;
-//        //transmission(chatId, text, nameButton, callbackName);
-//        return inputData.transmission(chatId, text, nameButton, callbackName);
-//        //return new SendMessage(chatId, out.toString());
-//    }
+
+    @Override
+    public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException {
+        return null;
+    }
+
+
 }

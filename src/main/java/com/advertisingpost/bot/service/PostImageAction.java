@@ -7,8 +7,11 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 @Log4j
@@ -17,7 +20,7 @@ import java.util.ArrayList;
 public class PostImageAction implements Action {
     private InputData inputData;
     @Override
-    public SendMessage handle(Update update, ArrayList<String> textCreatePost) {
+    public SendMessage handleText(Update update, ArrayList<String> textCreatePost) {
         String chatId;
         if (update.hasMessage()){
             chatId = update.getMessage().getChatId().toString();
@@ -44,4 +47,10 @@ public class PostImageAction implements Action {
         var text = "Изображение " + messageText + " добавлено, выполните команду: /postaddlink ";
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
+
+    @Override
+    public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException {
+        return null;
+    }
+
 }

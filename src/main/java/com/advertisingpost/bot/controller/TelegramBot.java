@@ -81,14 +81,25 @@ public class TelegramBot extends TelegramLongPollingBot {
             String key = update.getMessage().getText();
             chatId = update.getMessage().getChatId();
             if (map.containsKey(key)) {
-                SendMessage msg = null;
-                try {
-                    msg = map.get(key).handle(update,  textCreatePost);
-                } catch (MalformedURLException | URISyntaxException e) {
-                    throw new RuntimeException(e);
+                if (update.getMessage().hasPhoto()){
+                    SendPhoto msg = new SendPhoto();
+                    try {
+                        msg = map.get(key).handlePhoto(update, textCreatePost);
+                    } catch (MalformedURLException | URISyntaxException e) {
+                        log.debug(e);
+                    }
+                    bindingBy.put(chatId, key);
+                    sendPhoto(msg);
+                } else {
+                    SendMessage msg = new SendMessage();
+                    try {
+                        msg = map.get(key).handleText(update, textCreatePost);
+                    } catch (MalformedURLException | URISyntaxException e) {
+                        log.debug(e);
+                    }
+                    bindingBy.put(chatId, key);
+                    send(msg);
                 }
-                bindingBy.put(chatId, key);
-                send(msg);
             } else if (bindingBy.containsKey(chatId)) {
                 BotApiMethod msg = null;
                 try {
@@ -100,11 +111,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                 String photo = null;
                 if (update.getMessage().hasPhoto()){
                     GetFile getFile = new GetFile();
-                    getFile.setFileId(update.getMessage().getPhoto().get(3).getFileId());
+                    int el = update.getMessage().getPhoto().size()-1;
+                    getFile.setFileId(update.getMessage().getPhoto().get(el).getFileId());
                     log.debug(update.getMessage().getPhoto().size());
                     try {
                         File file = execute(getFile);
-                        file.setFileSize(3000L);
+                        //file.setFileSize(3000L);
                         log.debug(file.getFileSize());
                         URL url = new URL("https://api.telegram.org/file/bot" + token + "/" + file.getFilePath());
                         BufferedImage img = ImageIO.read(url);
@@ -131,14 +143,25 @@ public class TelegramBot extends TelegramLongPollingBot {
             String callbackData = update.getCallbackQuery().getData();
             chatId = update.getCallbackQuery().getMessage().getChatId();
             if (map.containsKey(callbackData)){
-                SendMessage msg = null;
-                try {
-                    msg = map.get(callbackData).handle(update, textCreatePost);
-                } catch (MalformedURLException | URISyntaxException e) {
-                    throw new RuntimeException(e);
+                if (callbackData.equals("CREATE_PREVIEW")){
+                    SendPhoto msg = new SendPhoto();
+                    try {
+                        msg = map.get(callbackData).handlePhoto(update, textCreatePost);
+                    } catch (MalformedURLException | URISyntaxException e){
+                        log.debug(e);
+                    }
+                    bindingBy.put(chatId, callbackData);
+                    sendPhoto(msg);
+                } else {
+                    SendMessage msg = new SendMessage();
+                    try {
+                        msg = map.get(callbackData).handleText(update, textCreatePost);
+                    } catch (MalformedURLException | URISyntaxException e) {
+                        log.debug(e);
+                    }
+                    bindingBy.put(chatId, callbackData);
+                    send(msg);
                 }
-                bindingBy.put(chatId, callbackData);
-                send(msg);
             } else if (bindingBy.containsKey(chatId)) {
                 log.debug(bindingBy);
                 BotApiMethod msg = null;
@@ -177,6 +200,13 @@ public class TelegramBot extends TelegramLongPollingBot {
             log.debug(e);
         }
     }
+    private void sendPhoto(SendPhoto msg) {
+        try {
+            execute(msg);
+        } catch (TelegramApiException e) {
+            log.debug(e);
+        }
+    }
     public void sendPhotoMethod(Long chatId, String photoUrl, String caption) {
         try {
             URL url = new URL(photoUrl);
@@ -193,29 +223,5 @@ public class TelegramBot extends TelegramLongPollingBot {
             e.printStackTrace();
         }
     }
-//        private void advPostCreate(long chatId) {
-//            SendMessage message = new SendMessage();
-//            String textPreview = EmojiParser.parseToUnicode("<strong><u>Чья-та реклама!</u></strong>\n*Россия* в течение 2–3 лет " +
-//                    "может стать лидером в мировой отрасли промышленного майнинга " +
-//                    "по уровню использования электроэнергии из попутного нефтяного газа (ПНГ), сообщил основатель и " +
-//                    "генеральный директор BitRiver Игорь Рунец. Опыт использования ПНГ для майнинга уже есть в таких " +
-//                    "странах, как США, Канада, Саудовская Аравия, Кувейт, Оман, Казахстан и ряде других. :blush:");
-//            message.setText(textPreview);
-//            message.setChatId(chatId);
-//            message.enableHtml(true);
-//            message.setReplyMarkup(updatingBot.createButtons());
-//            executeNewMethod(message);
-//    }
-//    private void startCommandReceived(long chatId, String firstName) {
-//        String answer = "Привет, "+firstName+"! ";
-//        sendMessage(chatId, answer);
-//    }
-//    private void firstMessage(long chatId, String textToSend){
-//        SendMessage message = new SendMessage();
-//        message.setChatId(chatId);
-//        message.setText(textToSend);
-//        message.setReplyMarkup(updatingBot.keyBoard());
-//        executeNewMethod(message);
-//    }
 
 }
