@@ -32,7 +32,7 @@ public class PostBodyAction implements Action {
     }
 
     @Override
-    public BotApiMethod callback(Update update) {
+    public SendMessage callback(Update update) {
         String chatId;
         String messageText;
         if (update.hasMessage()){

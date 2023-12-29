@@ -39,10 +39,8 @@ public class PostPreviewAction implements Action {
         return inputData.transmission(chatId,text, nameButton, callbackName, link, url);
     }
     @Override
-    public BotApiMethod callback(Update update) throws MalformedURLException, URISyntaxException {
-        ArrayList<String> temp = new ArrayList<>();
-        temp.add("0");
-        return handleText(update,temp);
+    public SendMessage callback(Update update) throws MalformedURLException, URISyntaxException {
+        return handleText(update,null);
     }
 
     @Override
@@ -57,8 +55,6 @@ public class PostPreviewAction implements Action {
         text = textCreatePost.get(0)+"\n"+textCreatePost.get(1);
         String link = textCreatePost.get(3);
         URL url = new URI(textCreatePost.get(2)).toURL();
-        //log.debug(text);
-        log.debug(url);
         String nameButton = "Перейти";
         String callbackName = "Перейти";
         return inputData.photoTransmission(chatId,text, nameButton, callbackName, link, url);

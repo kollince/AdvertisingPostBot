@@ -35,7 +35,7 @@ public class PostHeaderAction implements Action {
     }
 
     @Override
-    public BotApiMethod callback(Update update) {
+    public SendMessage callback(Update update) {
         String chatId;
         String messageText;
         if (update.hasMessage()){
@@ -48,12 +48,11 @@ public class PostHeaderAction implements Action {
         String nameButton = "Перейти к вводу текста";
         String callbackName = "CREATE_BODY";
         var text = "Заголовок " + messageText + " добавлен, выполните команду: /postbody ";
-        log.debug(messageText);
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
 
     @Override
-    public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException {
+    public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost) {
         return null;
     }
 }

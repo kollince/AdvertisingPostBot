@@ -20,39 +20,18 @@ import java.util.List;
 @Component
 @Log4j
 public class InputDataImpl implements InputData {
+
+
     @Override
     public SendMessage transmission(String chatId, String text, String nameButton, String callbackName, String link, URL url) {
-        List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
-        List<InlineKeyboardButton> rowInline = new ArrayList<>();
-        var linkButton = new InlineKeyboardButton();
-        linkButton.setText(nameButton);
-        linkButton.setCallbackData(callbackName);
-        if (link != null){
-            linkButton.setUrl(link);
-        }
-        rowInline.add(linkButton);
-        rowsInline.add(rowInline);
-        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-        markup.setKeyboard(rowsInline);
+        inlineButtons(nameButton, callbackName, link);
         SendMessage message = new SendMessage(chatId, text);
-        message.setReplyMarkup(markup);
+        message.setReplyMarkup(inlineButtons(nameButton, callbackName, link));
         return message;
     }
 
     @Override
     public SendPhoto photoTransmission(String chatId, String text, String nameButton, String callbackName, String link, URL url) {
-        List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
-        List<InlineKeyboardButton> rowInline = new ArrayList<>();
-        var linkButton = new InlineKeyboardButton();
-        linkButton.setText(nameButton);
-        linkButton.setCallbackData(callbackName);
-        if (link != null){
-            linkButton.setUrl(link);
-        }
-        rowInline.add(linkButton);
-        rowsInline.add(rowInline);
-        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-        markup.setKeyboard(rowsInline);
         SendPhoto sendPhoto = new SendPhoto();
         try {
             BufferedImage img = ImageIO.read(url);
@@ -62,11 +41,26 @@ public class InputDataImpl implements InputData {
             sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(baos.toByteArray()), "photo.jpg"));
             sendPhoto.setCaption(text);
             sendPhoto.setParseMode(ParseMode.MARKDOWN);
-            sendPhoto.setReplyMarkup(markup);
+            sendPhoto.setReplyMarkup(inlineButtons(nameButton, callbackName, link));
         } catch (Exception e){
             log.debug(e);
         }
         return sendPhoto;
+    }
+    private InlineKeyboardMarkup inlineButtons(String nameButton, String callbackName, String link) {
+        List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
+        List<InlineKeyboardButton> rowInline = new ArrayList<>();
+        var linkButton = new InlineKeyboardButton();
+        linkButton.setText(nameButton);
+        linkButton.setCallbackData(callbackName);
+        if (link != null){
+            linkButton.setUrl(link);
+        }
+        rowInline.add(linkButton);
+        rowsInline.add(rowInline);
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        markup.setKeyboard(rowsInline);
+        return markup;
     }
 
 }

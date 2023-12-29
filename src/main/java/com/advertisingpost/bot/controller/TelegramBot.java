@@ -40,7 +40,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final ArrayList<String> textCreatePost = new ArrayList<>();
     @Autowired
     private final InputData inputData;
-
     @Value("${bot.token}")
     String token;
     final BotConfig config;
@@ -78,106 +77,28 @@ public class TelegramBot extends TelegramLongPollingBot {
             String key = update.getMessage().getText();
             chatId = update.getMessage().getChatId();
             if (map.containsKey(key)) {
-                if (update.getMessage().hasPhoto()){
-                    SendPhoto msg = new SendPhoto();
-                    try {
-                        msg = map.get(key).handlePhoto(update, textCreatePost);
-                    } catch (MalformedURLException | URISyntaxException e) {
-                        log.debug(e);
-                    }
-                    bindingBy.put(chatId, key);
-                    sendPhoto(msg);
-                } else {
-                    SendMessage msg = new SendMessage();
-                    try {
-                        msg = map.get(key).handleText(update, textCreatePost);
-                    } catch (MalformedURLException | URISyntaxException e) {
-                        log.debug(e);
-                    }
-                    bindingBy.put(chatId, key);
-                    send(msg);
-                }
+                mapContainsKey(update, key, map, chatId);
             } else if (bindingBy.containsKey(chatId)) {
-                BotApiMethod msg = new SendMessage();
-                try {
-                    msg = map.get(bindingBy.get(chatId)).callback(update);
-                } catch (MalformedURLException | URISyntaxException e) {
-                    log.debug(e);
-                }
-                if (update.getMessage().hasPhoto()){
-                    GetFile getFile = new GetFile();
-                    int el = update.getMessage().getPhoto().size()-1;
-                    getFile.setFileId(update.getMessage().getPhoto().get(el).getFileId());
-                    try {
-                        File file = execute(getFile);
-                        URL url = new URI("https://api.telegram.org/file/bot" + token + "/" + file.getFilePath()).toURL();
-                        textCreatePost.add(String.valueOf(url));
-                        log.debug(url);
-                    } catch (TelegramApiException | IOException | URISyntaxException e) {
-                        log.debug(e);
-                    }
-                } else {
-                    textCreatePost.add(update.getMessage().getText());
-                }
-                bindingBy.remove(chatId);
-                send(msg);
+                notMapContainsKey(update, map, chatId);
             }
             if (update.getMessage().hasText() && update.getMessage().getText().equals("/start")){
                 textCreatePost.clear();
             }
-
         } else if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
             chatId = update.getCallbackQuery().getMessage().getChatId();
             if (map.containsKey(callbackData)){
-                if (callbackData.equals("CREATE_PREVIEW")){
-                    SendPhoto msg = new SendPhoto();
-                    try {
-                        msg = map.get(callbackData).handlePhoto(update, textCreatePost);
-                    } catch (MalformedURLException | URISyntaxException e){
-                        log.debug(e);
-                    }
-                    bindingBy.put(chatId, callbackData);
-                    sendPhoto(msg);
-                } else {
-                    SendMessage msg = new SendMessage();
-                    try {
-                        msg = map.get(callbackData).handleText(update, textCreatePost);
-                    } catch (MalformedURLException | URISyntaxException e) {
-                        log.debug(e);
-                    }
-                    bindingBy.put(chatId, callbackData);
-                    send(msg);
-                }
+                mapContainsKeyCallbackData(update, map, chatId , callbackData);
             } else if (bindingBy.containsKey(chatId)) {
-                log.debug(bindingBy);
-                BotApiMethod msg;
+                SendMessage msg = null;
                 try {
                     msg = map.get(bindingBy.get(chatId)).callback(update);
                 } catch (MalformedURLException | URISyntaxException e) {
-                    throw new RuntimeException(e);
+                     log.debug(e);
                 }
                 bindingBy.remove(chatId);
                 send(msg);
             }
-            if(callbackData.equals("CREATE_SUCCESSFUL")) {
-                String text = "Пост успешно создан";
-                SendMessage message = new SendMessage();
-                message.setChatId(update.getCallbackQuery().getMessage().getChatId());
-                message.setText(text);
-                executeNewMethod(message);
-            }
-
-        }
-
-    }
-    private void executeNewMethod(SendMessage message) {
-        try{
-            if (message != null) {
-                execute(message);
-            }
-        } catch (TelegramApiException e){
-            log.debug(e);
         }
     }
     private void send(BotApiMethod msg) {
@@ -194,4 +115,71 @@ public class TelegramBot extends TelegramLongPollingBot {
             log.debug(e);
         }
     }
+    private void mapContainsKey(Update update, String key, Map<String, Action> map, long chatId){
+        if (update.getMessage().hasPhoto()){
+            SendPhoto msg = new SendPhoto();
+            try {
+                msg = map.get(key).handlePhoto(update, textCreatePost);
+            } catch (MalformedURLException | URISyntaxException e) {
+                log.debug(e);
+            }
+            bindingBy.put(chatId, key);
+            sendPhoto(msg);
+        } else {
+            SendMessage msg = new SendMessage();
+            try {
+                msg = map.get(key).handleText(update, textCreatePost);
+            } catch (MalformedURLException | URISyntaxException e) {
+                log.debug(e);
+            }
+            bindingBy.put(chatId, key);
+            send(msg);
+        }
+    }
+    private void notMapContainsKey(Update update, Map<String, Action> map, long chatId){
+        BotApiMethod msg = new SendMessage();
+        try {
+            msg = map.get(bindingBy.get(chatId)).callback(update);
+        } catch (MalformedURLException | URISyntaxException e) {
+            log.debug(e);
+        }
+        if (update.getMessage().hasPhoto()){
+            GetFile getFile = new GetFile();
+            int el = update.getMessage().getPhoto().size()-1;
+            getFile.setFileId(update.getMessage().getPhoto().get(el).getFileId());
+            try {
+                File file = execute(getFile);
+                URL url = new URI("https://api.telegram.org/file/bot" + token + "/" + file.getFilePath()).toURL();
+                textCreatePost.add(String.valueOf(url));
+            } catch (TelegramApiException | IOException | URISyntaxException e) {
+                log.debug(e);
+            }
+        } else {
+            textCreatePost.add(update.getMessage().getText());
+        }
+        bindingBy.remove(chatId);
+        send(msg);
+    }
+    private void mapContainsKeyCallbackData(Update update, Map<String, Action> map, long chatId, String callbackData){
+        if (callbackData.equals("CREATE_PREVIEW")){
+            SendPhoto msg = new SendPhoto();
+            try {
+                msg = map.get(callbackData).handlePhoto(update, textCreatePost);
+            } catch (MalformedURLException | URISyntaxException e){
+                log.debug(e);
+            }
+            bindingBy.put(chatId, callbackData);
+            sendPhoto(msg);
+        } else {
+            SendMessage msg = new SendMessage();
+            try {
+                msg = map.get(callbackData).handleText(update, textCreatePost);
+            } catch (MalformedURLException | URISyntaxException e) {
+                log.debug(e);
+            }
+            bindingBy.put(chatId, callbackData);
+            send(msg);
+        }
+    }
+
 }

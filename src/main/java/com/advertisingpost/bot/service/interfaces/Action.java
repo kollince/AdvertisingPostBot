@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public interface Action {
     SendMessage handleText(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException;
 
-    BotApiMethod callback(Update update) throws MalformedURLException, URISyntaxException;
+    SendMessage callback(Update update) throws MalformedURLException, URISyntaxException;
 
     SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException;
 }

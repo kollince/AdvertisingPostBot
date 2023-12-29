@@ -39,7 +39,7 @@ public class InfoAction implements Action {
     }
 
     @Override
-    public BotApiMethod callback(Update update) {
+    public SendMessage callback(Update update) {
         var chatId = update.getMessage().getChatId().toString();
         var headerText = update.getMessage().getText();
         String nameButton = "Перейти к вводу текста";

@@ -36,7 +36,7 @@ public class PostImageAction implements Action {
         return new SendMessage(chatId, text);
     }
     @Override
-    public BotApiMethod callback(Update update) {
+    public SendMessage callback(Update update) {
         String chatId = "";
         String messageText = "";
         if (update.hasMessage()){
