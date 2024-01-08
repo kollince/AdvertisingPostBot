@@ -3,6 +3,7 @@ package com.advertisingpost.bot.service;
 import com.advertisingpost.bot.service.interfaces.InputData;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 @Component
 @Log4j
+@Service
 public class InputDataImpl implements InputData {
 
 
@@ -39,8 +41,8 @@ public class InputDataImpl implements InputData {
             ImageIO.write(img, "jpg", baos);
             sendPhoto.setChatId(chatId);
             sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(baos.toByteArray()), "photo.jpg"));
-            sendPhoto.setCaption(text);
             sendPhoto.setParseMode(ParseMode.MARKDOWN);
+            sendPhoto.setCaption(text);
             sendPhoto.setReplyMarkup(inlineButtons(nameButton, callbackName, link));
         } catch (Exception e){
             log.debug(e);

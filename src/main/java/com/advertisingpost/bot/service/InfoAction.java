@@ -1,11 +1,12 @@
 package com.advertisingpost.bot.service;
 
+import com.advertisingpost.bot.service.enums.StringDataMessage;
 import com.advertisingpost.bot.service.interfaces.Action;
 import com.advertisingpost.bot.service.interfaces.InputData;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -18,7 +19,7 @@ import java.util.List;
 @Component
 @AllArgsConstructor
 public class InfoAction implements Action {
-    private final List<String> actions;
+    //private final List<String> actions;
     private InputData inputData;
 //    public InfoAction(List<String> actions) {
 //        this.actions = actions;
@@ -27,26 +28,34 @@ public class InfoAction implements Action {
     public SendMessage handleText(Update update, ArrayList<String> textCreatePost) {
         var msg = update.getMessage();
         var chatId = msg.getChatId().toString();
-        var out = new StringBuilder();
-        out.append("Выберите действие:").append("\n");
-        for (String action : actions) {
-            out.append(action).append("\n");
-        }
-        String nameButton = "Приступить к созданию";
+        String out = StringDataMessage.INFO_ACTION_SELECT_ACTION.getMessage() + "\n" +
+                StringDataMessage.INFO_ACTION_HELP.getMessage();
+//        ArrayList<String> list = new ArrayList<>();
+//        list.add("/start - Команды бота");
+//        list.add( "/echo - Ввод данных для command");
+//        list.add( "/postheader - Создание рекламного поста");
+//        for (String action : list) {
+//            out.append(action).append("\n");
+//        }
+        String nameButton = StringDataMessage.COMMON_INPUT_TEXT_BUTTON.getMessage();
         String callbackName = "CREATE_HEADER";
-        var text = "Этот бот создает рекламные посты.\n"+out;
+        var text = StringDataMessage.INFO_ACTION_CREATE_ADV_POST.getMessage()+"\n"+ out;
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
 
     @Override
     public SendMessage callback(Update update) {
-        var chatId = update.getMessage().getChatId().toString();
-        var headerText = update.getMessage().getText();
-        String nameButton = "Перейти к вводу текста";
-        String callbackName = "CREATE_BODY";
-        var text = "Заголовок " + headerText + " добавлен, выполните команду: /postbody ";
+        AnswerCallbackQuery close = AnswerCallbackQuery.builder()
+                .callbackQueryId(update.getCallbackQuery().getId()).build();
+//        var chatId = update.getMessage().getChatId().toString();
+//        var headerText = update.getMessage().getText();
+//        String nameButton = StringDataMessage.INFO_ACTION_INPUT_TEXT.getMessage();
+//        String callbackName = "CREATE_BODY";
+//        var text = "Заголовок " + headerText + " добавлен, выполните команду: /postbody ";
+        //String text = StringDataMessage.INFO_ACTION_HEADER_ADDED.getMessage();
         //transmission(chatId, text, nameButton, callbackName);
-        return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
+        //return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
+        return null;
     }
 
     @Override

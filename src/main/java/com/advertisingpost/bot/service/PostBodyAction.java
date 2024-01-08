@@ -1,11 +1,11 @@
 package com.advertisingpost.bot.service;
 
+import com.advertisingpost.bot.service.enums.StringDataMessage;
 import com.advertisingpost.bot.service.interfaces.Action;
 import com.advertisingpost.bot.service.interfaces.InputData;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -27,7 +27,7 @@ public class PostBodyAction implements Action {
         } else {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
-        var text = "Введите рекламный текст: ";
+        var text = StringDataMessage.POST_BODY_ACTION_ENTER_ADV_TEXT.getMessage();
         return new SendMessage(chatId, text);
     }
 
@@ -42,14 +42,14 @@ public class PostBodyAction implements Action {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
             messageText = update.getCallbackQuery().getMessage().getText();
         }
-        String nameButton = "Перейти к загрузке изображения";
+        String nameButton = StringDataMessage.POST_BODY_ACTION_IMAGE_UPLOAD_BUTTON.getMessage();
         String callbackName = "CREATE_IMAGE";
-        var text = "Текст добавлен, выполните команду: /postimage ";
+        var text = StringDataMessage.POST_BODY_ACTION_TEXT_ADDED.getMessage();
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
 
     @Override
-    public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException {
+    public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost) {
         return null;
     }
 

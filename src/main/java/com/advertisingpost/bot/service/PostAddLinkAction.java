@@ -1,5 +1,6 @@
 package com.advertisingpost.bot.service;
 
+import com.advertisingpost.bot.service.enums.StringDataMessage;
 import com.advertisingpost.bot.service.interfaces.Action;
 import com.advertisingpost.bot.service.interfaces.InputData;
 import lombok.AllArgsConstructor;
@@ -27,7 +28,7 @@ public class PostAddLinkAction implements Action {
         } else {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
-        var text = "Добавьте ссылку: ";
+        var text = StringDataMessage.POST_ADD_LINK_ACTION_ADD_LINK.getMessage();
         return new SendMessage(chatId, text);
     }
 
@@ -42,14 +43,14 @@ public class PostAddLinkAction implements Action {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
             messageText = update.getCallbackQuery().getMessage().getText();
         }
-        String nameButton = "Открыть рекламный пост";
+        String nameButton = StringDataMessage.POST_ADD_LINK_ACTION_OPEN_ADV_POST.getMessage();
         String callbackName = "CREATE_PREVIEW";
-        var text = "Ссылка " + messageText + " добавлена, выполните команду: /postpreview";
+        var text = StringDataMessage.POST_ADD_LINK_ACTION_IMAGE_ADDED.getMessage();
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
 
     @Override
-    public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException {
+    public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost){
         return null;
     }
 

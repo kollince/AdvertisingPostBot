@@ -2,6 +2,7 @@ package com.advertisingpost.bot.controller;
 
 import com.advertisingpost.bot.config.BotConfig;
 import com.advertisingpost.bot.service.*;
+import com.advertisingpost.bot.service.enums.StringDataMessage;
 import com.advertisingpost.bot.service.interfaces.Action;
 import com.advertisingpost.bot.service.interfaces.InputData;
 import lombok.extern.log4j.Log4j;
@@ -9,19 +10,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.File;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.inlinequery.InlineQuery;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -57,12 +56,8 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         long chatId;
-        ArrayList<String> list = new ArrayList<>();
-        list.add("/start - Команды бота");
-        list.add( "/echo - Ввод данных для command");
-        list.add( "/postheader - Создание рекламного поста");
         Map<String, Action> map = new HashMap<>();
-        map.put("/start", new InfoAction(list,inputData));
+        map.put("/start", new InfoAction(inputData));
         map.put("/postheader", new PostHeaderAction(inputData));
         map.put("/postbody", new PostBodyAction(inputData));
         map.put("/postimage", new PostImageAction(inputData));
@@ -89,6 +84,9 @@ public class TelegramBot extends TelegramLongPollingBot {
             chatId = update.getCallbackQuery().getMessage().getChatId();
             if (map.containsKey(callbackData)){
                 mapContainsKeyCallbackData(update, map, chatId , callbackData);
+                AnswerCallbackQuery close = AnswerCallbackQuery.builder()
+                        .callbackQueryId(update.getCallbackQuery().getId()).build();
+                answerCallbackQuery(close);
             } else if (bindingBy.containsKey(chatId)) {
                 SendMessage msg = null;
                 try {
@@ -100,6 +98,14 @@ public class TelegramBot extends TelegramLongPollingBot {
                 send(msg);
             }
         }
+    }
+    private void answerCallbackQuery(AnswerCallbackQuery answer){
+        try {
+            execute(answer);
+        } catch (TelegramApiException e) {
+            log.debug(e);
+        }
+
     }
     private void send(BotApiMethod msg) {
         try {
@@ -116,6 +122,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
     private void mapContainsKey(Update update, String key, Map<String, Action> map, long chatId){
+
         if (update.getMessage().hasPhoto()){
             SendPhoto msg = new SendPhoto();
             try {
@@ -140,6 +147,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         BotApiMethod msg = new SendMessage();
         try {
             msg = map.get(bindingBy.get(chatId)).callback(update);
+            log.debug(update.getMessage().getEntities());
         } catch (MalformedURLException | URISyntaxException e) {
             log.debug(e);
         }

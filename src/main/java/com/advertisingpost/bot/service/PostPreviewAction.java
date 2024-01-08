@@ -1,5 +1,6 @@
 package com.advertisingpost.bot.service;
 
+import com.advertisingpost.bot.service.enums.StringDataMessage;
 import com.advertisingpost.bot.service.interfaces.Action;
 import com.advertisingpost.bot.service.interfaces.InputData;
 import lombok.AllArgsConstructor;
@@ -34,8 +35,8 @@ public class PostPreviewAction implements Action {
         String link = textCreatePost.get(3);
         URL url = new URI(textCreatePost.get(2)).toURL();
         log.debug(text);
-        String nameButton = "Перейти";
-        String callbackName = "Перейти";
+        String nameButton = StringDataMessage.POST_PREVIEW_ACTION_LINK_BUTTON.getMessage();
+        String callbackName = StringDataMessage.POST_PREVIEW_ACTION_LINK_BUTTON.getMessage();
         return inputData.transmission(chatId,text, nameButton, callbackName, link, url);
     }
     @Override
@@ -55,8 +56,8 @@ public class PostPreviewAction implements Action {
         text = textCreatePost.get(0)+"\n"+textCreatePost.get(1);
         String link = textCreatePost.get(3);
         URL url = new URI(textCreatePost.get(2)).toURL();
-        String nameButton = "Перейти";
-        String callbackName = "Перейти";
+        String nameButton = StringDataMessage.POST_PREVIEW_ACTION_LINK_BUTTON.getMessage();
+        String callbackName = StringDataMessage.POST_PREVIEW_ACTION_LINK_BUTTON.getMessage();
         return inputData.photoTransmission(chatId,text, nameButton, callbackName, link, url);
     }
 }

@@ -1,22 +1,18 @@
 package com.advertisingpost.bot.service;
 
+import com.advertisingpost.bot.service.enums.StringDataMessage;
 import com.advertisingpost.bot.service.interfaces.Action;
 import com.advertisingpost.bot.service.interfaces.InputData;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.Document;
-import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 
 @Log4j
@@ -32,7 +28,7 @@ public class PostImageAction implements Action {
         } else {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
-        var text = "Загрузите изображение: ";
+        var text = StringDataMessage.POST_IMAGE_ACTION_IMAGE_UPLOAD.getMessage();
         return new SendMessage(chatId, text);
     }
     @Override
@@ -56,9 +52,9 @@ public class PostImageAction implements Action {
             messageText = update.getMessage().getPhoto().get(el).getFilePath();
         }
 
-        String nameButton = "Добавить ссылку для кнопки";
+        String nameButton = StringDataMessage.POST_IMAGE_ACTION_ADD_LINK_BUTTON.getMessage();
         String callbackName = "CREATE_ADD_LINK";
-        var text = "Изображение " + messageText + " добавлено, выполните команду: /postaddlink ";
+        var text = StringDataMessage.POST_IMAGE_ACTION_IMAGE_ADDED.getMessage();
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
     @Override
