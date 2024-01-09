@@ -5,6 +5,7 @@ import com.advertisingpost.bot.service.*;
 import com.advertisingpost.bot.service.enums.StringDataMessage;
 import com.advertisingpost.bot.service.interfaces.Action;
 import com.advertisingpost.bot.service.interfaces.InputData;
+import com.vdurmont.emoji.EmojiParser;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,7 +75,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             if (map.containsKey(key)) {
                 mapContainsKey(update, key, map, chatId);
             } else if (bindingBy.containsKey(chatId)) {
-                notMapContainsKey(update, map, chatId);
+                notMapContainsKey(update, key, map, chatId);
             }
             if (update.getMessage().hasText() && update.getMessage().getText().equals("/start")){
                 textCreatePost.clear();
@@ -143,7 +144,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             send(msg);
         }
     }
-    private void notMapContainsKey(Update update, Map<String, Action> map, long chatId){
+    private void notMapContainsKey(Update update, String key, Map<String, Action> map, long chatId){
         BotApiMethod msg = new SendMessage();
         try {
             msg = map.get(bindingBy.get(chatId)).callback(update);
@@ -163,7 +164,9 @@ public class TelegramBot extends TelegramLongPollingBot {
                 log.debug(e);
             }
         } else {
-            textCreatePost.add(update.getMessage().getText());
+                textCreatePost.add(update.getMessage().getText());
+            log.debug(textCreatePost);
+
         }
         bindingBy.remove(chatId);
         send(msg);

@@ -1,6 +1,7 @@
 package com.advertisingpost.bot.service;
 
 import com.advertisingpost.bot.service.interfaces.InputData;
+import com.vdurmont.emoji.EmojiParser;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -41,8 +42,13 @@ public class InputDataImpl implements InputData {
             ImageIO.write(img, "jpg", baos);
             sendPhoto.setChatId(chatId);
             sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(baos.toByteArray()), "photo.jpg"));
-            sendPhoto.setParseMode(ParseMode.MARKDOWN);
-            sendPhoto.setCaption(text);
+//            String textPreview = EmojiParser.parseToUnicode("~~Чья та реклама~~\n**Россия** в течение 2–3 лет " +
+//                    "может стать лидером в мировой отрасли промышленного __майнинга__ " +
+//                    "по уровню использования электроэнергии из ||попутного|| нефтяного газа ПНГ сообщил основатель и " +
+//                    "генеральный директор BitRiver Игорь Рунец Опыт использования ПНГ для майнинга уже есть в таких " +
+//                    "странах как США Канада Саудовская Аравия Кувейт Оман Казахстан и ряде других :blush:");
+            sendPhoto.setCaption(EmojiParser.parseToUnicode(text));
+            sendPhoto.setParseMode(ParseMode.HTML);
             sendPhoto.setReplyMarkup(inlineButtons(nameButton, callbackName, link));
         } catch (Exception e){
             log.debug(e);
