@@ -32,7 +32,7 @@ public enum StringDataMessage {
     POST_IMAGE_ACTION_IMAGE_ADDED("Изображение добавлено, для продолжения нажмите на кнопку «"+
             POST_IMAGE_ACTION_ADD_LINK_BUTTON.message+"»."),
     /*PostAddLInkAction*/
-    POST_ADD_LINK_ACTION_ADD_LINK("Добавьте ссылку:"),
+    POST_ADD_LINK_ACTION_ADD_LINK("Добавьте ссылку:   <code>название ссылки : site.com/mypage</code>"),
     POST_ADD_LINK_ACTION_OPEN_ADV_POST("Открыть созданный пост"),
     POST_ADD_LINK_ACTION_IMAGE_ADDED("Ссылка добавлена, для продолжения нажмите на кнопку «"+
             POST_ADD_LINK_ACTION_OPEN_ADV_POST.message+"»."),

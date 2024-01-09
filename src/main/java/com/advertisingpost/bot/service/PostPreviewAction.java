@@ -3,6 +3,7 @@ package com.advertisingpost.bot.service;
 import com.advertisingpost.bot.service.enums.StringDataMessage;
 import com.advertisingpost.bot.service.interfaces.Action;
 import com.advertisingpost.bot.service.interfaces.InputData;
+import com.sun.jdi.event.StepEvent;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
@@ -54,10 +55,15 @@ public class PostPreviewAction implements Action {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
         text = textCreatePost.get(0)+"\n"+textCreatePost.get(1);
-        String link = textCreatePost.get(3);
+        String[] textLink = textCreatePost.get(3).split(":");
+        String textButton = textLink[0].trim();
+        String link = textLink[1].trim();
         URL url = new URI(textCreatePost.get(2)).toURL();
-        String nameButton = StringDataMessage.POST_PREVIEW_ACTION_LINK_BUTTON.getMessage();
-        String callbackName = StringDataMessage.POST_PREVIEW_ACTION_LINK_BUTTON.getMessage();
+        log.debug(url);
+//        String nameButton = StringDataMessage.POST_PREVIEW_ACTION_LINK_BUTTON.getMessage();
+//        String callbackName = StringDataMessage.POST_PREVIEW_ACTION_LINK_BUTTON.getMessage();
+        String nameButton = textButton;
+        String callbackName = textButton;
         return inputData.photoTransmission(chatId,text, nameButton, callbackName, link, url);
     }
 }

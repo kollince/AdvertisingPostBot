@@ -14,6 +14,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.File;
@@ -96,6 +97,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                      log.debug(e);
                 }
                 bindingBy.remove(chatId);
+                log.debug(msg);
                 send(msg);
             }
         }
@@ -108,7 +110,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
 
     }
-    private void send(BotApiMethod msg) {
+    private void send(SendMessage msg) {
         try {
             execute(msg);
         } catch (TelegramApiException e) {
@@ -141,11 +143,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                 log.debug(e);
             }
             bindingBy.put(chatId, key);
+            log.debug(msg.getText());
             send(msg);
         }
     }
     private void notMapContainsKey(Update update, String key, Map<String, Action> map, long chatId){
-        BotApiMethod msg = new SendMessage();
+        SendMessage msg = new SendMessage();
         try {
             msg = map.get(bindingBy.get(chatId)).callback(update);
             log.debug(update.getMessage().getEntities());
@@ -169,6 +172,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         }
         bindingBy.remove(chatId);
+        log.debug(msg.getText());
         send(msg);
     }
     private void mapContainsKeyCallbackData(Update update, Map<String, Action> map, long chatId, String callbackData){
@@ -182,13 +186,18 @@ public class TelegramBot extends TelegramLongPollingBot {
             bindingBy.put(chatId, callbackData);
             sendPhoto(msg);
         } else {
+            //TODO: Подумать над правильным условием, сюда залетает каждая подсказка после нажатия кнопки
+            //TODO: Подумать над структурой всего приложения (MVC)
+            //TODO: Подумать как быстро через файл настроек переключаться в режимы HTML или Markdown
             SendMessage msg = new SendMessage();
             try {
                 msg = map.get(callbackData).handleText(update, textCreatePost);
+                msg.setParseMode(ParseMode.HTML);
             } catch (MalformedURLException | URISyntaxException e) {
                 log.debug(e);
             }
             bindingBy.put(chatId, callbackData);
+            log.debug(msg.getText());
             send(msg);
         }
     }
