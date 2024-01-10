@@ -3,6 +3,7 @@ package com.advertisingpost.bot.service;
 import com.advertisingpost.bot.service.interfaces.InputData;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.extern.log4j.Log4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
@@ -23,14 +24,19 @@ import java.util.List;
 @Log4j
 @Service
 public class InputDataImpl implements InputData {
-
+    @Value("${bot.ParseMode}")
+    String mode;
 
     @Override
     public SendMessage transmission(String chatId, String text, String nameButton, String callbackName, String link, URL url) {
         inlineButtons(nameButton, callbackName, link);
         SendMessage message = new SendMessage(chatId, text);
         log.debug(text);
-        message.setParseMode(ParseMode.HTML);
+        switch (mode) {
+            case "HTML" -> message.setParseMode(ParseMode.HTML);
+            case "MARKDOWN" -> message.setParseMode(ParseMode.MARKDOWN);
+            case "MARKDOWNV2" -> message.setParseMode(ParseMode.MARKDOWNV2);
+        }
         message.setReplyMarkup(inlineButtons(nameButton, callbackName, link));
         return message;
     }
@@ -70,6 +76,7 @@ public class InputDataImpl implements InputData {
         rowsInline.add(rowInline);
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.setKeyboard(rowsInline);
+        log.debug(mode);
         return markup;
     }
 
