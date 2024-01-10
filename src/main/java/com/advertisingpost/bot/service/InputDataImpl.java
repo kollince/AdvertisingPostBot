@@ -1,9 +1,11 @@
 package com.advertisingpost.bot.service;
 
 import com.advertisingpost.bot.service.interfaces.InputData;
+import com.advertisingpost.bot.util.interfaces.ModeParsing;
 import com.vdurmont.emoji.EmojiParser;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
@@ -23,20 +25,17 @@ import java.util.List;
 @Component
 @Log4j
 @Service
+@AllArgsConstructor
 public class InputDataImpl implements InputData {
-    @Value("${bot.ParseMode}")
-    String mode;
-
+    @Autowired
+    private final ModeParsing modeParsing;
     @Override
     public SendMessage transmission(String chatId, String text, String nameButton, String callbackName, String link, URL url) {
         inlineButtons(nameButton, callbackName, link);
         SendMessage message = new SendMessage(chatId, text);
         log.debug(text);
-        switch (mode) {
-            case "HTML" -> message.setParseMode(ParseMode.HTML);
-            case "MARKDOWN" -> message.setParseMode(ParseMode.MARKDOWN);
-            case "MARKDOWNV2" -> message.setParseMode(ParseMode.MARKDOWNV2);
-        }
+        modeParsing.ParsingMessage(message);
+        log.debug(modeParsing.ParsingMessage(message));
         message.setReplyMarkup(inlineButtons(nameButton, callbackName, link));
         return message;
     }
@@ -50,13 +49,8 @@ public class InputDataImpl implements InputData {
             ImageIO.write(img, "jpg", baos);
             sendPhoto.setChatId(chatId);
             sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(baos.toByteArray()), "photo.jpg"));
-//            String textPreview = EmojiParser.parseToUnicode("~~Чья та реклама~~\n**Россия** в течение 2–3 лет " +
-//                    "может стать лидером в мировой отрасли промышленного __майнинга__ " +
-//                    "по уровню использования электроэнергии из ||попутного|| нефтяного газа ПНГ сообщил основатель и " +
-//                    "генеральный директор BitRiver Игорь Рунец Опыт использования ПНГ для майнинга уже есть в таких " +
-//                    "странах как США Канада Саудовская Аравия Кувейт Оман Казахстан и ряде других :blush:");
             sendPhoto.setCaption(EmojiParser.parseToUnicode(text));
-            sendPhoto.setParseMode(ParseMode.HTML);
+            modeParsing.ParsingPhoto(sendPhoto);
             sendPhoto.setReplyMarkup(inlineButtons(nameButton, callbackName, link));
         } catch (Exception e){
             log.debug(e);
@@ -76,7 +70,6 @@ public class InputDataImpl implements InputData {
         rowsInline.add(rowInline);
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.setKeyboard(rowsInline);
-        log.debug(mode);
         return markup;
     }
 
