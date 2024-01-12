@@ -54,11 +54,12 @@ public class PostPreviewAction implements Action {
         } else {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
-        text = textCreatePost.get(0)+"\n"+textCreatePost.get(1);
-        String[] textLink = textCreatePost.get(3).split(":");
+//        text = textCreatePost.get(0)+"\n"+textCreatePost.get(1);
+        text = textCreatePost.get(0);
+        String[] textLink = textCreatePost.get(2).split(":");
         String textButton = textLink[0].trim();
         String link = textLink[1].trim();
-        URL url = new URI(textCreatePost.get(2)).toURL();
+        URL url = new URI(textCreatePost.get(1)).toURL();
         log.debug(url);
 //        String nameButton = StringDataMessage.POST_PREVIEW_ACTION_LINK_BUTTON.getMessage();
 //        String callbackName = StringDataMessage.POST_PREVIEW_ACTION_LINK_BUTTON.getMessage();

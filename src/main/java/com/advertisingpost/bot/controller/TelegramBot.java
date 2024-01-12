@@ -5,6 +5,7 @@ import com.advertisingpost.bot.service.*;
 import com.advertisingpost.bot.service.enums.StringDataMessage;
 import com.advertisingpost.bot.service.interfaces.Action;
 import com.advertisingpost.bot.service.interfaces.InputData;
+import com.advertisingpost.bot.service.interfaces.ReadMessageUser;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,13 +42,16 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final ArrayList<String> textCreatePost = new ArrayList<>();
     @Autowired
     private final InputData inputData;
+    @Autowired
+    private final ReadMessageUser readMessageUser;
     @Value("${bot.token}")
     String token;
     final BotConfig config;
-    public TelegramBot(@Value("${bot.token}") String token, InputData inputData, BotConfig config){
+    public TelegramBot(@Value("${bot.token}") String token, InputData inputData, BotConfig config, ReadMessageUser readMessageUser){
         super(token);
         this.inputData = inputData;
         this.config = config;
+        this.readMessageUser = readMessageUser;
     }
 
     @Override
@@ -60,12 +64,12 @@ public class TelegramBot extends TelegramLongPollingBot {
         long chatId;
         Map<String, Action> map = new HashMap<>();
         map.put("/start", new InfoAction(inputData));
-        map.put("/postheader", new PostHeaderAction(inputData));
-        map.put("/postbody", new PostBodyAction(inputData));
-        map.put("/postimage", new PostImageAction(inputData));
-        map.put("/postaddlink", new PostAddLinkAction(inputData));
-        map.put("/postpreview", new PostPreviewAction(inputData));
-        map.put("CREATE_HEADER", new PostHeaderAction(inputData));
+        //map.put("/postheader", new PostHeaderAction(inputData));
+//        map.put("/postbody", new PostBodyAction(inputData));
+//        map.put("/postimage", new PostImageAction(inputData));
+//        map.put("/postaddlink", new PostAddLinkAction(inputData));
+//        map.put("/postpreview", new PostPreviewAction(inputData));
+        //map.put("CREATE_HEADER", new PostHeaderAction(inputData));
         map.put("CREATE_BODY", new PostBodyAction(inputData));
         map.put("CREATE_IMAGE", new PostImageAction(inputData));
         map.put("CREATE_ADD_LINK", new PostAddLinkAction(inputData));
@@ -79,7 +83,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                 notMapContainsKey(update, key, map, chatId);
             }
             if (update.getMessage().hasText() && update.getMessage().getText().equals("/start")){
-                textCreatePost.clear();
+                readMessageUser.clearArrayList();
+//                textCreatePost.clear();
             }
         } else if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
@@ -90,7 +95,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                         .callbackQueryId(update.getCallbackQuery().getId()).build();
                 answerCallbackQuery(close);
             } else if (bindingBy.containsKey(chatId)) {
-                SendMessage msg = null;
+                SendMessage msg = new SendMessage();
                 try {
                     msg = map.get(bindingBy.get(chatId)).callback(update);
                 } catch (MalformedURLException | URISyntaxException e) {
@@ -129,7 +134,8 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (update.getMessage().hasPhoto()){
             SendPhoto msg = new SendPhoto();
             try {
-                msg = map.get(key).handlePhoto(update, textCreatePost);
+                //msg = map.get(key).handlePhoto(update, textCreatePost);
+                msg = map.get(key).handlePhoto(update, readMessageUser.readMessage());
             } catch (MalformedURLException | URISyntaxException e) {
                 log.debug(e);
             }
@@ -138,7 +144,8 @@ public class TelegramBot extends TelegramLongPollingBot {
         } else {
             SendMessage msg = new SendMessage();
             try {
-                msg = map.get(key).handleText(update, textCreatePost);
+                //msg = map.get(key).handleText(update, textCreatePost);
+                msg = map.get(key).handleText(update, readMessageUser.readMessage());
             } catch (MalformedURLException | URISyntaxException e) {
                 log.debug(e);
             }
@@ -162,13 +169,15 @@ public class TelegramBot extends TelegramLongPollingBot {
             try {
                 File file = execute(getFile);
                 URL url = new URI("https://api.telegram.org/file/bot" + token + "/" + file.getFilePath()).toURL();
-                textCreatePost.add(String.valueOf(url));
+                readMessageUser.addAPathImage(String.valueOf(url));
+                //textCreatePost.add(String.valueOf(url));
             } catch (TelegramApiException | IOException | URISyntaxException e) {
                 log.debug(e);
             }
         } else {
-                textCreatePost.add(update.getMessage().getText());
-            log.debug(textCreatePost);
+                //textCreatePost.add(update.getMessage().getText());
+                readMessageUser.addArticle(update.getMessage().getText());
+            log.debug(readMessageUser.readMessage());
 
         }
         bindingBy.remove(chatId);
@@ -179,7 +188,8 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (callbackData.equals("CREATE_PREVIEW")){
             SendPhoto msg = new SendPhoto();
             try {
-                msg = map.get(callbackData).handlePhoto(update, textCreatePost);
+                //msg = map.get(callbackData).handlePhoto(update, textCreatePost);
+                msg = map.get(callbackData).handlePhoto(update, readMessageUser.readMessage());
             } catch (MalformedURLException | URISyntaxException e){
                 log.debug(e);
             }
@@ -191,7 +201,8 @@ public class TelegramBot extends TelegramLongPollingBot {
             //TODO: Подумать как быстро через файл настроек переключаться в режимы HTML или Markdown
             SendMessage msg = new SendMessage();
             try {
-                msg = map.get(callbackData).handleText(update, textCreatePost);
+                //msg = map.get(callbackData).handleText(update, textCreatePost);
+                msg = map.get(callbackData).handleText(update, readMessageUser.readMessage());
                 msg.setParseMode(ParseMode.HTML);
             } catch (MalformedURLException | URISyntaxException e) {
                 log.debug(e);

@@ -19,26 +19,17 @@ import java.util.List;
 @Component
 @AllArgsConstructor
 public class InfoAction implements Action {
-    //private final List<String> actions;
     private InputData inputData;
-//    public InfoAction(List<String> actions) {
-//        this.actions = actions;
-//    }
+
     @Override
     public SendMessage handleText(Update update, ArrayList<String> textCreatePost) {
         var msg = update.getMessage();
         var chatId = msg.getChatId().toString();
         String out = StringDataMessage.INFO_ACTION_SELECT_ACTION.getMessage() + "\n" +
                 StringDataMessage.INFO_ACTION_HELP.getMessage();
-//        ArrayList<String> list = new ArrayList<>();
-//        list.add("/start - Команды бота");
-//        list.add( "/echo - Ввод данных для command");
-//        list.add( "/postheader - Создание рекламного поста");
-//        for (String action : list) {
-//            out.append(action).append("\n");
-//        }
         String nameButton = StringDataMessage.COMMON_INPUT_TEXT_BUTTON.getMessage();
-        String callbackName = "CREATE_HEADER";
+        //String callbackName = "CREATE_HEADER";
+        String callbackName = "CREATE_BODY";
         var text = StringDataMessage.INFO_ACTION_CREATE_ADV_POST.getMessage()+"\n"+ out;
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
