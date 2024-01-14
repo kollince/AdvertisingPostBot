@@ -1,13 +1,11 @@
-package com.advertisingpost.bot.service;
+package com.advertisingpost.bot.service.messaging;
 
 import com.advertisingpost.bot.service.enums.StringDataMessage;
-import com.advertisingpost.bot.service.interfaces.Action;
-import com.advertisingpost.bot.service.interfaces.InputData;
-import com.sun.jdi.event.StepEvent;
+import com.advertisingpost.bot.service.messaging.interfaces.Action;
+import com.advertisingpost.bot.service.buttonsUsers.interfaces.InputData;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -60,7 +58,6 @@ public class PostPreviewAction implements Action {
         String textButton = textLink[0].trim();
         String link = textLink[1].trim();
         URL url = new URI(textCreatePost.get(1)).toURL();
-        log.debug(url);
 //        String nameButton = StringDataMessage.POST_PREVIEW_ACTION_LINK_BUTTON.getMessage();
 //        String callbackName = StringDataMessage.POST_PREVIEW_ACTION_LINK_BUTTON.getMessage();
         String nameButton = textButton;

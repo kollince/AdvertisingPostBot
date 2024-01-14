@@ -1,14 +1,13 @@
-package com.advertisingpost.bot.service;
+package com.advertisingpost.bot.service.buttonsUsers;
 
-import com.advertisingpost.bot.service.interfaces.InputData;
-import com.advertisingpost.bot.util.interfaces.ModeParsing;
+import com.advertisingpost.bot.service.buttonsUsers.interfaces.InputData;
+import com.advertisingpost.bot.service.processing.interfaces.ModeParsing;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;

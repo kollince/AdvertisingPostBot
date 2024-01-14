@@ -1,4 +1,4 @@
-package com.advertisingpost.bot.service.interfaces;
+package com.advertisingpost.bot.service.messaging.interfaces;
 
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

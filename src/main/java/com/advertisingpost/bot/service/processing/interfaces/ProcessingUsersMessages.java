@@ -1,11 +1,10 @@
-package com.advertisingpost.bot.service.interfaces;
+package com.advertisingpost.bot.service.processing.interfaces;
 
 import com.advertisingpost.bot.model.UserMessage;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public interface ReadMessageUser {
+public interface ProcessingUsersMessages {
     ArrayList<ArrayList<UserMessage>> addArrayList(ArrayList<UserMessage> message);
 
     ArrayList<String> readMessage();

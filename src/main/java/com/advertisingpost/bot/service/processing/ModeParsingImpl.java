@@ -1,6 +1,6 @@
-package com.advertisingpost.bot.util;
+package com.advertisingpost.bot.service.processing;
 
-import com.advertisingpost.bot.util.interfaces.ModeParsing;
+import com.advertisingpost.bot.service.processing.interfaces.ModeParsing;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

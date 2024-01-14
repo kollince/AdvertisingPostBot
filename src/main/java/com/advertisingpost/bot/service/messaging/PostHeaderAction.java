@@ -1,8 +1,8 @@
-package com.advertisingpost.bot.service;
+package com.advertisingpost.bot.service.messaging;
 
 import com.advertisingpost.bot.service.enums.StringDataMessage;
-import com.advertisingpost.bot.service.interfaces.Action;
-import com.advertisingpost.bot.service.interfaces.InputData;
+import com.advertisingpost.bot.service.messaging.interfaces.Action;
+import com.advertisingpost.bot.service.buttonsUsers.interfaces.InputData;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
@@ -10,15 +10,14 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 @Log4j
 @Component
 @AllArgsConstructor
-public class PostBodyAction implements Action {
+public class PostHeaderAction implements Action {
     private InputData inputData;
+
     @Override
     public SendMessage handleText(Update update, ArrayList<String> textCreatePost) {
         String chatId;
@@ -27,7 +26,7 @@ public class PostBodyAction implements Action {
         } else {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
-        var text = StringDataMessage.POST_BODY_ACTION_ENTER_ADV_TEXT.getMessage();
+        var text = StringDataMessage.POST_HEADER_ACTION_ENTER_ADV_HEADER.getMessage();
         return new SendMessage(chatId, text);
     }
 
@@ -42,9 +41,9 @@ public class PostBodyAction implements Action {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
             messageText = update.getCallbackQuery().getMessage().getText();
         }
-        String nameButton = StringDataMessage.POST_BODY_ACTION_IMAGE_UPLOAD_BUTTON.getMessage();
-        String callbackName = "CREATE_IMAGE";
-        var text = StringDataMessage.POST_BODY_ACTION_TEXT_ADDED.getMessage();
+        String nameButton = StringDataMessage.COMMON_INPUT_TEXT_BUTTON.getMessage();
+        String callbackName = "CREATE_BODY";
+        var text = StringDataMessage.POST_HEADER_ACTION_HEADER_ADDED.getMessage();
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
 
@@ -52,6 +51,4 @@ public class PostBodyAction implements Action {
     public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost) {
         return null;
     }
-
-
 }

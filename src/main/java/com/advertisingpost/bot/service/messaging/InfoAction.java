@@ -1,8 +1,8 @@
-package com.advertisingpost.bot.service;
+package com.advertisingpost.bot.service.messaging;
 
 import com.advertisingpost.bot.service.enums.StringDataMessage;
-import com.advertisingpost.bot.service.interfaces.Action;
-import com.advertisingpost.bot.service.interfaces.InputData;
+import com.advertisingpost.bot.service.messaging.interfaces.Action;
+import com.advertisingpost.bot.service.buttonsUsers.interfaces.InputData;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.List;
+
 @Log4j
 @Component
 @AllArgsConstructor

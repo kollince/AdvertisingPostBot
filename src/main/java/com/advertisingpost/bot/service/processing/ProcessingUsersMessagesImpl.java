@@ -1,21 +1,19 @@
-package com.advertisingpost.bot.service;
+package com.advertisingpost.bot.service.processing;
 
 import com.advertisingpost.bot.dao.interfaces.MessageDao;
 import com.advertisingpost.bot.model.UserMessage;
-import com.advertisingpost.bot.service.interfaces.ReadMessageUser;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import com.advertisingpost.bot.service.processing.interfaces.ProcessingUsersMessages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
+
 //@NoArgsConstructor
 //@AllArgsConstructor
 @RequiredArgsConstructor
 @Service
-public class ReadMessageUserImpl implements ReadMessageUser {
+public class ProcessingUsersMessagesImpl implements ProcessingUsersMessages {
     @Autowired
     private MessageDao messageDao;
     @Override

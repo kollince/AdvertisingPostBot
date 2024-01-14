@@ -1,8 +1,8 @@
-package com.advertisingpost.bot.service;
+package com.advertisingpost.bot.service.messaging;
 
 import com.advertisingpost.bot.service.enums.StringDataMessage;
-import com.advertisingpost.bot.service.interfaces.Action;
-import com.advertisingpost.bot.service.interfaces.InputData;
+import com.advertisingpost.bot.service.messaging.interfaces.Action;
+import com.advertisingpost.bot.service.buttonsUsers.interfaces.InputData;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
