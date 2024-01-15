@@ -2,8 +2,10 @@ package com.advertisingpost.bot.service.processing;
 
 import com.advertisingpost.bot.service.messaging.interfaces.Action;
 import com.advertisingpost.bot.service.processing.interfaces.MapAction;
+import com.advertisingpost.bot.service.processing.interfaces.ModeParsing;
 import com.advertisingpost.bot.service.processing.interfaces.PreparingMessages;
 import com.advertisingpost.bot.service.processing.interfaces.ProcessingUsersMessages;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
@@ -20,9 +22,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
+@AllArgsConstructor
 @Component
 @Log4j
 public class PreparingMessagesImpl implements PreparingMessages {
+    private final ModeParsing modeParsing;
     @Override
     public SendMessage sendingMessage(Update update, String key, Map<String, Action> map, long chatId,
                                       ArrayList<String> readMessage, MapAction mapAction) {
@@ -87,7 +91,8 @@ public class PreparingMessagesImpl implements PreparingMessages {
         SendMessage msg = new SendMessage();
         try {
             msg = map.get(callbackData).handleText(update, readMessage);
-            msg.setParseMode(ParseMode.HTML);
+            modeParsing.ParsingMessage(msg);
+            //msg.setParseMode(ParseMode.HTML);
         } catch (MalformedURLException | URISyntaxException e) {
             log.debug(e);
         }
