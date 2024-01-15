@@ -26,6 +26,16 @@ public class ChoosingAction implements Action {
         String nameButton = StringDataMessage.COMMON_INPUT_TEXT_BUTTON.getMessage();
         String nameButton1 = StringDataMessage.COMMON_INPUT_TEXT_BUTTON.getMessage();
         String nameButton2 = StringDataMessage.COMMON_INPUT_TEXT_BUTTON.getMessage();
+        //TODO
+        //Добавить три кнопки для стиля поста: текст, медиа, текст и медиа.
+        //Добавить определение типа загружаемого файла, возможность загрузка gif, видео, картинка
+        //Добавить проверку на ввод текста и загрузки файла, если нет текста или нет файла, повторно вызывать нужное действие.
+        //Добавить правильное описание действий и хелп
+        //Добавить иконку для бота
+        //Добавить регистрацию пользователя, для каждого пользователя свой ArrayList (article+photo, перед этим сделать тест работы
+        //без регистрации на добавление чужих элементов в ArrayList от других пользователей.
+        //Добавить управляемую рекламу на начальную страницу
+        //Добавить о боте, контакты разработчика.
         //String callbackName = "CREATE_HEADER";
         String callbackName = "CREATE_BODY";
         var text = StringDataMessage.INFO_ACTION_CREATE_ADV_POST.getMessage()+"\n"+ out;
