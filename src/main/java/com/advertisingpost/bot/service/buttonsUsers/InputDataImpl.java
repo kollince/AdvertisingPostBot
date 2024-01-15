@@ -60,9 +60,17 @@ public class InputDataImpl implements InputData {
         var linkButton = new InlineKeyboardButton();
         linkButton.setText(nameButton);
         linkButton.setCallbackData(callbackName);
+        var linkButton1 = new InlineKeyboardButton();
+        linkButton1.setText(nameButton);
+        linkButton1.setCallbackData(callbackName);
+        var linkButton2 = new InlineKeyboardButton();
+        linkButton2.setText(nameButton);
+        linkButton2.setCallbackData(callbackName);
         if (link != null){
             linkButton.setUrl(link);
         }
+        rowInline.add(linkButton2);
+        rowInline.add(linkButton1);
         rowInline.add(linkButton);
         rowsInline.add(rowInline);
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();

@@ -10,7 +10,11 @@ import lombok.Getter;
 public enum StringDataMessage {
     /*common*/
     COMMON_INPUT_TEXT_BUTTON("Перейти к вводу текста"),
-
+    /*ChoosingAction*/
+    CHOOSE_ACTION_BUTTON("Выберите тип поста:"),
+    CHOOSE_BUTTON1("Только текст"),
+    CHOOSE_BUTTON2("Только мультимедиа"),
+    CHOOSE_BUTTON3("Текст и мультимедиа"),
     /*InfoAction*/
     INFO_ACTION_SELECT_ACTION(""),
     INFO_ACTION_HELP("Для продолжения нажмите на кнопку «" + COMMON_INPUT_TEXT_BUTTON.message +"»."),

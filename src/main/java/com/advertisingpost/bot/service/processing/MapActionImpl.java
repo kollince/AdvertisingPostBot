@@ -21,7 +21,8 @@ public class MapActionImpl implements MapAction {
     @Override
     public Map<String, Action> generalMapPut (InputData inputData) {
 
-        map.put("/start", new InfoAction(inputData));
+        //map.put("/start", new InfoAction(inputData));
+        map.put("/start", new ChoosingAction(inputData));
         map.put("QUESTION_ADD_ARTICLE", new PostBodyAction(inputData));
         //map.put("CREATE_HEADER", new PostHeaderAction(inputData));
         map.put("CREATE_BODY", new PostBodyAction(inputData));
