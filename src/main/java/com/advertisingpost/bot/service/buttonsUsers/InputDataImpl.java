@@ -32,9 +32,7 @@ public class InputDataImpl implements InputData {
     public SendMessage transmission(String chatId, String text, String nameButton, String callbackName, String link, URL url) {
         inlineButtons(nameButton, callbackName, link);
         SendMessage message = new SendMessage(chatId, text);
-        log.debug(text);
         modeParsing.ParsingMessage(message);
-        log.debug(modeParsing.ParsingMessage(message));
         message.setReplyMarkup(inlineButtons(nameButton, callbackName, link));
         return message;
     }

@@ -13,7 +13,6 @@ import java.util.List;
 public class MessageDaoImpl implements MessageDao {
     private final ArrayList<ArrayList<UserMessage>> arrayListArrayList = new ArrayList<>();
     private final ArrayList<String> messageList = new ArrayList<>();
-    //private final ArrayList<String> textCreatePost = new ArrayList<>();
     @Override
     public ArrayList<String> addArticle(String article){
         messageList.add(article);

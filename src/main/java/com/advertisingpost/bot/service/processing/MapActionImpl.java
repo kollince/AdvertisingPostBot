@@ -22,7 +22,7 @@ public class MapActionImpl implements MapAction {
     public Map<String, Action> generalMapPut (InputData inputData) {
 
         map.put("/start", new InfoAction(inputData));
-        map.put("/start1", new PostBodyAction(inputData));
+        map.put("QUESTION_ADD_ARTICLE", new PostBodyAction(inputData));
         //map.put("CREATE_HEADER", new PostHeaderAction(inputData));
         map.put("CREATE_BODY", new PostBodyAction(inputData));
         map.put("CREATE_IMAGE", new PostImageAction(inputData));

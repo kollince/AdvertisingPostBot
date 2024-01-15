@@ -19,11 +19,8 @@ import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Map;
 
 
@@ -64,7 +61,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             chatId = update.getMessage().getChatId();
             if(mapAction.generalMapRead().containsKey(key)){
                 mapContainsKey(update,key,mapAction.generalMapRead(), chatId);
-                log.debug("777 "+mapAction.bindingByRead());
             } else if (mapAction.bindingByRead().containsKey(chatId)) {
                 try {
                     notMapContainsKey(update, key, mapAction.generalMapRead(), chatId);
@@ -91,7 +87,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                      log.debug(e);
                 }
                 mapAction.bindingByRemove(chatId);
-                log.debug(msg);
                 send(msg);
             }
         }
@@ -120,7 +115,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
     private File sendFile(Update update) throws TelegramApiException {
         GetFile getFile = new GetFile();
-        int el = update.getMessage().getPhoto().size()-1;
+        int el = update.getMessage().getPhoto().size() - 1;
         getFile.setFileId(update.getMessage().getPhoto().get(el).getFileId());
         return  execute(getFile);
     }
@@ -129,63 +124,21 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (update.getMessage().hasText()){
             send(preparingMessages.sendingMessage(update, key, map, chatId,
                     processingUsersMessages.readMessage(), mapAction));
-            log.debug("mapContainsKey"+mapAction);
         }
     }
     private void notMapContainsKey(Update update, String key, Map<String, Action> map, long chatId) throws TelegramApiException {
         //Отправка сообщения и фото пользователю
-//        preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath());
-
-        SendMessage msg = new SendMessage();
-        try {
-            msg = map.get(mapAction.bindingByRead().get(chatId)).callback(update);
-            log.debug("notMapContainsKey"+map.get(mapAction.bindingByRead().get(chatId)).callback(update));
-        } catch (MalformedURLException | URISyntaxException e) {
-            log.debug(e);
-        }
-        if (update.getMessage().hasPhoto()){
-            log.debug(update.getMessage().getPhoto());
-            try {
-                URL url = new URI("https://api.telegram.org/file/bot" + token + "/" + sendFile(update).getFilePath()).toURL();
-                processingUsersMessages.addAPathImage(String.valueOf(url));
-                log.debug(url);
-            } catch (TelegramApiException | IOException | URISyntaxException e) {
-                log.debug(e);
-            }
+        if (update.getMessage().hasPhoto()) {
+            send(preparingMessages.collectingMessagesPhoto(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath()));
         } else {
-            processingUsersMessages.addArticle(update.getMessage().getText());
+            send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
         }
-        log.debug("до "+mapAction);
-        mapAction.bindingByRemove(chatId);
-        log.debug("после "+mapAction);
-        send(msg);
-        //TODO
-//        send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath()));
     }
     private void mapContainsKeyCallbackData(Update update, Map<String, Action> map, long chatId, String callbackData){
         if (callbackData.equals("CREATE_PREVIEW")){
-            SendPhoto msg = new SendPhoto();
-            try {
-                msg = map.get(callbackData).handlePhoto(update, processingUsersMessages.readMessage());
-            } catch (MalformedURLException | URISyntaxException e){
-                log.debug(e);
-            }
-            mapAction.bindingByPut(chatId, callbackData);
-            sendPhoto(msg);
+            sendPhoto(preparingMessages.sendCallbackDataPhoto(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
         } else {
-            //TODO: Подумать над правильным условием, сюда залетает каждая подсказка после нажатия кнопки
-            //TODO: Подумать над структурой всего приложения (MVC)
-            //TODO: Подумать как быстро через файл настроек переключаться в режимы HTML или Markdown
-            SendMessage msg = new SendMessage();
-            try {
-                msg = map.get(callbackData).handleText(update, processingUsersMessages.readMessage());
-                msg.setParseMode(ParseMode.HTML);
-            } catch (MalformedURLException | URISyntaxException e) {
-                log.debug(e);
-            }
-            mapAction.bindingByPut(chatId, callbackData);
-            log.debug(msg.getText());
-            send(msg);
+            send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
         }
     }
 
