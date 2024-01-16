@@ -23,9 +23,12 @@ public class ChoosingAction implements Action {
         var msg = update.getMessage();
         var chatId = msg.getChatId().toString();
         String out = StringDataMessage.CHOOSE_ACTION_BUTTON.getMessage();
-        String nameButton = StringDataMessage.COMMON_INPUT_TEXT_BUTTON.getMessage();
-        String nameButton1 = StringDataMessage.COMMON_INPUT_TEXT_BUTTON.getMessage();
-        String nameButton2 = StringDataMessage.COMMON_INPUT_TEXT_BUTTON.getMessage();
+        String nameButton1 = StringDataMessage.CHOOSE_BUTTON1.getMessage();
+        String nameButton2 = StringDataMessage.CHOOSE_BUTTON2.getMessage();
+        String nameButton3 = StringDataMessage.CHOOSE_BUTTON3.getMessage();
+        String nameButton = nameButton1+":"+nameButton2+":"+nameButton3;
+
+        String callbackName = "CREATE_BODY";
         //TODO
         //Добавить три кнопки для стиля поста: текст, медиа, текст и медиа.
         //Добавить определение типа загружаемого файла, возможность загрузка gif, видео, картинка
@@ -37,7 +40,7 @@ public class ChoosingAction implements Action {
         //Добавить управляемую рекламу на начальную страницу
         //Добавить о боте, контакты разработчика.
         //String callbackName = "CREATE_HEADER";
-        String callbackName = "CREATE_BODY";
+
         var text = StringDataMessage.INFO_ACTION_CREATE_ADV_POST.getMessage()+"\n"+ out;
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
