@@ -20,7 +20,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 @Component
 @Log4j
 @Service
@@ -56,15 +59,29 @@ public class InputDataImpl implements InputData {
     }
     private InlineKeyboardMarkup inlineButtons(String nameButton, String callbackName, String link) {
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
-        List<InlineKeyboardButton> rowInline = new ArrayList<>();
-        var linkButton = new InlineKeyboardButton();
-        linkButton.setText(nameButton);
-        linkButton.setCallbackData(callbackName);
-        if (link != null){
-            linkButton.setUrl(link);
+        String[] nameButtonsArray = nameButton.split(":");
+        String[] callbackNameArray = callbackName.split(":");
+        if(nameButtonsArray.length > 1) {
+            for (int i = 0; i < nameButtonsArray.length; i++) {
+                List<InlineKeyboardButton> rowInline = new ArrayList<>();
+                var button = new InlineKeyboardButton();
+                //TODO Доделать callbackName для кнопок
+                button.setText(nameButtonsArray[i]);
+                button.setCallbackData(callbackNameArray[i]);
+                rowInline.add(button);
+                rowsInline.add(rowInline);
+            }
+        } else {
+            List<InlineKeyboardButton> rowInline = new ArrayList<>();
+            var linkButton = new InlineKeyboardButton();
+            linkButton.setText(nameButton);
+            linkButton.setCallbackData(callbackName);
+            if (link != null) {
+                linkButton.setUrl(link);
+            }
+            rowInline.add(linkButton);
+            rowsInline.add(rowInline);
         }
-        rowInline.add(linkButton);
-        rowsInline.add(rowInline);
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.setKeyboard(rowsInline);
         return markup;
