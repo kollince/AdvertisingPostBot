@@ -3,6 +3,7 @@ package com.advertisingpost.bot.dao;
 import com.advertisingpost.bot.dao.interfaces.MessageDao;
 import com.advertisingpost.bot.model.UserMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Component
+@Log4j
 public class MessageDaoImpl implements MessageDao {
     private final ArrayList<ArrayList<UserMessage>> arrayListArrayList = new ArrayList<>();
     private final ArrayList<String> messageList = new ArrayList<>();
@@ -43,6 +45,7 @@ public class MessageDaoImpl implements MessageDao {
 
     @Override
     public ArrayList<String> readMessageList() {
+        log.debug(messageList);
         return messageList;
     }
 

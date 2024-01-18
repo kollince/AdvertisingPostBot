@@ -53,7 +53,7 @@ public class PostPreviewAction implements Action {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
 //        text = textCreatePost.get(0)+"\n"+textCreatePost.get(1);
-        log.debug(textCreatePost.get(0));
+        log.debug(textCreatePost);
         text = textCreatePost.get(0);
         String[] textLink = textCreatePost.get(2).split(":");
         String textButton = textLink[0].trim();
