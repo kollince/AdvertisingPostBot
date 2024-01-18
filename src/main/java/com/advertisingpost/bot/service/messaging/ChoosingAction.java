@@ -28,7 +28,10 @@ public class ChoosingAction implements Action {
         String nameButton3 = StringDataMessage.CHOOSE_BUTTON3.getMessage();
         String nameButton = nameButton1+":"+nameButton2+":"+nameButton3;
 
-        String callbackName = "CREATE_BODY";
+        String callbackName1 = StringDataMessage.CREATE_BODY.getMessage();
+        String callbackName2 = StringDataMessage.CREATE_IMAGE.getMessage();
+        String callbackName3 = StringDataMessage.CREATE_BODY_AND_CREATE_IMAGE.getMessage();
+        String callbackName = callbackName1+":"+callbackName2+":"+callbackName3;
         //TODO
         //Добавить три кнопки для стиля поста: текст, медиа, текст и медиа.
         //Добавить определение типа загружаемого файла, возможность загрузка gif, видео, картинка

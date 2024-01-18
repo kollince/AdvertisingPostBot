@@ -62,7 +62,7 @@ public class InputDataImpl implements InputData {
         String[] nameButtonsArray = nameButton.split(":");
         String[] callbackNameArray = callbackName.split(":");
         if(nameButtonsArray.length > 1) {
-            for (int i = 0; i < nameButtonsArray.length; i++) {
+            for (int i = 0; i < 3; i++) {
                 List<InlineKeyboardButton> rowInline = new ArrayList<>();
                 var button = new InlineKeyboardButton();
                 //TODO Доделать callbackName для кнопок
