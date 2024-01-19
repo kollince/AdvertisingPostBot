@@ -1,8 +1,8 @@
 package com.advertisingpost.bot.service.messaging;
 
+import com.advertisingpost.bot.service.buttonsUsers.interfaces.InputData;
 import com.advertisingpost.bot.service.enums.StringDataMessage;
 import com.advertisingpost.bot.service.messaging.interfaces.Action;
-import com.advertisingpost.bot.service.buttonsUsers.interfaces.InputData;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 @Log4j
 @AllArgsConstructor
 @Component
-public class PostPreviewAction implements Action {
+public class PostPreviewTextAction implements Action {
     private InputData inputData;
     @Override
     public SendMessage handleText(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException {

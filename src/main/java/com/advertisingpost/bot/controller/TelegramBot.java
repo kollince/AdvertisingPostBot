@@ -1,6 +1,7 @@
 package com.advertisingpost.bot.controller;
 
 import com.advertisingpost.bot.config.BotConfig;
+import com.advertisingpost.bot.service.enums.StringDataMessage;
 import com.advertisingpost.bot.service.messaging.interfaces.Action;
 import com.advertisingpost.bot.service.buttonsUsers.interfaces.InputData;
 import com.advertisingpost.bot.service.processing.interfaces.MapAction;
@@ -73,6 +74,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
         } else if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
+            log.debug(callbackData);
             chatId = update.getCallbackQuery().getMessage().getChatId();
             if (mapAction.generalMapRead().containsKey(callbackData)){
                 mapContainsKeyCallbackData(update, mapAction.generalMapRead(), chatId , callbackData);
@@ -135,8 +137,12 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
     private void mapContainsKeyCallbackData(Update update, Map<String, Action> map, long chatId, String callbackData){
-        if (callbackData.equals("CREATE_PREVIEW")){
+        if (callbackData.equals(StringDataMessage.CREATE_ONLY_TEXT.getMessage())){
+            send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
+        } else if (callbackData.equals(StringDataMessage.CREATE_PREVIEW.getMessage())){
             sendPhoto(preparingMessages.sendCallbackDataPhoto(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
+        } else if (callbackData.equals(StringDataMessage.CREATE_PREVIEW_TEXT.getMessage())) {
+            send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
         } else {
             send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
         }

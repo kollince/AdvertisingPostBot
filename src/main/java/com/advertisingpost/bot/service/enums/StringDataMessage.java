@@ -46,13 +46,22 @@ public enum StringDataMessage {
     POST_ADD_LINK_ACTION_OPEN_ADV_POST("Открыть созданный пост"),
     POST_ADD_LINK_ACTION_IMAGE_ADDED("Ссылка добавлена, для продолжения нажмите на кнопку «"+
             POST_ADD_LINK_ACTION_OPEN_ADV_POST.message+"»."),
-
+    /*PostOnlyTextAction*/
+    POST_ONLY_TEXT_ACTION_ENTER_ADV_TEXT("Введите текст для статьи:"),
+    POST_ONLY_TEXT_ACTION_IMAGE_UPLOAD_BUTTON("Перейти к загрузке изображения"),
+    POST_ONLY_TEXT_ACTION_TEXT_ADDED("Текст добавлен, для продолжения нажмите на кнопку «"+
+            POST_IMAGE_ACTION_ADD_LINK_BUTTON.message+"»."),
     /*PostPreviewAction*/
     POST_PREVIEW_ACTION_LINK_BUTTON("Перейти"),
     /*MapAction and CallbackName*/
+    CREATE_ONLY_TEXT("CREATE_ONLY_TEXT"),
+    CREATE_ONLY_IMAGE("CREATE_ONLY_IMAGE"),
+    CREATE_BODY_AND_CREATE_IMAGE("CREATE_BODY_AND_CREATE_IMAGE"),
     CREATE_BODY("CREATE_BODY"),
     CREATE_IMAGE("CREATE_IMAGE"),
-    CREATE_BODY_AND_CREATE_IMAGE("CREATE_BODY_AND_CREATE_IMAGE");
+    CREATE_PREVIEW("CREATE_PREVIEW"),
+    CREATE_PREVIEW_TEXT("CREATE_PREVIEW_TEXT"),
+    CREATE_PREVIEW_IMAGE("CREATE_PREVIEW_IMAGE");
     private final String message;
 
 }

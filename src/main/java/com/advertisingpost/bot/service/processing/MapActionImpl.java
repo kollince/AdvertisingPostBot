@@ -23,11 +23,15 @@ public class MapActionImpl implements MapAction {
 
         //map.put("/start", new InfoAction(inputData));
         map.put("/start", new ChoosingAction(inputData));
+        map.put("CREATE_ONLY_TEXT", new PostOnlyTextAction(inputData));
+        map.put("CREATE_ONLY_IMAGE", new PostBodyAction(inputData));
         map.put("CREATE_BODY_AND_CREATE_IMAGE", new PostBodyImageAction(inputData));
         map.put("CREATE_BODY", new PostBodyAction(inputData));
         map.put("CREATE_IMAGE", new PostImageAction(inputData));
         map.put("CREATE_ADD_LINK", new PostAddLinkAction(inputData));
         map.put("CREATE_PREVIEW", new PostPreviewAction(inputData));
+        map.put("CREATE_PREVIEW_TEXT", new PostPreviewAction(inputData));
+        map.put("CREATE_PREVIEW_IMAGE", new PostPreviewAction(inputData));
         return map;
     }
     @Override
