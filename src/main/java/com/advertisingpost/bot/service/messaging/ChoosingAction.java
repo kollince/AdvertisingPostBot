@@ -33,7 +33,7 @@ public class ChoosingAction implements Action {
         String callbackName3 = StringDataMessage.CREATE_BODY_AND_CREATE_IMAGE.getMessage();
         String callbackName = callbackName1+":"+callbackName2+":"+callbackName3;
         //TODO
-        //Добавить три кнопки для стиля поста: текст, медиа, текст и медиа.
+        //Убрать все callbackName в enum StringDataImpl, оставить только переменные из этого enum класса
         //Добавить определение типа загружаемого файла, возможность загрузка gif, видео, картинка
         //Добавить проверку на ввод текста и загрузки файла, если нет текста или нет файла, повторно вызывать нужное действие.
         //Добавить правильное описание действий и хелп
@@ -42,8 +42,6 @@ public class ChoosingAction implements Action {
         //без регистрации на добавление чужих элементов в ArrayList от других пользователей.
         //Добавить управляемую рекламу на начальную страницу
         //Добавить о боте, контакты разработчика.
-        //String callbackName = "CREATE_HEADER";
-
         var text = StringDataMessage.INFO_ACTION_CREATE_ADV_POST.getMessage()+"\n"+ out;
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }

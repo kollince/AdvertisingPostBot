@@ -48,7 +48,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         this.mapAction = mapAction;
         this.preparingMessages = preparingMessages;
     }
-
     @Override
     public String getBotUsername() {
         return config.getBotName();
@@ -141,22 +140,21 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (callbackData.equals(StringDataMessage.CREATE_ONLY_TEXT.getMessage())){
             send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
         } else if (callbackData.equals(StringDataMessage.CREATE_PREVIEW.getMessage())){
-            log.debug(processingUsersMessages.readMessage());
-            String location = processingUsersMessages.readMessage().get(0);
-            log.debug(isUrlHttp(location));
-            //TODO Изменить условие
+            String location;
+            if (processingUsersMessages.readMessage().size() == 3){
+                location = processingUsersMessages.readMessage().get(1);
+            } else {
+                location = processingUsersMessages.readMessage().get(0);
+            }
             if (!isUrlHttp(location)){
                 send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
             } else {
                 sendPhoto(preparingMessages.sendCallbackDataPhoto(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
             }
-        } else if (callbackData.equals(StringDataMessage.CREATE_PREVIEW_TEXT.getMessage())) {
-            send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
         } else {
             send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
         }
     }
-
     private boolean isUrlHttp(String location) {
         return location != null && location.matches("^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
     }

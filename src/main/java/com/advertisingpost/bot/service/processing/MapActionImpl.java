@@ -20,18 +20,12 @@ public class MapActionImpl implements MapAction {
     private final Map<String, Action> map = new HashMap<>();
     @Override
     public Map<String, Action> generalMapPut (InputData inputData) {
-
-        //map.put("/start", new InfoAction(inputData));
         map.put("/start", new ChoosingAction(inputData));
-        map.put("CREATE_ONLY_TEXT", new PostOnlyTextAction(inputData));
-        map.put("CREATE_ONLY_IMAGE", new PostBodyAction(inputData));
-        map.put("CREATE_BODY_AND_CREATE_IMAGE", new PostBodyImageAction(inputData));
-        map.put("CREATE_BODY", new PostBodyAction(inputData));
-        map.put("CREATE_IMAGE", new PostImageAction(inputData));
-        map.put("CREATE_ADD_LINK", new PostAddLinkAction(inputData));
-        map.put("CREATE_PREVIEW", new PostPreviewAction(inputData));
-        map.put("CREATE_PREVIEW_TEXT", new PostPreviewAction(inputData));
-        map.put("CREATE_PREVIEW_IMAGE", new PostPreviewAction(inputData));
+        map.put("CREATE_ONLY_TEXT", new PostOnlyTextAction(inputData));//text1
+        map.put("CREATE_BODY_AND_CREATE_IMAGE", new PostBodyImageAction(inputData));//text_image1
+        map.put("CREATE_IMAGE", new PostImageAction(inputData));//text_image2 /image1
+        map.put("CREATE_ADD_LINK", new PostAddLinkAction(inputData));//text_image3 //text2 //image2
+        map.put("CREATE_PREVIEW", new PostPreviewAction(inputData));//text_image4 //text3 //image3
         return map;
     }
     @Override
