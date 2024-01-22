@@ -24,18 +24,33 @@ public class PostPreviewAction implements Action {
     @Override
     public SendMessage handleText(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException {
         String text = "" ;
+        String[] textLink;
+        String nameButton = "_";
         String chatId;
         if (update.hasMessage()){
             chatId = update.getMessage().getChatId().toString();
         } else {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
-        text = textCreatePost.get(0)+"\n"+textCreatePost.get(1);
-        String link = textCreatePost.get(3);
-        URL url = new URI(textCreatePost.get(2)).toURL();
-        log.debug(text);
-        String nameButton = StringDataMessage.POST_PREVIEW_ACTION_LINK_BUTTON.getMessage();
-        String callbackName = StringDataMessage.POST_PREVIEW_ACTION_LINK_BUTTON.getMessage();
+        text = textCreatePost.get(0);
+        String link = null;
+        log.debug(textCreatePost.get(1));
+//        URL url = new URI(textCreatePost.get(1)).toURL();
+        URL url = null;
+        //if(textCreatePost.size() == 2){
+            textLink = textCreatePost.get(1).split(":");
+            nameButton = textLink[0].trim();
+            link = textLink[1].trim();
+        //}
+        if(textCreatePost.size() == 3){
+            link = textCreatePost.get(1);
+            url = new URI(textCreatePost.get(2)).toURL();
+        }
+        String callbackName = nameButton+"||";
+        log.debug(link);
+        log.debug(url);
+//        String nameButton = StringDataMessage.POST_PREVIEW_ACTION_LINK_BUTTON.getMessage();
+//        String callbackName = StringDataMessage.POST_PREVIEW_ACTION_LINK_BUTTON.getMessage();
         return inputData.transmission(chatId,text, nameButton, callbackName, link, url);
     }
     @Override
@@ -55,16 +70,21 @@ public class PostPreviewAction implements Action {
         }
 //        text = textCreatePost.get(0)+"\n"+textCreatePost.get(1);
         log.debug(textCreatePost);
-        text = textCreatePost.get(0);
+
         log.debug(textCreatePost.size());
+        URL url = null;
         if(textCreatePost.size() == 3) {
+            text = textCreatePost.get(0);
             textLink = textCreatePost.get(2).split(":");
+            url = new URI(textCreatePost.get(1)).toURL();
         } else if(textCreatePost.size() == 2){
             textLink = textCreatePost.get(1).split(":");
+            url = new URI(textCreatePost.get(0)).toURL();
+            text = "";
         }
         String textButton = textLink[0].trim();
         String link = textLink[1].trim();
-        URL url = new URI(textCreatePost.get(1)).toURL();
+       // URL url = new URI(textCreatePost.get(1)).toURL();
 //        String nameButton = StringDataMessage.POST_PREVIEW_ACTION_LINK_BUTTON.getMessage();
 //        String callbackName = StringDataMessage.POST_PREVIEW_ACTION_LINK_BUTTON.getMessage();
         String nameButton = textButton;

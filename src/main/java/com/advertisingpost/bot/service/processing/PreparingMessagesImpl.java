@@ -97,7 +97,7 @@ public class PreparingMessagesImpl implements PreparingMessages {
             log.debug(e);
         }
         mapAction.bindingByPut(chatId, callbackData);
-        log.debug(msg.getText());
+        log.debug(msg);
         return msg;
     }
 

@@ -33,7 +33,10 @@ public class InputDataImpl implements InputData {
     private final ModeParsing modeParsing;
     @Override
     public SendMessage transmission(String chatId, String text, String nameButton, String callbackName, String link, URL url) {
-        inlineButtons(nameButton, callbackName, link);
+        log.debug(nameButton);
+        log.debug(callbackName);
+        log.debug(text);
+        //inlineButtons(nameButton, callbackName, link);
         SendMessage message = new SendMessage(chatId, text);
         modeParsing.ParsingMessage(message);
         message.setReplyMarkup(inlineButtons(nameButton, callbackName, link));

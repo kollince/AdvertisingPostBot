@@ -39,7 +39,7 @@ public class PostOnlyTextAction implements Action {
         }else {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
-        String nameButton = StringDataMessage.POST_IMAGE_ACTION_ADD_LINK_BUTTON.getMessage()+"1";
+        String nameButton = StringDataMessage.POST_IMAGE_ACTION_ADD_LINK_BUTTON.getMessage();
         String callbackName = "CREATE_ADD_LINK";
         log.debug(callbackName);
         var text = StringDataMessage.POST_ONLY_TEXT_ACTION_TEXT_ADDED.getMessage();

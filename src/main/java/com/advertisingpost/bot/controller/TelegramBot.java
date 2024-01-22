@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
-import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.File;
@@ -21,8 +20,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 
 @Component
@@ -140,12 +141,24 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (callbackData.equals(StringDataMessage.CREATE_ONLY_TEXT.getMessage())){
             send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
         } else if (callbackData.equals(StringDataMessage.CREATE_PREVIEW.getMessage())){
-            sendPhoto(preparingMessages.sendCallbackDataPhoto(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
+            log.debug(processingUsersMessages.readMessage());
+            String location = processingUsersMessages.readMessage().get(0);
+            log.debug(isUrlHttp(location));
+            //TODO Изменить условие
+            if (!isUrlHttp(location)){
+                send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
+            } else {
+                sendPhoto(preparingMessages.sendCallbackDataPhoto(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
+            }
         } else if (callbackData.equals(StringDataMessage.CREATE_PREVIEW_TEXT.getMessage())) {
             send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
         } else {
             send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
         }
+    }
+
+    private boolean isUrlHttp(String location) {
+        return location != null && location.matches("^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
     }
 
 }
