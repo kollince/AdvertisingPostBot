@@ -7,7 +7,6 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Component
@@ -45,7 +44,6 @@ public class MessageDaoImpl implements MessageDao {
 
     @Override
     public ArrayList<String> readMessageList() {
-        log.debug(messageList);
         return messageList;
     }
 

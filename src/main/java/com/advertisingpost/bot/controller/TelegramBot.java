@@ -20,10 +20,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 
 @Component
@@ -64,7 +62,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 mapContainsKey(update,key,mapAction.generalMapRead(), chatId);
             } else if (mapAction.bindingByRead().containsKey(chatId)) {
                 try {
-                    notMapContainsKey(update, key, mapAction.generalMapRead(), chatId);
+                    notMapContainsKey(update, mapAction.generalMapRead(), chatId);
                 } catch (TelegramApiException e) {
                     throw new RuntimeException(e);
                 }
@@ -74,7 +72,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
         } else if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
-            log.debug(callbackData);
             chatId = update.getCallbackQuery().getMessage().getChatId();
             if (mapAction.generalMapRead().containsKey(callbackData)){
                 mapContainsKeyCallbackData(update, mapAction.generalMapRead(), chatId , callbackData);
@@ -128,7 +125,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     processingUsersMessages.readMessage(), mapAction));
         }
     }
-    private void notMapContainsKey(Update update, String key, Map<String, Action> map, long chatId) throws TelegramApiException {
+    private void notMapContainsKey(Update update, Map<String, Action> map, long chatId) throws TelegramApiException {
         //Отправка сообщения и фото пользователю
         if (update.getMessage().hasPhoto()) {
             send(preparingMessages.collectingMessagesPhoto(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath()));

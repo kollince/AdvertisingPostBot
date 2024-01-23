@@ -10,8 +10,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 @Log4j
@@ -40,14 +38,14 @@ public class PostOnlyTextAction implements Action {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
         String nameButton = StringDataMessage.POST_IMAGE_ACTION_ADD_LINK_BUTTON.getMessage();
-        String callbackName = "CREATE_ADD_LINK";
-        log.debug(callbackName);
+        //CREATE_ADD_LINK
+        String callbackName = StringDataMessage.CREATE_ADD_LINK.getMessage();
         var text = StringDataMessage.POST_ONLY_TEXT_ACTION_TEXT_ADDED.getMessage();
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
 
     @Override
-    public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException {
+    public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost) {
         return null;
     }
 

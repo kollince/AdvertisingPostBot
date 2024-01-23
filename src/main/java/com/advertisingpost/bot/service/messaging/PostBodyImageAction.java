@@ -25,23 +25,21 @@ public class PostBodyImageAction implements Action {
         } else {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
-        var text = StringDataMessage.POST_BODY_ACTION_ENTER_ADV_TEXT.getMessage();
+        var text = StringDataMessage.POST_BODY_IMAGE_ACTION_ENTER_ADV_TEXT.getMessage();
         return new SendMessage(chatId, text);
     }
 
     @Override
     public SendMessage callback(Update update) {
         String chatId;
-        String messageText;
         if (update.hasMessage()){
             chatId = update.getMessage().getChatId().toString();
-            messageText = update.getMessage().getText();
         }else {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
-            messageText = update.getCallbackQuery().getMessage().getText();
         }
         String nameButton = StringDataMessage.POST_BODY_IMAGE_ACTION_IMAGE_UPLOAD_BUTTON.getMessage();
-        String callbackName = "CREATE_IMAGE";
+        //CREATE_IMAGE
+        String callbackName = StringDataMessage.CREATE_IMAGE.getMessage();
         String text = StringDataMessage.POST_BODY_IMAGE_ACTION_TEXT_ADDED.getMessage();
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
