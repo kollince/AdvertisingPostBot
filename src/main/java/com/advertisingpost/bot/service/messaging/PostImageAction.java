@@ -16,6 +16,7 @@ import java.util.ArrayList;
 @Component
 @AllArgsConstructor
 public class PostImageAction implements Action {
+
     private InputData inputData;
     @Override
     public SendMessage handleText(Update update, ArrayList<String> textCreatePost) {

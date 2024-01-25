@@ -40,7 +40,6 @@ public class InputDataImpl implements InputData {
         message.setReplyMarkup(inlineButtons(nameButton, callbackName, link));
         return message;
     }
-
     @Override
     public SendPhoto photoTransmission(String chatId, String text, String nameButton, String callbackName, String link, URL url) {
         SendPhoto sendPhoto = new SendPhoto();
