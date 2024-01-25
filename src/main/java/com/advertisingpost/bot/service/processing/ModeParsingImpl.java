@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 
 @Log4j
 @Component
@@ -31,4 +32,15 @@ public class ModeParsingImpl implements ModeParsing {
         }
         return sendPhoto;
     }
+
+    @Override
+    public SendVideo ParsingVideo(SendVideo sendVideo) {
+        switch (mode) {
+            case "HTML" -> sendVideo.setParseMode(ParseMode.HTML);
+            case "MARKDOWN" -> sendVideo.setParseMode(ParseMode.MARKDOWN);
+            case "MARKDOWNV2" -> sendVideo.setParseMode(ParseMode.MARKDOWNV2);
+        }
+        return sendVideo;
+    }
+
 }

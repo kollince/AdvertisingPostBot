@@ -8,8 +8,10 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -18,6 +20,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,6 +63,26 @@ public class InputDataImpl implements InputData {
         }
         return sendPhoto;
     }
+
+    @Override
+    public SendVideo videoTransmission(String chatId, String text, String nameButton, String callbackName, String link, URL url) {
+        SendVideo sendVideo = new SendVideo();
+        try {
+            BufferedImage img = ImageIO.read(url);
+            File file = new File(url.toURI());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            //TODO
+            sendVideo.setChatId(chatId);
+            sendVideo.setVideo(new InputFile(new ByteArrayInputStream(baos.toByteArray()), "video.mp4"));
+            sendVideo.setCaption(EmojiParser.parseToUnicode(text));
+            modeParsing.ParsingVideo(sendVideo);
+            sendVideo.setReplyMarkup(inlineButtons(nameButton, callbackName, link));
+        } catch (Exception e){
+            log.debug(e);
+        }
+        return sendVideo;
+    }
+
     private InlineKeyboardMarkup inlineButtons(String nameButton, String callbackName, String link) {
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
         String[] nameButtonsArray = nameButton.split(":");
