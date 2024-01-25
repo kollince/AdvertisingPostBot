@@ -20,10 +20,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 
 @Component
@@ -48,7 +46,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         this.mapAction = mapAction;
         this.preparingMessages = preparingMessages;
     }
-
     @Override
     public String getBotUsername() {
         return config.getBotName();
@@ -65,7 +62,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 mapContainsKey(update,key,mapAction.generalMapRead(), chatId);
             } else if (mapAction.bindingByRead().containsKey(chatId)) {
                 try {
-                    notMapContainsKey(update, key, mapAction.generalMapRead(), chatId);
+                    notMapContainsKey(update, mapAction.generalMapRead(), chatId);
                 } catch (TelegramApiException e) {
                     throw new RuntimeException(e);
                 }
@@ -75,7 +72,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
         } else if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
-            log.debug(callbackData);
             chatId = update.getCallbackQuery().getMessage().getChatId();
             if (mapAction.generalMapRead().containsKey(callbackData)){
                 mapContainsKeyCallbackData(update, mapAction.generalMapRead(), chatId , callbackData);
@@ -129,7 +125,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     processingUsersMessages.readMessage(), mapAction));
         }
     }
-    private void notMapContainsKey(Update update, String key, Map<String, Action> map, long chatId) throws TelegramApiException {
+    private void notMapContainsKey(Update update, Map<String, Action> map, long chatId) throws TelegramApiException {
         //Отправка сообщения и фото пользователю
         if (update.getMessage().hasPhoto()) {
             send(preparingMessages.collectingMessagesPhoto(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath()));
@@ -141,22 +137,21 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (callbackData.equals(StringDataMessage.CREATE_ONLY_TEXT.getMessage())){
             send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
         } else if (callbackData.equals(StringDataMessage.CREATE_PREVIEW.getMessage())){
-            log.debug(processingUsersMessages.readMessage());
-            String location = processingUsersMessages.readMessage().get(0);
-            log.debug(isUrlHttp(location));
-            //TODO Изменить условие
+            String location;
+            if (processingUsersMessages.readMessage().size() == 3){
+                location = processingUsersMessages.readMessage().get(1);
+            } else {
+                location = processingUsersMessages.readMessage().get(0);
+            }
             if (!isUrlHttp(location)){
                 send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
             } else {
                 sendPhoto(preparingMessages.sendCallbackDataPhoto(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
             }
-        } else if (callbackData.equals(StringDataMessage.CREATE_PREVIEW_TEXT.getMessage())) {
-            send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
         } else {
             send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
         }
     }
-
     private boolean isUrlHttp(String location) {
         return location != null && location.matches("^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
     }

@@ -32,16 +32,14 @@ public class PostAddLinkAction implements Action {
     @Override
     public SendMessage callback(Update update) {
         String chatId;
-        String messageText;
         if (update.hasMessage()){
             chatId = update.getMessage().getChatId().toString();
-            messageText = update.getMessage().getText();
         }else {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
-            messageText = update.getCallbackQuery().getMessage().getText();
         }
         String nameButton = StringDataMessage.POST_ADD_LINK_ACTION_OPEN_ADV_POST.getMessage();
-        String callbackName = "CREATE_PREVIEW";
+        //CREATE_PREVIEW
+        String callbackName = StringDataMessage.CREATE_PREVIEW.getMessage();
         var text = StringDataMessage.POST_ADD_LINK_ACTION_IMAGE_ADDED.getMessage();
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }

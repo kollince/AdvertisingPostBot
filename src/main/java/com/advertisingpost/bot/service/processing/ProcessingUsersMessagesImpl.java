@@ -9,8 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
-//@NoArgsConstructor
-//@AllArgsConstructor
+
 @RequiredArgsConstructor
 @Service
 public class ProcessingUsersMessagesImpl implements ProcessingUsersMessages {

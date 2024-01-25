@@ -8,12 +8,9 @@ import com.advertisingpost.bot.service.processing.interfaces.ProcessingUsersMess
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -39,7 +36,6 @@ public class PreparingMessagesImpl implements PreparingMessages {
         mapAction.bindingByPut(chatId, key);
         return msg;
     }
- //TODO
     @Override
     public SendMessage collectingMessagesPhoto(Update update, Map<String, Action> map, long chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token, String sendFile) {
         SendMessage msg = new SendMessage();
@@ -92,12 +88,10 @@ public class PreparingMessagesImpl implements PreparingMessages {
         try {
             msg = map.get(callbackData).handleText(update, readMessage);
             modeParsing.ParsingMessage(msg);
-            //msg.setParseMode(ParseMode.HTML);
         } catch (MalformedURLException | URISyntaxException e) {
             log.debug(e);
         }
         mapAction.bindingByPut(chatId, callbackData);
-        log.debug(msg);
         return msg;
     }
 

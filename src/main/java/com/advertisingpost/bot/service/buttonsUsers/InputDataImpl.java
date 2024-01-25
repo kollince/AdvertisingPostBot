@@ -23,9 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Component
 @Log4j
@@ -36,9 +34,6 @@ public class InputDataImpl implements InputData {
     private final ModeParsing modeParsing;
     @Override
     public SendMessage transmission(String chatId, String text, String nameButton, String callbackName, String link, URL url) {
-        log.debug(nameButton);
-        log.debug(callbackName);
-        log.debug(text);
         //inlineButtons(nameButton, callbackName, link);
         SendMessage message = new SendMessage(chatId, text);
         modeParsing.ParsingMessage(message);
