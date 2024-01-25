@@ -51,9 +51,12 @@ public class InputDataImpl implements InputData {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(img, "jpg", baos);
             sendPhoto.setChatId(chatId);
-            sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(myByteArray), "photo.jpg"));
+            //sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(myByteArray), "photo.jpg"));
+            InputFile inputFile = new InputFile(url.getFile());
+            log.debug(inputFile);
             //log.debug(sendPhoto1.getPhoto());
-            //sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(baos.toByteArray()), "photo.jpg"));
+            sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(baos.toByteArray()), "photo.jpg"));
+            //sendPhoto.setPhoto(inputFile);
             sendPhoto.setCaption(EmojiParser.parseToUnicode(text));
             log.debug(sendPhoto);
             modeParsing.ParsingPhoto(sendPhoto);
@@ -75,6 +78,8 @@ public class InputDataImpl implements InputData {
             Socket sock = null;
             File file = new File(url.toURI());
             byte [] myByteArray  = new byte [(int)file.length()];
+            InputFile inputFile = new InputFile(url.getFile());
+            sendVideo.setVideo(inputFile);
 //            fos = new FileOutputStream(file);
 //            bos = new BufferedOutputStream(fos);
 //            InputStream is = sock.getInputStream();
