@@ -15,12 +15,15 @@ import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Map;
 
 
@@ -63,6 +66,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             } else if (mapAction.bindingByRead().containsKey(chatId)) {
                 try {
                     notMapContainsKey(update, mapAction.generalMapRead(), chatId);
+                    log.debug(processingUsersMessages.readMessage());
                 } catch (TelegramApiException e) {
                     throw new RuntimeException(e);
                 }
@@ -112,10 +116,21 @@ public class TelegramBot extends TelegramLongPollingBot {
             log.debug(e);
         }
     }
+    private void sendVideo(SendVideo msg) {
+        try {
+            execute(msg);
+        } catch (TelegramApiException e) {
+            log.debug(e);
+        }
+    }
     private File sendFile(Update update) throws TelegramApiException {
         GetFile getFile = new GetFile();
-        int el = update.getMessage().getPhoto().size() - 1;
-        getFile.setFileId(update.getMessage().getPhoto().get(el).getFileId());
+        if (update.getMessage().hasPhoto()) {
+            int el = update.getMessage().getPhoto().size() - 1;
+            getFile.setFileId(update.getMessage().getPhoto().get(el).getFileId());
+        } else if (update.getMessage().hasVideo()) {
+            getFile.setFileId(update.getMessage().getVideo().getFileId());
+        }
         return  execute(getFile);
     }
     private void mapContainsKey(Update update, String key, Map<String, Action> map, long chatId){
@@ -129,7 +144,9 @@ public class TelegramBot extends TelegramLongPollingBot {
         //Отправка сообщения и фото пользователю
         if (update.getMessage().hasPhoto()) {
             send(preparingMessages.collectingMessagesPhoto(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath()));
-        } else {
+        } else if (update.getMessage().hasVideo()) {
+            send(preparingMessages.collectingMessagesVideo(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath()));
+    } else {
             send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
         }
     }
@@ -146,7 +163,24 @@ public class TelegramBot extends TelegramLongPollingBot {
             if (!isUrlHttp(location)){
                 send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
             } else {
-                sendPhoto(preparingMessages.sendCallbackDataPhoto(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
+                log.debug(processingUsersMessages.readMessage());
+                    String extensionFiles = "";
+                    try {
+                        URL url = new URI("http://default").toURL();
+                        if (processingUsersMessages.readMessage().size() == 2) {
+                            url = new URI(processingUsersMessages.readMessage().get(0)).toURL();
+                        } else if (processingUsersMessages.readMessage().size() == 3) {
+                            url = new URI(processingUsersMessages.readMessage().get(1)).toURL();
+                        }
+                        extensionFiles = url.getPath().substring(url.getPath().lastIndexOf('.')+1);
+                    } catch (Exception e){
+                        log.debug(e);
+                    }
+                    if (extensionFiles.equals("mp4")) {
+                        sendVideo(preparingMessages.sendCallbackDataVideo(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
+                    } else if (extensionFiles.equals("jpg")) {
+                        sendPhoto(preparingMessages.sendCallbackDataPhoto(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
+                    }
             }
         } else {
             send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));

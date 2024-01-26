@@ -10,6 +10,7 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.io.IOException;
@@ -57,6 +58,31 @@ public class PreparingMessagesImpl implements PreparingMessages {
         mapAction.bindingByRemove(chatId);
         return msg;
     }
+    //TODO Можно сделать вместо двух методов один, который выше. Добавить условие (hasVideo) и переименовать метод вместо collectingMessagesPhoto()
+    //TODO в collectingMessagesMedia
+    @Override
+    public SendMessage collectingMessagesVideo(Update update, Map<String, Action> map, long chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token, String sendFile) {
+        SendMessage msg = new SendMessage();
+        log.debug(update.getMessage().getVideo().getFileId());
+        try {
+            msg = map.get(mapAction.bindingByRead().get(chatId)).callback(update);
+        } catch (MalformedURLException | URISyntaxException e) {
+            log.debug(e);
+        }
+        if (update.getMessage().hasVideo()){
+            try {
+                URL url = new URI("https://api.telegram.org/file/bot" + token + "/" + sendFile).toURL();
+                processingUsersMessages.addAPathImage(String.valueOf(url));
+            } catch (IOException | URISyntaxException e) {
+                log.debug(e);
+            }
+        } else {
+            processingUsersMessages.addArticle(update.getMessage().getText());
+        }
+        mapAction.bindingByRemove(chatId);
+        return msg;
+    }
+
     @Override
     public SendMessage collectingMessages(Update update, Map<String, Action> map, long chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token) {
         SendMessage msg = new SendMessage();
@@ -81,6 +107,19 @@ public class PreparingMessagesImpl implements PreparingMessages {
         mapAction.bindingByPut(chatId, callbackData);
         return msg;
     }
+
+    @Override
+    public SendVideo sendCallbackDataVideo(Update update, Map<String, Action> map, ArrayList<String> readMessage, MapAction mapAction, long chatId, String callbackData) {
+        SendVideo msg = new SendVideo();
+        try {
+            msg = map.get(callbackData).handleVideo(update, readMessage);
+        } catch (MalformedURLException | URISyntaxException e){
+            log.debug(e);
+        }
+        mapAction.bindingByPut(chatId, callbackData);
+        return msg;
+    }
+
 
     @Override
     public SendMessage sendCallbackData(Update update, Map<String, Action> map, ArrayList<String> readMessage, MapAction mapAction, long chatId, String callbackData) {
