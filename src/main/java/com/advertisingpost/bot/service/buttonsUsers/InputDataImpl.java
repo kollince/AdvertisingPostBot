@@ -8,6 +8,7 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
@@ -44,19 +45,12 @@ public class InputDataImpl implements InputData {
     public SendPhoto photoTransmission(String chatId, String text, String nameButton, String callbackName, String link, URL url) {
         SendPhoto sendPhoto = new SendPhoto();
         try {
-            File file = new File(url.getFile());
-            BufferedImage img = ImageIO.read(url);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(img, "jpg", baos);
+//            BufferedImage img = ImageIO.read(url);
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            ImageIO.write(img, "jpg", baos);
             sendPhoto.setChatId(chatId);
-            //sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(myByteArray), "photo.jpg"));
-            Video video = new Video();
-
-            InputFile inputFile = new InputFile(url.getFile());
-            //log.debug(inputFile);
-            //log.debug(sendPhoto1.getPhoto());
-            sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(baos.toByteArray()), "photo.jpg"));
-            //sendPhoto.setPhoto(inputFile);
+            //sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(baos.toByteArray()), "photo.jpg"));
+            sendPhoto.setPhoto(new InputFile(url.openStream(), "photo.jpg"));
             sendPhoto.setCaption(EmojiParser.parseToUnicode(text));
             log.debug(sendPhoto);
             modeParsing.ParsingPhoto(sendPhoto);
@@ -81,6 +75,20 @@ public class InputDataImpl implements InputData {
         }
         return sendVideo;
     }
+    @Override
+    public SendAnimation animationTransmission(String chatId, String text, String nameButton, String callbackName, String link, URL url) {
+        SendAnimation sendAnimation = new SendAnimation();
+        try {
+            sendAnimation.setAnimation(new InputFile(url.openStream(), "animation.gif"));
+            sendAnimation.setChatId(chatId);
+            sendAnimation.setCaption(EmojiParser.parseToUnicode(text));
+            modeParsing.ParsingAnimation(sendAnimation);
+            sendAnimation.setReplyMarkup(inlineButtons(nameButton, callbackName, link));
+        } catch (Exception e){
+            log.debug(e);
+        }
+        return sendAnimation;
+    }
 
     private InlineKeyboardMarkup inlineButtons(String nameButton, String callbackName, String link) {
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
@@ -90,7 +98,6 @@ public class InputDataImpl implements InputData {
             for (int i = 0; i < 3; i++) {
                 List<InlineKeyboardButton> rowInline = new ArrayList<>();
                 var button = new InlineKeyboardButton();
-                //TODO Доделать callbackName для кнопок
                 button.setText(nameButtonsArray[i]);
                 button.setCallbackData(callbackNameArray[i]);
                 rowInline.add(button);

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
+import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
@@ -68,7 +69,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     notMapContainsKey(update, mapAction.generalMapRead(), chatId);
                     log.debug(processingUsersMessages.readMessage());
                 } catch (TelegramApiException e) {
-                    throw new RuntimeException(e);
+                    log.debug(e);
                 }
             }
             if (update.getMessage().hasText() && update.getMessage().getText().equals("/start")){
@@ -123,6 +124,13 @@ public class TelegramBot extends TelegramLongPollingBot {
             log.debug(e);
         }
     }
+    private void sendAnimation(SendAnimation msg) {
+        try {
+            execute(msg);
+        } catch (TelegramApiException e) {
+            log.debug(e);
+        }
+    }
     private File sendFile(Update update) throws TelegramApiException {
         GetFile getFile = new GetFile();
         if (update.getMessage().hasPhoto()) {
@@ -130,6 +138,8 @@ public class TelegramBot extends TelegramLongPollingBot {
             getFile.setFileId(update.getMessage().getPhoto().get(el).getFileId());
         } else if (update.getMessage().hasVideo()) {
             getFile.setFileId(update.getMessage().getVideo().getFileId());
+        } else if (update.getMessage().hasAnimation()) {
+            getFile.setFileId(update.getMessage().getAnimation().getFileId());
         }
         return  execute(getFile);
     }
@@ -146,7 +156,9 @@ public class TelegramBot extends TelegramLongPollingBot {
             send(preparingMessages.collectingMessagesPhoto(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath()));
         } else if (update.getMessage().hasVideo()) {
             send(preparingMessages.collectingMessagesVideo(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath()));
-    } else {
+        } else if (update.getMessage().hasAnimation()) {
+            send(preparingMessages.collectingMessagesAnimation(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath()));
+        } else {
             send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
         }
     }
@@ -180,6 +192,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                         sendVideo(preparingMessages.sendCallbackDataVideo(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
                     } else if (extensionFiles.equals("jpg")) {
                         sendPhoto(preparingMessages.sendCallbackDataPhoto(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
+                    } else if (extensionFiles.equals("gif")) {
+                        sendAnimation(preparingMessages.sendCallbackDataAnimation(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
                     }
             }
         } else {

@@ -1,6 +1,7 @@
 package com.advertisingpost.bot.service.messaging.interfaces;
 
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
@@ -15,5 +16,6 @@ public interface Action {
     SendMessage callback(Update update) throws MalformedURLException, URISyntaxException;
     SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException;
     SendVideo handleVideo(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException;
+    SendAnimation handleAnimation(Update update, ArrayList<String> textCreatePost)throws MalformedURLException, URISyntaxException;
 
 }

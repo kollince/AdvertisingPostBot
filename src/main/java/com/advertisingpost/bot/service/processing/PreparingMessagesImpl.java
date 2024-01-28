@@ -8,6 +8,7 @@ import com.advertisingpost.bot.service.processing.interfaces.ProcessingUsersMess
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
@@ -82,6 +83,28 @@ public class PreparingMessagesImpl implements PreparingMessages {
         mapAction.bindingByRemove(chatId);
         return msg;
     }
+    @Override
+    public SendMessage collectingMessagesAnimation(Update update, Map<String, Action> map, long chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token, String sendFile) {
+        SendMessage msg = new SendMessage();
+        log.debug(update.getMessage().getAnimation().getFileId());
+        try {
+            msg = map.get(mapAction.bindingByRead().get(chatId)).callback(update);
+        } catch (MalformedURLException | URISyntaxException e) {
+            log.debug(e);
+        }
+        if (update.getMessage().hasAnimation()){
+            try {
+                URL url = new URI("https://api.telegram.org/file/bot" + token + "/" + sendFile).toURL();
+                processingUsersMessages.addAPathImage(String.valueOf(url));
+            } catch (IOException | URISyntaxException e) {
+                log.debug(e);
+            }
+        } else {
+            processingUsersMessages.addArticle(update.getMessage().getText());
+        }
+        mapAction.bindingByRemove(chatId);
+        return msg;
+    }
 
     @Override
     public SendMessage collectingMessages(Update update, Map<String, Action> map, long chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token) {
@@ -119,8 +142,17 @@ public class PreparingMessagesImpl implements PreparingMessages {
         mapAction.bindingByPut(chatId, callbackData);
         return msg;
     }
-
-
+    @Override
+    public SendAnimation sendCallbackDataAnimation(Update update, Map<String, Action> map, ArrayList<String> readMessage, MapAction mapAction, long chatId, String callbackData) {
+        SendAnimation msg = new SendAnimation();
+        try {
+            msg = map.get(callbackData).handleAnimation(update, readMessage);
+        } catch (MalformedURLException | URISyntaxException e){
+            log.debug(e);
+        }
+        mapAction.bindingByPut(chatId, callbackData);
+        return msg;
+    }
     @Override
     public SendMessage sendCallbackData(Update update, Map<String, Action> map, ArrayList<String> readMessage, MapAction mapAction, long chatId, String callbackData) {
         SendMessage msg = new SendMessage();

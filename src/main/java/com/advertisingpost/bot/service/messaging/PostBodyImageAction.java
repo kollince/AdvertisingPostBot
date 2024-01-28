@@ -6,6 +6,7 @@ import com.advertisingpost.bot.service.messaging.interfaces.Action;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
@@ -54,6 +55,11 @@ public class PostBodyImageAction implements Action {
 
     @Override
     public SendVideo handleVideo(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException {
+        return null;
+    }
+
+    @Override
+    public SendAnimation handleAnimation(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException {
         return null;
     }
 
