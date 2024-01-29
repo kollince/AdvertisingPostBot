@@ -22,120 +22,90 @@ import java.util.ArrayList;
 @Component
 public class PostPreviewAction implements Action {
     private InputData inputData;
-    @Override
-    public SendMessage handleText(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException {
-        String text;
-        String[] textLink;
-        String nameButton;
+    private String[] getData(Update update, ArrayList<String> textCreatePost, boolean isTextAttach) {
+        String text = "" ;
         String chatId;
+        String[] textLink = new String[0];
+        String url = null;
         if (update.hasMessage()){
             chatId = update.getMessage().getChatId().toString();
         } else {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
-        text = textCreatePost.get(0);
-        String link;
-        URL url = null;
-        //if(textCreatePost.size() == 2){
-            textLink = textCreatePost.get(1).split(":");
-            nameButton = textLink[0].trim();
-            link = textLink[1].trim();
-        //}
-        if(textCreatePost.size() == 3){
-            link = textCreatePost.get(1);
-            url = new URI(textCreatePost.get(2)).toURL();
+        log.debug(textCreatePost);
+        try {
+            if (textCreatePost.size() == 2) {
+                textLink = textCreatePost.get(1).split(":");
+                if (isTextAttach){
+                    text = textCreatePost.get(0);
+                } else {
+                    url = textCreatePost.get(0);
+                }
+                log.debug(url);
+            }  else if (textCreatePost.size() == 3) {
+                text = textCreatePost.get(0);
+                textLink = textCreatePost.get(2).split(":");
+                url = textCreatePost.get(1);
+                log.debug(url);
+            }
+        } catch (Exception e) {
+            log.debug(e);
         }
-        String callbackName = nameButton+"||";
-        return inputData.transmission(chatId,text, nameButton, callbackName, link, url);
+        String textButton = textLink[0].trim();
+        String link = textLink[1].trim();
+        return new String[] {chatId, text, textButton, textButton, link, url};
     }
     @Override
-    public SendMessage callback(Update update) throws MalformedURLException, URISyntaxException {
+    public SendMessage handleText(Update update, ArrayList<String> textCreatePost) {
+        boolean isTextAttach = true;
+        String[] data = getData(update, textCreatePost, isTextAttach);
+        URL url = null;
+        try {
+            if (data[5] != null) url = new URI(data[5]).toURL();
+        } catch (Exception e){
+            log.debug(e);
+        }
+        return inputData.transmission(data[0], data[1], data[2], data[3], data[4], url);
+    }
+    @Override
+    public SendMessage callback(Update update) {
         return handleText(update,null);
     }
 
-    private <T> T handleObject(Update update, ArrayList<String> textCreatePost, Class clazz) throws MalformedURLException, URISyntaxException {
-        if(textCreatePost.get(0).equals("1")){
-            return (T) handlePhoto(update, textCreatePost);
-        } else if (textCreatePost.get(0).equals("2")) {
-            return (T) handleVideo(update, textCreatePost);
-        } else if (textCreatePost.get(0).equals("3")) {
-            return (T) handleAnimation(update, textCreatePost);
-        }
-        return null;
-    }
-
     @Override
-    public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException {
-        String text = "" ;
-        String chatId;
-        String[] textLink = new String[0];
-        if (update.hasMessage()){
-            chatId = update.getMessage().getChatId().toString();
-        } else {
-            chatId = update.getCallbackQuery().getMessage().getChatId().toString();
-        }
-//        text = textCreatePost.get(0)+"\n"+textCreatePost.get(1);
+    public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost) {
+        boolean isTextAttach = false;
         URL url = null;
-        if(textCreatePost.size() == 3) {
-            text = textCreatePost.get(0);
-            textLink = textCreatePost.get(2).split(":");
-            url = new URI(textCreatePost.get(1)).toURL();
-        } else if(textCreatePost.size() == 2){
-            textLink = textCreatePost.get(1).split(":");
-            url = new URI(textCreatePost.get(0)).toURL();
-            text = "";
+        String[] data = getData(update, textCreatePost, isTextAttach);
+        try {
+            url = new URI(data[5]).toURL();
+        } catch (Exception e){
+            log.debug(e);
         }
-        String textButton = textLink[0].trim();
-        String link = textLink[1].trim();
-
-        return inputData.photoTransmission(chatId,text, textButton, textButton, link, url);
+        return inputData.photoTransmission(data[0], data[1], data[2], data[3], data[4], url);
     }
     @Override
-    public SendVideo handleVideo(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException {
-        String text = "" ;
-        String chatId;
-        String[] textLink = new String[0];
-        if (update.hasMessage()){
-            chatId = update.getMessage().getChatId().toString();
-        } else {
-            chatId = update.getCallbackQuery().getMessage().getChatId().toString();
-        }
+    public SendVideo handleVideo(Update update, ArrayList<String> textCreatePost) {
+        boolean isTextAttach = false;
         URL url = null;
-        if(textCreatePost.size() == 3) {
-            text = textCreatePost.get(0);
-            textLink = textCreatePost.get(2).split(":");
-            url = new URI(textCreatePost.get(1)).toURL();
-        } else if(textCreatePost.size() == 2){
-            textLink = textCreatePost.get(1).split(":");
-            url = new URI(textCreatePost.get(0)).toURL();
-            text = "";
+        String[] data = getData(update, textCreatePost, isTextAttach);
+        try {
+            url = new URI(data[5]).toURL();
+        } catch (Exception e){
+            log.debug(e);
         }
-        String textButton = textLink[0].trim();
-        String link = textLink[1].trim();
-        return inputData.videoTransmission(chatId,text, textButton, textButton, link, url);
+        return inputData.videoTransmission(data[0], data[1], data[2], data[3], data[4], url);
     }
     @Override
-    public SendAnimation handleAnimation(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException {
-        String text = "" ;
-        String chatId;
-        String[] textLink = new String[0];
-        if (update.hasMessage()){
-            chatId = update.getMessage().getChatId().toString();
-        } else {
-            chatId = update.getCallbackQuery().getMessage().getChatId().toString();
-        }
+    public SendAnimation handleAnimation(Update update, ArrayList<String> textCreatePost) {
+        boolean isTextAttach = false;
         URL url = null;
-        if(textCreatePost.size() == 3) {
-            text = textCreatePost.get(0);
-            textLink = textCreatePost.get(2).split(":");
-            url = new URI(textCreatePost.get(1)).toURL();
-        } else if(textCreatePost.size() == 2){
-            textLink = textCreatePost.get(1).split(":");
-            url = new URI(textCreatePost.get(0)).toURL();
-            text = "";
+        String[] data = getData(update, textCreatePost, isTextAttach);
+        try {
+            url = new URI(data[5]).toURL();
+        } catch (Exception e){
+            log.debug(e);
         }
-        String textButton = textLink[0].trim();
-        String link = textLink[1].trim();
-        return inputData.animationTransmission(chatId,text, textButton, textButton, link, url);
+        return inputData.animationTransmission(data[0], data[1], data[2], data[3], data[4], url);
     }
 }
