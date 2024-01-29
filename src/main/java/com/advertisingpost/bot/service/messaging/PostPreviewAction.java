@@ -53,6 +53,17 @@ public class PostPreviewAction implements Action {
         return handleText(update,null);
     }
 
+    private <T> T handleObject(Update update, ArrayList<String> textCreatePost, Class clazz) throws MalformedURLException, URISyntaxException {
+        if(textCreatePost.get(0).equals("1")){
+            return (T) handlePhoto(update, textCreatePost);
+        } else if (textCreatePost.get(0).equals("2")) {
+            return (T) handleVideo(update, textCreatePost);
+        } else if (textCreatePost.get(0).equals("3")) {
+            return (T) handleAnimation(update, textCreatePost);
+        }
+        return null;
+    }
+
     @Override
     public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException {
         String text = "" ;
@@ -76,6 +87,7 @@ public class PostPreviewAction implements Action {
         }
         String textButton = textLink[0].trim();
         String link = textLink[1].trim();
+
         return inputData.photoTransmission(chatId,text, textButton, textButton, link, url);
     }
     @Override
