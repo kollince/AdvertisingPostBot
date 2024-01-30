@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.net.MalformedURLException;
@@ -22,7 +23,12 @@ public class ChoosingAction implements Action {
     private InputData inputData;
     @Override
     public SendMessage handleText(Update update, ArrayList<String> textCreatePost) {
-        var msg = update.getMessage();
+        Message msg = new Message();
+        if (update.hasMessage()) {
+            msg = update.getMessage();
+        } else if (update.hasCallbackQuery()) {
+            msg = update.getCallbackQuery().getMessage();
+        }
         var chatId = msg.getChatId().toString();
         String out = StringDataMessage.CHOOSE_ACTION_BUTTON.getMessage();
         String nameButton1 = StringDataMessage.CHOOSE_BUTTON1.getMessage();

@@ -23,8 +23,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Component
 @Log4j
@@ -104,15 +103,39 @@ public class InputDataImpl implements InputData {
                 rowsInline.add(rowInline);
             }
         } else {
-            List<InlineKeyboardButton> rowInline = new ArrayList<>();
-            var linkButton = new InlineKeyboardButton();
-            linkButton.setText(nameButton);
-            linkButton.setCallbackData(callbackName);
-            if (link != null) {
-                linkButton.setUrl(link);
-            }
-            rowInline.add(linkButton);
-            rowsInline.add(rowInline);
+//            Map<String, String> mapButtons = Map.of(nameButton, callbackName, "Отмена", "CANCEL");
+//            List<Map.Entry<String, String>> list = new ArrayList<>(mapButtons.entrySet());
+//            list.sort(Map.Entry.comparingByKey());
+//            for (Map.Entry<String, String> entry : list) {
+                List<InlineKeyboardButton> rowInline = new ArrayList<>();
+                var linkButton = new InlineKeyboardButton();
+                linkButton.setText(nameButton);
+                linkButton.setCallbackData(callbackName);
+//                if (mapButtons.containsKey(nameButton)){
+                    if (link != null) {
+                        linkButton.setUrl(link);
+                        List<InlineKeyboardButton> rowInline1 = new ArrayList<>();
+                        var linkButton1 = new InlineKeyboardButton();
+                        linkButton1.setText("Отмена");
+                        linkButton1.setCallbackData("CANCEL");
+                        rowInline1.add(linkButton1);
+                        rowsInline.add(rowInline1);
+                    }
+//                }
+                rowInline.add(linkButton);
+                rowsInline.add(rowInline);
+//            }
+//            for (int i = 0; i < 2; i++) {
+//                List<InlineKeyboardButton> rowInline = new ArrayList<>();
+//                var linkButton = new InlineKeyboardButton();
+//                linkButton.setText(nameButton);
+//                linkButton.setCallbackData(callbackName);
+//                if (link != null) {
+//                    linkButton.setUrl(link);
+//                }
+//                rowInline.add(linkButton);
+//                rowsInline.add(rowInline);
+//            }
         }
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.setKeyboard(rowsInline);
