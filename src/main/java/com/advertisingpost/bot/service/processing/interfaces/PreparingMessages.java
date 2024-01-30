@@ -14,9 +14,9 @@ public interface PreparingMessages {
     SendMessage sendingMessage(Update update, String key, Map<String, Action> map, long chatId,
                                ArrayList<String> readMessage, MapAction mapAction);
 
-    SendMessage collectingMessagesPhoto(Update update, Map<String, Action> map, long chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token, String sendFile);
-    SendMessage collectingMessagesVideo(Update update, Map<String, Action> map, long chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token, String sendFile);
-    SendMessage collectingMessagesAnimation(Update update, Map<String, Action> map, long chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token, String sendFile);
+    SendMessage collectingMessagesMedia(Update update, Map<String, Action> map, long chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token, String sendFile);
+//    SendMessage collectingMessagesVideo(Update update, Map<String, Action> map, long chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token, String sendFile);
+//    SendMessage collectingMessagesAnimation(Update update, Map<String, Action> map, long chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token, String sendFile);
 
     SendMessage collectingMessages(Update update, Map<String, Action> map, long chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token);
 

@@ -65,6 +65,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             if(mapAction.generalMapRead().containsKey(key)){
                 mapContainsKey(update,key,mapAction.generalMapRead(), chatId);
             } else if (mapAction.bindingByRead().containsKey(chatId)) {
+//                log.debug(mapAction.bindingByRead().get(chatId));
                 try {
                     notMapContainsKey(update, mapAction.generalMapRead(), chatId);
                     log.debug(processingUsersMessages.readMessage());
@@ -152,14 +153,15 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
     private void notMapContainsKey(Update update, Map<String, Action> map, long chatId) throws TelegramApiException {
         //Отправка сообщения и фото пользователю
-        if (update.getMessage().hasPhoto()) {
-            send(preparingMessages.collectingMessagesPhoto(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath()));
-        } else if (update.getMessage().hasVideo()) {
-            send(preparingMessages.collectingMessagesVideo(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath()));
-        } else if (update.getMessage().hasAnimation()) {
-            send(preparingMessages.collectingMessagesAnimation(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath()));
-        } else {
+        if (update.getMessage().hasPhoto() || update.getMessage().hasVideo() || update.getMessage().hasAnimation()) {
+            send(preparingMessages.collectingMessagesMedia(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath()));
+            log.debug("1");
+        } else if (update.getMessage().hasText()){
             send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
+            log.debug("2");
+        } else {
+            log.debug("3");
+            send(preparingMessages.sendCallbackData(update,map, processingUsersMessages.readMessage(),mapAction,chatId, StringDataMessage.CREATE_IMAGE.getMessage()));
         }
     }
     private void mapContainsKeyCallbackData(Update update, Map<String, Action> map, long chatId, String callbackData){
@@ -178,7 +180,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 log.debug(processingUsersMessages.readMessage());
                     String extensionFiles = "";
                     try {
-                        URL url = new URI("http://default").toURL();
+                        URL url = new URI("http://localhost").toURL();
                         if (processingUsersMessages.readMessage().size() == 2) {
                             url = new URI(processingUsersMessages.readMessage().get(0)).toURL();
                         } else if (processingUsersMessages.readMessage().size() == 3) {
@@ -194,6 +196,11 @@ public class TelegramBot extends TelegramLongPollingBot {
                         sendPhoto(preparingMessages.sendCallbackDataPhoto(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
                     } else if (extensionFiles.equals("gif")) {
                         sendAnimation(preparingMessages.sendCallbackDataAnimation(update, map, processingUsersMessages.readMessage(), mapAction, chatId, callbackData));
+                    } else {
+                        String key = update.getMessage().getText();
+                        log.debug(key);
+                        send(preparingMessages.sendingMessage(update, key, map, chatId,
+                                processingUsersMessages.readMessage(), mapAction));
                     }
             }
         } else {

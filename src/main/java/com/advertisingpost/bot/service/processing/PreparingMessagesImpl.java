@@ -39,73 +39,35 @@ public class PreparingMessagesImpl implements PreparingMessages {
         return msg;
     }
     @Override
-    public SendMessage collectingMessagesPhoto(Update update, Map<String, Action> map, long chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token, String sendFile) {
+    public SendMessage collectingMessagesMedia(Update update, Map<String, Action> map, long chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token, String sendFile) {
         SendMessage msg = new SendMessage();
         try {
             msg = map.get(mapAction.bindingByRead().get(chatId)).callback(update);
+            log.debug(msg);
         } catch (MalformedURLException | URISyntaxException e) {
             log.debug(e);
         }
-        if (update.getMessage().hasPhoto()){
+        if (update.getMessage().hasPhoto() || update.getMessage().hasVideo() || update.getMessage().hasAnimation()) {
             try {
                 URL url = new URI("https://api.telegram.org/file/bot" + token + "/" + sendFile).toURL();
                 processingUsersMessages.addAPathImage(String.valueOf(url));
             } catch (IOException | URISyntaxException e) {
                 log.debug(e);
             }
-        } else {
-            processingUsersMessages.addArticle(update.getMessage().getText());
-        }
-        mapAction.bindingByRemove(chatId);
-        return msg;
-    }
-    //TODO Можно сделать вместо двух методов один, который выше. Добавить условие (hasVideo) и переименовать метод вместо collectingMessagesPhoto()
-    //TODO в collectingMessagesMedia
-    @Override
-    public SendMessage collectingMessagesVideo(Update update, Map<String, Action> map, long chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token, String sendFile) {
-        SendMessage msg = new SendMessage();
-        log.debug(update.getMessage().getVideo().getFileId());
-        try {
-            msg = map.get(mapAction.bindingByRead().get(chatId)).callback(update);
-        } catch (MalformedURLException | URISyntaxException e) {
-            log.debug(e);
-        }
-        if (update.getMessage().hasVideo()){
+        } else if (!update.getMessage().hasPhoto() && !update.getMessage().hasVideo() && !update.getMessage().hasAnimation()) {
             try {
-                URL url = new URI("https://api.telegram.org/file/bot" + token + "/" + sendFile).toURL();
-                processingUsersMessages.addAPathImage(String.valueOf(url));
-            } catch (IOException | URISyntaxException e) {
+                log.debug("Неверный формат файла");
+            } catch (Exception e){
                 log.debug(e);
             }
-        } else {
-            processingUsersMessages.addArticle(update.getMessage().getText());
-        }
-        mapAction.bindingByRemove(chatId);
-        return msg;
-    }
-    @Override
-    public SendMessage collectingMessagesAnimation(Update update, Map<String, Action> map, long chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token, String sendFile) {
-        SendMessage msg = new SendMessage();
-        log.debug(update.getMessage().getAnimation().getFileId());
-        try {
-            msg = map.get(mapAction.bindingByRead().get(chatId)).callback(update);
-        } catch (MalformedURLException | URISyntaxException e) {
-            log.debug(e);
-        }
-        if (update.getMessage().hasAnimation()){
-            try {
-                URL url = new URI("https://api.telegram.org/file/bot" + token + "/" + sendFile).toURL();
-                processingUsersMessages.addAPathImage(String.valueOf(url));
-            } catch (IOException | URISyntaxException e) {
-                log.debug(e);
-            }
-        } else {
-            processingUsersMessages.addArticle(update.getMessage().getText());
-        }
-        mapAction.bindingByRemove(chatId);
-        return msg;
-    }
 
+
+    } else {
+            processingUsersMessages.addArticle(update.getMessage().getText());
+        }
+        mapAction.bindingByRemove(chatId);
+        return msg;
+    }
     @Override
     public SendMessage collectingMessages(Update update, Map<String, Action> map, long chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token) {
         SendMessage msg = new SendMessage();
@@ -153,6 +115,7 @@ public class PreparingMessagesImpl implements PreparingMessages {
         mapAction.bindingByPut(chatId, callbackData);
         return msg;
     }
+    //Загрузите изображение
     @Override
     public SendMessage sendCallbackData(Update update, Map<String, Action> map, ArrayList<String> readMessage, MapAction mapAction, long chatId, String callbackData) {
         SendMessage msg = new SendMessage();
