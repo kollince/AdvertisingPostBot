@@ -60,7 +60,8 @@ public class TelegramBot extends TelegramLongPollingBot {
         Message channel = update.getChannelPost();
         SendMessage message = new SendMessage();
         message.setText("test");
-        message.setChatId("-1001282898271");
+//        message.setChatId("-1001282898271");
+        message.setChatId("@cryptafanat");
         log.debug(message);
         log.debug(update.getMessage().getForwardFromChat());
         log.debug(update.getMessage().getChatId());
