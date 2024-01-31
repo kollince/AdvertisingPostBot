@@ -8,6 +8,7 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -114,16 +115,18 @@ public class InputDataImpl implements InputData {
 //                if (mapButtons.containsKey(nameButton)){
                     if (link != null) {
                         linkButton.setUrl(link);
-                        List<InlineKeyboardButton> rowInline1 = new ArrayList<>();
-                        var linkButton1 = new InlineKeyboardButton();
-                        linkButton1.setText("Отмена");
-                        linkButton1.setCallbackData("CANCEL");
-                        rowInline1.add(linkButton1);
-                        rowsInline.add(rowInline1);
                     }
 //                }
                 rowInline.add(linkButton);
                 rowsInline.add(rowInline);
+            if (link != null) {
+                List<InlineKeyboardButton> rowInline1 = new ArrayList<>();
+                var linkButton1 = new InlineKeyboardButton();
+                linkButton1.setText("Отмена");
+                linkButton1.setCallbackData("CANCEL");
+                rowInline1.add(linkButton1);
+                rowsInline.add(rowInline1);
+            }
 //            }
 //            for (int i = 0; i < 2; i++) {
 //                List<InlineKeyboardButton> rowInline = new ArrayList<>();

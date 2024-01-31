@@ -17,8 +17,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
-import org.telegram.telegrambots.meta.api.objects.File;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.net.MalformedURLException;
@@ -58,6 +57,15 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         long chatId;
+        Message channel = update.getChannelPost();
+        SendMessage message = new SendMessage();
+        message.setText("test");
+        message.setChatId("-1001282898271");
+        log.debug(message);
+        log.debug(update.getMessage().getForwardFromChat());
+        log.debug(update.getMessage().getChatId());
+
+        sendChannel(message);
         mapAction.generalMapPut(inputData);
         if (update.hasMessage()) {
             String key = update.getMessage().getText();
@@ -104,6 +112,14 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
 
     }
+    private void sendChannel(SendMessage msg) {
+        try {
+            execute(msg);
+        } catch (TelegramApiException e) {
+            log.debug(e);
+        }
+    }
+
     private void send(SendMessage msg) {
         try {
             execute(msg);
