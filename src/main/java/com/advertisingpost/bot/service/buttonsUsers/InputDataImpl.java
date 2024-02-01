@@ -8,21 +8,14 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
-import org.telegram.telegrambots.meta.api.objects.Video;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-
-import java.io.*;
-import java.net.Socket;
 import java.net.URL;
 import java.util.*;
 
@@ -94,6 +87,8 @@ public class InputDataImpl implements InputData {
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
         String[] nameButtonsArray = nameButton.split(":");
         String[] callbackNameArray = callbackName.split(":");
+        log.debug(nameButton);
+        log.debug(callbackName);
         if(nameButtonsArray.length > 1) {
             for (int i = 0; i < 3; i++) {
                 List<InlineKeyboardButton> rowInline = new ArrayList<>();
@@ -104,41 +99,30 @@ public class InputDataImpl implements InputData {
                 rowsInline.add(rowInline);
             }
         } else {
-//            Map<String, String> mapButtons = Map.of(nameButton, callbackName, "Отмена", "CANCEL");
-//            List<Map.Entry<String, String>> list = new ArrayList<>(mapButtons.entrySet());
-//            list.sort(Map.Entry.comparingByKey());
-//            for (Map.Entry<String, String> entry : list) {
                 List<InlineKeyboardButton> rowInline = new ArrayList<>();
                 var linkButton = new InlineKeyboardButton();
                 linkButton.setText(nameButton);
                 linkButton.setCallbackData(callbackName);
-//                if (mapButtons.containsKey(nameButton)){
                     if (link != null) {
                         linkButton.setUrl(link);
                     }
-//                }
                 rowInline.add(linkButton);
                 rowsInline.add(rowInline);
             if (link != null) {
-                List<InlineKeyboardButton> rowInline1 = new ArrayList<>();
-                var linkButton1 = new InlineKeyboardButton();
-                linkButton1.setText("Отмена");
-                linkButton1.setCallbackData("CANCEL");
-                rowInline1.add(linkButton1);
-                rowsInline.add(rowInline1);
+                for (int i = 0; i < 2; i++) {
+                    rowInline = new ArrayList<>();
+                     linkButton = new InlineKeyboardButton();
+                    if (i == 0){
+                        linkButton.setText(nameButton);
+                        linkButton.setCallbackData("POST");
+                    } else {
+                        linkButton.setText("Отмена");
+                        linkButton.setCallbackData("CANCEL");
+                    }
+                    rowInline.add(linkButton);
+                    rowsInline.add(rowInline);
+                }
             }
-//            }
-//            for (int i = 0; i < 2; i++) {
-//                List<InlineKeyboardButton> rowInline = new ArrayList<>();
-//                var linkButton = new InlineKeyboardButton();
-//                linkButton.setText(nameButton);
-//                linkButton.setCallbackData(callbackName);
-//                if (link != null) {
-//                    linkButton.setUrl(link);
-//                }
-//                rowInline.add(linkButton);
-//                rowsInline.add(rowInline);
-//            }
         }
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.setKeyboard(rowsInline);

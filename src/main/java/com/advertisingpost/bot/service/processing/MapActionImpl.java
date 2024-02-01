@@ -27,6 +27,7 @@ public class MapActionImpl implements MapAction {
         map.put("CREATE_IMAGE", new PostImageAction(inputData));//text_image2 /image1
         map.put("CREATE_ADD_LINK", new PostAddLinkAction(inputData));//text_image3 //text2 //image2
         map.put("CREATE_PREVIEW", new PostPreviewAction(inputData));//text_image4 //text3 //image3
+        map.put("POST", new ChoosingAction(inputData));
         return map;
     }
     @Override

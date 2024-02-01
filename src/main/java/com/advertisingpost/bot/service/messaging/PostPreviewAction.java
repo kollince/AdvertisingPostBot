@@ -51,9 +51,11 @@ public class PostPreviewAction implements Action {
         } catch (Exception e) {
             log.debug(e);
         }
-        String textButton = textLink[0].trim();
+        //TODO Неправильно отдаю nameButton и callbackName на выход - исправить
+        String callbackName = textLink[0].trim();
+        String nameButton = textLink[0].trim();
         String link = textLink[1].trim();
-        return new String[] {chatId, text, textButton, textButton, link, url};
+        return new String[] {chatId, text, nameButton, callbackName, link, url};
     }
     @Override
     public SendMessage handleText(Update update, ArrayList<String> textCreatePost) {
@@ -65,6 +67,7 @@ public class PostPreviewAction implements Action {
         } catch (Exception e){
             log.debug(e);
         }
+        log.debug(data[2]+", "+data[3]);
         return inputData.transmission(data[0], data[1], data[2], data[3], data[4], url);
     }
     @Override

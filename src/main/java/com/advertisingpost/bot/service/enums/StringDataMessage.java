@@ -35,6 +35,7 @@ public enum StringDataMessage {
     POST_ONLY_TEXT_ACTION_ENTER_ADV_TEXT("Введите текст для статьи:"),
     POST_ONLY_TEXT_ACTION_TEXT_ADDED("Текст добавлен, для продолжения нажмите на кнопку «"+
             POST_IMAGE_ACTION_ADD_LINK_BUTTON.message+"»."),
+
     /*PostPreviewAction*/
 
     /*MapAction and CallbackName*/
