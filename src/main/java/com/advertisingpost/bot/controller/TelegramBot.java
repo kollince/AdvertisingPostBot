@@ -57,16 +57,16 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         long chatId;
-        Message channel = update.getChannelPost();
-        SendMessage message = new SendMessage();
-        message.setText("test");
+//        Message channel = update.getChannelPost();
+//        SendMessage message = new SendMessage();
+//        message.setText("test");
 //        message.setChatId("-1001282898271");
-        message.setChatId("@cryptafanat");
-        log.debug(message);
-        log.debug(update.getMessage().getForwardFromChat());
-        log.debug(update.getMessage().getChatId());
+//        message.setChatId("@cryptafanat");
+//        log.debug(message);
+//        log.debug(update.getMessage().getForwardFromChat());
+//        log.debug(update.getMessage().getChatId());
 
-        sendChannel(message);
+//        sendChannel(message);
         mapAction.generalMapPut(inputData);
         if (update.hasMessage()) {
             String key = update.getMessage().getText();
