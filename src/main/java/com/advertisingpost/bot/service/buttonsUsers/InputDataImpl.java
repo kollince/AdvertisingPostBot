@@ -88,9 +88,13 @@ public class InputDataImpl implements InputData {
         String[] nameButtonsArray = nameButton.split(":");
         String[] callbackNameArray = callbackName.split(":");
         log.debug(nameButton);
-        log.debug(callbackName);
-        if(nameButtonsArray.length > 1) {
+        log.debug(nameButtonsArray);
+        log.debug(link);
+        //TODO Добавить условие в конец (***) для публикации поста в канале
+        if(nameButtonsArray.length == 3 && link == null) {
             for (int i = 0; i < 3; i++) {
+                log.debug(nameButtonsArray.length);
+                log.debug(nameButton);
                 List<InlineKeyboardButton> rowInline = new ArrayList<>();
                 var button = new InlineKeyboardButton();
                 button.setText(nameButtonsArray[i]);
@@ -101,7 +105,7 @@ public class InputDataImpl implements InputData {
         } else {
                 List<InlineKeyboardButton> rowInline = new ArrayList<>();
                 var linkButton = new InlineKeyboardButton();
-                linkButton.setText(nameButton);
+                linkButton.setText(nameButtonsArray[0]);
                 linkButton.setCallbackData(callbackName);
                     if (link != null) {
                         linkButton.setUrl(link);
@@ -109,21 +113,26 @@ public class InputDataImpl implements InputData {
                 rowInline.add(linkButton);
                 rowsInline.add(rowInline);
             if (link != null) {
+                log.debug(nameButtonsArray[0]+"-"+nameButtonsArray[1]+"-"+nameButtonsArray[2]);
+                log.debug(callbackNameArray[0]+"-"+callbackNameArray[1]);
                 for (int i = 0; i < 2; i++) {
                     rowInline = new ArrayList<>();
                      linkButton = new InlineKeyboardButton();
                     if (i == 0){
-                        linkButton.setText(nameButton);
-                        linkButton.setCallbackData("POST");
+                        linkButton.setText(nameButtonsArray[1]);
+                        linkButton.setCallbackData(callbackNameArray[0]);
                     } else {
-                        linkButton.setText("Отмена");
-                        linkButton.setCallbackData("CANCEL");
+                        linkButton.setText(nameButtonsArray[2]);
+                        linkButton.setCallbackData(callbackNameArray[1]);
+                        log.debug(callbackNameArray[0]);
+                        log.debug(callbackNameArray[1]);
                     }
                     rowInline.add(linkButton);
                     rowsInline.add(rowInline);
                 }
             }
-        }
+        } //TODO (***) условие должно быть здесь
+
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.setKeyboard(rowsInline);
         return markup;

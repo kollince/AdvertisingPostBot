@@ -1,8 +1,8 @@
 package com.advertisingpost.bot.service.messaging;
 
+import com.advertisingpost.bot.service.buttonsUsers.interfaces.InputData;
 import com.advertisingpost.bot.service.enums.StringDataMessage;
 import com.advertisingpost.bot.service.messaging.interfaces.Action;
-import com.advertisingpost.bot.service.buttonsUsers.interfaces.InputData;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 @Log4j
 @AllArgsConstructor
 @Component
-public class PostPreviewAction implements Action {
+public class PostPublishAction implements Action {
     private InputData inputData;
     private String[] getData(Update update, ArrayList<String> textCreatePost, boolean isTextAttach) {
         String text = "" ;
@@ -33,14 +33,14 @@ public class PostPreviewAction implements Action {
         }
         log.debug(textCreatePost);
         try {
-            if (textCreatePost.size() == 2) {
+            if (textCreatePost.size() == 3) {
                 textLink = textCreatePost.get(1).split(":");
                 if (isTextAttach){
                     text = textCreatePost.get(0);
                 } else {
                     url = textCreatePost.get(0);
                 }
-            }  else if (textCreatePost.size() == 3) {
+            }  else if (textCreatePost.size() == 4) {
                 text = textCreatePost.get(0);
                 textLink = textCreatePost.get(2).split(":");
                 url = textCreatePost.get(1);
@@ -48,13 +48,9 @@ public class PostPreviewAction implements Action {
         } catch (Exception e) {
             log.debug(e);
         }
-        //TODO Неправильно отдаю nameButton и callbackName на выход - исправить
-        String postButtonPublish = StringDataMessage.POST_BUTTON_NEXT.getMessage();
-        String postButtonCancel = StringDataMessage.POST_BUTTON_CANCEL.getMessage();
-        String callbackNamePost = StringDataMessage.CREATE_ADD_CHANNEL.getMessage();
-        String callbackNameCancel = StringDataMessage.CANCEL_POST.getMessage();
-        String nameButton = textLink[0].trim()+":"+postButtonPublish+":"+postButtonCancel;
-        String callbackName = callbackNamePost+":"+callbackNameCancel;
+        log.debug(textCreatePost);
+        String nameButton = textLink[0].trim();
+        String callbackName = "__";
         String link = textLink[1].trim();
         return new String[] {chatId, text, nameButton, callbackName, link, url};
     }

@@ -21,13 +21,14 @@ public class MapActionImpl implements MapAction {
     @Override
     public Map<String, Action> generalMapPut (InputData inputData) {
         map.put("/start", new ChoosingAction(inputData));
-        map.put("CANCEL", new ChoosingAction(inputData));
+        map.put("CANCEL_POST", new ChoosingAction(inputData));
         map.put("CREATE_ONLY_TEXT", new PostOnlyTextAction(inputData));//text1
         map.put("CREATE_BODY_AND_CREATE_IMAGE", new PostBodyImageAction(inputData));//text_image1
         map.put("CREATE_IMAGE", new PostImageAction(inputData));//text_image2 /image1
         map.put("CREATE_ADD_LINK", new PostAddLinkAction(inputData));//text_image3 //text2 //image2
         map.put("CREATE_PREVIEW", new PostPreviewAction(inputData));//text_image4 //text3 //image3
-        map.put("POST", new ChoosingAction(inputData));
+        map.put("CREATE_ADD_CHANNEL", new PostAddChannel(inputData));
+        map.put("CREATE_POST", new PostPublishAction(inputData));
         return map;
     }
     @Override

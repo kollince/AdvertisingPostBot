@@ -37,6 +37,13 @@ public enum StringDataMessage {
             POST_IMAGE_ACTION_ADD_LINK_BUTTON.message+"»."),
 
     /*PostPreviewAction*/
+    POST_BUTTON_NEXT("Далее"),
+    POST_BUTTON_CANCEL("Отмена"),
+    /*PostAddChannel*/
+    POST_ADD_CHANNEL_ACTION("Отправьте сюда наименование своего канала, которое идет после \"t.me/\" или перешлите в этот чат любой опубликованный пост."),
+    POST_BUTTON_PUBLISH("Опубликовать"),
+    POST_CHANNEL_ADDED("Канал добвален"),
+
 
     /*MapAction and CallbackName*/
     CREATE_ONLY_TEXT("CREATE_ONLY_TEXT"),
@@ -44,7 +51,10 @@ public enum StringDataMessage {
     CREATE_BODY("CREATE_BODY"),
     CREATE_IMAGE("CREATE_IMAGE"),
     CREATE_ADD_LINK("CREATE_ADD_LINK"),
-    CREATE_PREVIEW("CREATE_PREVIEW");
+    CREATE_PREVIEW("CREATE_PREVIEW"),
+    CREATE_ADD_CHANNEL("CREATE_ADD_CHANNEL"),
+    CREATE_POST("CREATE_POST"),
+    CANCEL_POST("CANCEL_POST");
     private final String message;
 
 }
