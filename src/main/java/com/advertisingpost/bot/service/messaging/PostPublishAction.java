@@ -31,7 +31,6 @@ public class PostPublishAction implements Action {
         } else {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
-        log.debug(textCreatePost);
         try {
             if (textCreatePost.size() == 3) {
                 textLink = textCreatePost.get(1).split(":");
@@ -48,8 +47,8 @@ public class PostPublishAction implements Action {
         } catch (Exception e) {
             log.debug(e);
         }
-        log.debug(textCreatePost);
         String nameButton = textLink[0].trim();
+        //TODO проверить зачем это здесь:
         String callbackName = "__";
         String link = textLink[1].trim();
         return new String[] {chatId, text, nameButton, callbackName, link, url};
@@ -64,7 +63,6 @@ public class PostPublishAction implements Action {
         } catch (Exception e){
             log.debug(e);
         }
-        log.debug(data[2]+", "+data[3]);
         return inputData.transmission(data[0], data[1], data[2], data[3], data[4], url);
     }
     @Override

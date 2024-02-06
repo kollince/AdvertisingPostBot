@@ -65,16 +65,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         long chatId;
-//        Message channel = update.getChannelPost();
-//        SendMessage message = new SendMessage();
-//        message.setText("test");
-//        message.setChatId("-1001282898271");
-//        message.setChatId("@cryptafanat");
-//        log.debug(message);
-//        log.debug(update.getMessage().getForwardFromChat());
-//        log.debug(update.getMessage().getChatId());
-
-//        sendChannel(message);
         mapAction.generalMapPut(inputData);
         if (update.hasMessage()) {
             String key = update.getMessage().getText();
@@ -82,7 +72,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             if(mapAction.generalMapRead().containsKey(key)){
                 mapContainsKey(update,key,mapAction.generalMapRead(), chatId);
             } else if (mapAction.bindingByRead().containsKey(chatId)) {
-//                log.debug(mapAction.bindingByRead().get(chatId));
                 try {
                     notMapContainsKey(update, mapAction.generalMapRead(), chatId);
                     log.debug(processingUsersMessages.readMessage());
@@ -121,14 +110,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
 
     }
-    private void sendChannel(SendMessage msg) {
-        try {
-            execute(msg);
-        } catch (TelegramApiException e) {
-            log.debug(e);
-        }
-    }
-
     private void send(SendMessage msg) {
         try {
             execute(msg);
@@ -137,27 +118,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
     private void sendPhoto(SendPhoto msg) {
-        try {
-            execute(msg);
-        } catch (TelegramApiException e) {
-            log.debug(e);
-        }
-    }
-    private void sendTextChannel(SendMessage msg) {
-        try {
-            execute(msg);
-        } catch (TelegramApiException e) {
-            log.debug(e);
-        }
-    }
-    private void sendPhotoChanel(SendPhoto msg) {
-        try {
-            execute(msg);
-        } catch (TelegramApiException e) {
-            log.debug(e);
-        }
-    }
-    private void sendAnimationChanel(SendAnimation msg) {
         try {
             execute(msg);
         } catch (TelegramApiException e) {
@@ -211,30 +171,18 @@ public class TelegramBot extends TelegramLongPollingBot {
         ArrayList<String> readMessage = processingUsersMessages.readMessage();
         String channelChatId = "";
         if (readMessage.size() > 2){
-             log.debug("Зашел");
              channelChatId = processingUsersMessages.readMessage().get(processingUsersMessages.readMessage().size()-1);
         }
         if (callbackData.equals(CREATE_ONLY_TEXT)){
             send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData));
         } else if (callbackData.equals(CREATE_PREVIEW) || callbackData.equals(CREATE_POST)){
-            log.debug(callbackData);
-            //TODO Сократить (завести отдельную булевую переменную) условие callbackData.equals(StringDataMessage.CREATE_POST.getMessage())
-            String location = "";
-            if (!callbackData.equals(CREATE_POST) && readMessage.size() == 3){
-                location = readMessage.get(1);
-            } else if (!callbackData.equals(CREATE_POST) && readMessage.size() == 2){
-                location = readMessage.get(0);
-            } else if (callbackData.equals(CREATE_POST) && readMessage.size() == 4) {
-                location = readMessage.get(1);
-            } else if (callbackData.equals(CREATE_POST) && readMessage.size() == 3) {
-                location = readMessage.get(0);
-            }
-            if (!isUrlHttp(location)){
+            if (!isUrlHttp(location(callbackData,readMessage))){
                 if (readMessage.size() > 2 && callbackData.equals(CREATE_POST)){
                     log.debug(readMessage.size()+"-"+callbackData);
                     SendMessage msg = preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData);
                     msg.setChatId(channelChatId);
-                    sendTextChannel(msg);
+                    //sendTextChannel(msg);
+                    send(msg);
                 } else {
                     log.debug(readMessage.size()+"-"+callbackData);
                     send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData));
@@ -254,7 +202,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                         if (callbackData.equals(CREATE_POST)) {
                             SendPhoto msgPhoto = preparingMessages.sendCallbackDataPhoto(update, map, readMessage, mapAction, chatId, callbackData);
                             msgPhoto.setChatId(channelChatId);
-                            sendPhotoChanel(msgPhoto);
+                            sendPhoto(msgPhoto);
                         } else {
                             sendPhoto(preparingMessages.sendCallbackDataPhoto(update, map, readMessage, mapAction, chatId, callbackData));
                         }
@@ -263,7 +211,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                         if (callbackData.equals(CREATE_POST)) {
                             SendAnimation msgAnimation = preparingMessages.sendCallbackDataAnimation(update, map, readMessage, mapAction, chatId, callbackData);
                             msgAnimation.setChatId(channelChatId);
-                            sendAnimationChanel(msgAnimation);
+                            sendAnimation(msgAnimation);
                         } else {
                             sendAnimation(preparingMessages.sendCallbackDataAnimation(update, map, readMessage, mapAction, chatId, callbackData));
                         }
@@ -277,6 +225,20 @@ public class TelegramBot extends TelegramLongPollingBot {
         } else {
             send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData));
         }
+    }
+
+    private String location(String callbackData, ArrayList<String> readMessage) {
+        String location = "";
+        if (!callbackData.equals(CREATE_POST) && readMessage.size() == 3){
+            location = readMessage.get(1);
+        } else if (!callbackData.equals(CREATE_POST) && readMessage.size() == 2){
+            location = readMessage.get(0);
+        } else if (callbackData.equals(CREATE_POST) && readMessage.size() == 4) {
+            location = readMessage.get(1);
+        } else if (callbackData.equals(CREATE_POST) && readMessage.size() == 3) {
+            location = readMessage.get(0);
+        }
+        return location;
     }
 
     private String extensionFiles(ArrayList<String> readMessage, String callbackData) {
