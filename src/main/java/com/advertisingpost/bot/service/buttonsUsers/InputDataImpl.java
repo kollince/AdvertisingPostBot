@@ -1,6 +1,7 @@
 package com.advertisingpost.bot.service.buttonsUsers;
 
 import com.advertisingpost.bot.service.buttonsUsers.interfaces.InputData;
+import com.advertisingpost.bot.service.enums.StringDataMessage;
 import com.advertisingpost.bot.service.processing.interfaces.ModeParsing;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.AllArgsConstructor;
@@ -87,7 +88,14 @@ public class InputDataImpl implements InputData {
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
         String[] nameButtonsArray = nameButton.split(":");
         String[] callbackNameArray = callbackName.split(":");
-
+        log.debug(callbackName);
+        log.debug(callbackNameArray.length);
+        for (String s : callbackNameArray) {
+            log.debug(s);
+        }
+        for (String s : nameButtonsArray) {
+            log.debug(s);
+        }
         if(nameButtonsArray.length == 3 && link == null) {
             for (int i = 0; i < 3; i++) {
                 log.debug(nameButtonsArray.length);
@@ -105,6 +113,15 @@ public class InputDataImpl implements InputData {
             linkButton.setText(nameButtonsArray[0]);
             linkButton.setCallbackData(callbackName);
             linkButton.setUrl(link);
+            rowInline.add(linkButton);
+            rowsInline.add(rowInline);
+        } else if (nameButtonsArray.length == 1 && callbackName.equals(StringDataMessage.CREATE_POST.getMessage())) {
+            log.debug(nameButton);
+            List<InlineKeyboardButton> rowInline = new ArrayList<>();
+            var linkButton = new InlineKeyboardButton();
+            linkButton.setText(nameButton);
+            linkButton.setCallbackData(callbackName);
+            //linkButton.setUrl(link);
             rowInline.add(linkButton);
             rowsInline.add(rowInline);
         } else {

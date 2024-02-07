@@ -69,6 +69,7 @@ public class PostPreviewAction implements Action {
             log.debug(e);
         }
         log.debug(data[2]+", "+data[3]);
+        log.debug("handleText");
         return inputData.transmission(data[0], data[1], data[2], data[3], data[4], url);
     }
     @Override
@@ -81,6 +82,7 @@ public class PostPreviewAction implements Action {
         }
         String nameButton = StringDataMessage.POST_ADD_LINK_ACTION_OPEN_ADV_POST.getMessage();
         //CREATE_PREVIEW
+        log.debug("callback");
         String callbackName = StringDataMessage.CREATE_PREVIEW.getMessage();
         var text = StringDataMessage.POST_ADD_LINK_ACTION_IMAGE_ADDED.getMessage();
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);

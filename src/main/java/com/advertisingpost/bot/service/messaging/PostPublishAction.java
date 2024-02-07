@@ -49,7 +49,7 @@ public class PostPublishAction implements Action {
         }
         String nameButton = textLink[0].trim();
         //TODO проверить зачем это здесь:
-        String callbackName = "__";
+        String callbackName = StringDataMessage.CREATE_POST.getMessage();
         String link = textLink[1].trim();
         return new String[] {chatId, text, nameButton, callbackName, link, url};
     }
@@ -57,13 +57,17 @@ public class PostPublishAction implements Action {
     public SendMessage handleText(Update update, ArrayList<String> textCreatePost) {
         boolean isTextAttach = true;
         String[] data = getData(update, textCreatePost, isTextAttach);
+        log.debug(textCreatePost);
         URL url = null;
         try {
             if (data[5] != null) url = new URI(data[5]).toURL();
         } catch (Exception e){
             log.debug(e);
         }
-        return inputData.transmission(data[0], data[1], data[2], data[3], data[4], url);
+        String nameButton = StringDataMessage.CREATE_POST_CHANNEL.getMessage();
+        log.debug(data[0]+"-"+data[1]+"-"+data[2]+"-"+data[3]+"-"+data[4]+"-"+data[5]);
+        return inputData.transmission(data[0], data[1], nameButton, data[3], data[4], url);
+//        return inputData.transmission(data[0], data[1], nameButton, data[3], data[4], url);
     }
     @Override
     public SendMessage callback(Update update) {
@@ -74,9 +78,9 @@ public class PostPublishAction implements Action {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
         String nameButton = StringDataMessage.POST_ADD_LINK_ACTION_OPEN_ADV_POST.getMessage();
-        //CREATE_PREVIEW
-        String callbackName = StringDataMessage.CREATE_PREVIEW.getMessage();
-        var text = StringDataMessage.POST_ADD_LINK_ACTION_IMAGE_ADDED.getMessage();
+        String callbackName = StringDataMessage.CREATE_ONLY_TEXT.getMessage();
+        var text = StringDataMessage.CREATE_ADD_CHANNEL.getMessage();
+        log.debug(callbackName);
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
 
@@ -90,6 +94,7 @@ public class PostPublishAction implements Action {
         } catch (Exception e){
             log.debug(e);
         }
+        log.debug("handlePhoto");
         return inputData.photoTransmission(data[0], data[1], data[2], data[3], data[4], url);
     }
     @Override

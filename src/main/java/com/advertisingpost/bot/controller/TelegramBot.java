@@ -161,10 +161,13 @@ public class TelegramBot extends TelegramLongPollingBot {
         //Отправка сообщения и фото пользователю
         if (update.getMessage().hasPhoto() || update.getMessage().hasVideo() || update.getMessage().hasAnimation()) {
             send(preparingMessages.collectingMessagesMedia(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath()));
+            log.debug("media");
         } else if (update.getMessage().hasText()){
+            log.debug("text");
             send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
         } else {
             send(preparingMessages.sendCallbackData(update,map, processingUsersMessages.readMessage(),mapAction,chatId, StringDataMessage.CREATE_IMAGE.getMessage()));
+            log.debug("no media and no text");
         }
     }
     private void mapContainsKeyCallbackData(Update update, Map<String, Action> map, long chatId, String callbackData){
@@ -175,14 +178,21 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
         if (callbackData.equals(CREATE_ONLY_TEXT)){
             send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData));
-        } else if (callbackData.equals(CREATE_PREVIEW) || callbackData.equals(CREATE_POST)){
+            //TODO убрал callbackData.equals(CREATE_POST) из-неправильной концепции (здесь сообщение отправлялось в канал)
+//        } else if (callbackData.equals(CREATE_PREVIEW) || callbackData.equals(CREATE_POST)){
+        } else if (callbackData.equals(CREATE_PREVIEW)){
             if (!isUrlHttp(location(callbackData,readMessage))){
                 if (readMessage.size() > 2 && callbackData.equals(CREATE_POST)){
                     log.debug(readMessage.size()+"-"+callbackData);
                     SendMessage msg = preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData);
+                    log.debug(readMessage);
                     msg.setChatId(channelChatId);
                     //sendTextChannel(msg);
                     send(msg);
+                    log.debug(msg);
+                    SendMessage msg1 = preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData);
+                    msg1.setText(StringDataMessage.POST_PUBLISHED_CHANNEL.getMessage());
+                    send(msg1);
                 } else {
                     log.debug(readMessage.size()+"-"+callbackData);
                     send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData));
@@ -223,6 +233,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 }
             }
         } else {
+            log.debug(callbackData);
             send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData));
         }
     }

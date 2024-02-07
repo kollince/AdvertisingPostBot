@@ -44,6 +44,9 @@ public enum StringDataMessage {
     POST_BUTTON_PUBLISH("Опубликовать"),
     POST_CHANNEL_ADDED("Канал добвален"),
 
+    /*PostPublishAction*/
+    POST_PUBLISHED_CHANNEL("Пост успешно опубликован."),
+    CREATE_POST_CHANNEL("Посмотреть пост"),
 
     /*MapAction and CallbackName*/
     CREATE_ONLY_TEXT("CREATE_ONLY_TEXT"),
