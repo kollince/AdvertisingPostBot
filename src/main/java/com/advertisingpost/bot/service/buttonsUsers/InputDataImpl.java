@@ -83,7 +83,7 @@ public class InputDataImpl implements InputData {
         }
         return sendAnimation;
     }
-
+    //TODO Здесь можно использовать условия сравнения callbackName с enum константами
     private InlineKeyboardMarkup inlineButtons(String nameButton, String callbackName, String link) {
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
         String[] nameButtonsArray = nameButton.split(":");
