@@ -47,8 +47,11 @@ public class PostPublishAction implements Action {
         } catch (Exception e) {
             log.debug(e);
         }
+        for (int i = 0; i < textCreatePost.size(); i++) {
+            log.debug(textCreatePost.get(i));
+        }
         String nameButton = textLink[0].trim();
-        //TODO проверить зачем это здесь:
+        //TODO добавить новое action и исправить StringDataMessage.CREATE_POST.getMessage() на VIEW_POST
         String callbackName = StringDataMessage.CREATE_POST.getMessage();
         String link = textLink[1].trim();
         return new String[] {chatId, text, nameButton, callbackName, link, url};
@@ -64,7 +67,9 @@ public class PostPublishAction implements Action {
             log.debug(e);
         }
         String nameButton = StringDataMessage.CREATE_POST_CHANNEL.getMessage();
-        return inputData.transmission(data[0], data[1], nameButton, data[3], data[4], url);
+        String text = StringDataMessage.POST_PUBLISHED_CHANNEL.getMessage();
+        log.debug(textCreatePost.get(textCreatePost.size()-1));
+        return inputData.transmission(data[0], text, nameButton, data[3], textCreatePost.get(textCreatePost.size()-1), url);
 //        return inputData.transmission(data[0], data[1], nameButton, data[3], data[4], url);
     }
     @Override

@@ -143,6 +143,14 @@ public class InputDataImpl implements InputData {
                 rowInline.add(linkButton);
                 rowsInline.add(rowInline);
             }
+        } else if (callbackName.equals(CREATE_POST)) {
+            List<InlineKeyboardButton> rowInline = new ArrayList<>();
+            var linkButton = new InlineKeyboardButton();
+            linkButton.setText(nameButton);
+            linkButton.setCallbackData(callbackName);
+            //.setUrl(link);
+            rowInline.add(linkButton);
+            rowsInline.add(rowInline);
         }
 //        else if (callbackName.equals(CREATE_ONLY_TEXT) || callbackName.equals(CREATE_ADD_LINK)
 //                || callbackName.equals(CREATE_PREVIEW) || callbackName.equals(CREATE_ADD_CHANNEL)) {
