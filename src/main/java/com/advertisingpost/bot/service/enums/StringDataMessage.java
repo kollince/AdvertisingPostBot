@@ -42,7 +42,7 @@ public enum StringDataMessage {
     /*PostAddChannel*/
     POST_ADD_CHANNEL_ACTION("Отправьте сюда наименование своего канала, которое идет после \"t.me/\" или перешлите в этот чат любой опубликованный пост."),
     POST_BUTTON_PUBLISH("Опубликовать"),
-    POST_CHANNEL_ADDED("Канал добвален"),
+    POST_CHANNEL_ADDED("Канал добавлен"),
 
     /*PostPublishAction*/
     POST_PUBLISHED_CHANNEL("Пост успешно опубликован."),

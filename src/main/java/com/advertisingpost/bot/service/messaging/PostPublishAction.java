@@ -57,7 +57,6 @@ public class PostPublishAction implements Action {
     public SendMessage handleText(Update update, ArrayList<String> textCreatePost) {
         boolean isTextAttach = true;
         String[] data = getData(update, textCreatePost, isTextAttach);
-        log.debug(textCreatePost);
         URL url = null;
         try {
             if (data[5] != null) url = new URI(data[5]).toURL();
@@ -65,7 +64,6 @@ public class PostPublishAction implements Action {
             log.debug(e);
         }
         String nameButton = StringDataMessage.CREATE_POST_CHANNEL.getMessage();
-        log.debug(data[0]+"-"+data[1]+"-"+data[2]+"-"+data[3]+"-"+data[4]+"-"+data[5]);
         return inputData.transmission(data[0], data[1], nameButton, data[3], data[4], url);
 //        return inputData.transmission(data[0], data[1], nameButton, data[3], data[4], url);
     }

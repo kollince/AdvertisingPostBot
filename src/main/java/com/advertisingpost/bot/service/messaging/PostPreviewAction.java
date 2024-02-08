@@ -31,7 +31,6 @@ public class PostPreviewAction implements Action {
         } else {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
-        log.debug(textCreatePost);
         try {
             if (textCreatePost.size() == 2) {
                 textLink = textCreatePost.get(1).split(":");
@@ -68,8 +67,6 @@ public class PostPreviewAction implements Action {
         } catch (Exception e){
             log.debug(e);
         }
-        log.debug(data[2]+", "+data[3]);
-        log.debug("handleText");
         return inputData.transmission(data[0], data[1], data[2], data[3], data[4], url);
     }
     @Override

@@ -74,7 +74,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             } else if (mapAction.bindingByRead().containsKey(chatId)) {
                 try {
                     notMapContainsKey(update, mapAction.generalMapRead(), chatId);
-                    log.debug(processingUsersMessages.readMessage());
                 } catch (TelegramApiException e) {
                     log.debug(e);
                 }
@@ -161,13 +160,10 @@ public class TelegramBot extends TelegramLongPollingBot {
         //Отправка сообщения и фото пользователю
         if (update.getMessage().hasPhoto() || update.getMessage().hasVideo() || update.getMessage().hasAnimation()) {
             send(preparingMessages.collectingMessagesMedia(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath()));
-            log.debug("media");
         } else if (update.getMessage().hasText()){
-            log.debug("text");
             send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
         } else {
             send(preparingMessages.sendCallbackData(update,map, processingUsersMessages.readMessage(),mapAction,chatId, StringDataMessage.CREATE_IMAGE.getMessage()));
-            log.debug("no media and no text");
         }
     }
     private void mapContainsKeyCallbackData(Update update, Map<String, Action> map, long chatId, String callbackData){
@@ -194,7 +190,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                     msg1.setText(StringDataMessage.POST_PUBLISHED_CHANNEL.getMessage());
                     send(msg1);
                 } else {
-                    log.debug(readMessage.size()+"-"+callbackData);
                     send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData));
                 }
             } else {
@@ -233,7 +228,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                 }
             }
         } else {
-            log.debug(callbackData);
             send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData));
         }
     }
