@@ -98,6 +98,7 @@ public class InputDataImpl implements InputData {
         String CREATE_ADD_CHANNEL = StringDataMessage.CREATE_ADD_CHANNEL.getMessage();
         String CREATE_POST = StringDataMessage.CREATE_POST.getMessage();
         String CANCEL_POST = StringDataMessage.CANCEL_POST.getMessage();
+        String VIEW_POST = StringDataMessage.VIEW_POST.getMessage();
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
         String[] nameButtonsArray = nameButton.split(":");
         String[] callbackNameArray = callbackName.split(":");
@@ -148,7 +149,15 @@ public class InputDataImpl implements InputData {
             var linkButton = new InlineKeyboardButton();
             linkButton.setText(nameButton);
             linkButton.setCallbackData(callbackName);
-            //.setUrl(link);
+            rowInline.add(linkButton);
+            rowsInline.add(rowInline);
+        } else if (callbackName.equals(VIEW_POST)) {
+            List<InlineKeyboardButton> rowInline = new ArrayList<>();
+            var linkButton = new InlineKeyboardButton();
+            linkButton.setText(nameButton);
+            //linkButton.setUrl("http://t.me/"+link);
+            log.debug(link);
+            linkButton.setUrl(link);
             rowInline.add(linkButton);
             rowsInline.add(rowInline);
         }

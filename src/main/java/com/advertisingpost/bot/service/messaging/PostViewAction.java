@@ -19,7 +19,7 @@ import java.util.ArrayList;
 @Log4j
 @AllArgsConstructor
 @Component
-public class PostAddChannel implements Action {
+public class PostViewAction implements Action {
     private InputData inputData;
     @Override
     public SendMessage handleText(Update update, ArrayList<String> textCreatePost) {
@@ -41,7 +41,7 @@ public class PostAddChannel implements Action {
         }else {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
-        String nameButton = StringDataMessage.POST_BUTTON_NEXT_CHANNEL.getMessage();
+        String nameButton = StringDataMessage.POST_BUTTON_PUBLISH.getMessage();
         //CREATE_PREVIEW
         String callbackName = StringDataMessage.CREATE_POST.getMessage();
         var text = StringDataMessage.POST_CHANNEL_ADDED.getMessage();

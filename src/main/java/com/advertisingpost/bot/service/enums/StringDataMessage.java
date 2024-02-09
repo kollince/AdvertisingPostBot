@@ -47,6 +47,7 @@ public enum StringDataMessage {
     /*PostPublishAction*/
     POST_PUBLISHED_CHANNEL("Пост успешно опубликован."),
     CREATE_POST_CHANNEL("Посмотреть пост"),
+    POST_BUTTON_NEXT_CHANNEL("Далее"),
 
     /*MapAction and CallbackName*/
     CREATE_ONLY_TEXT("CREATE_ONLY_TEXT"),
@@ -57,7 +58,8 @@ public enum StringDataMessage {
     CREATE_PREVIEW("CREATE_PREVIEW"),
     CREATE_ADD_CHANNEL("CREATE_ADD_CHANNEL"),
     CREATE_POST("CREATE_POST"),
-    CANCEL_POST("CANCEL_POST");
+    CANCEL_POST("CANCEL_POST"),
+    VIEW_POST("VIEW_POST");
     private final String message;
 
 }

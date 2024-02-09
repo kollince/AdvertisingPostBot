@@ -4,12 +4,10 @@ import com.advertisingpost.bot.config.BotConfig;
 import com.advertisingpost.bot.service.enums.StringDataMessage;
 import com.advertisingpost.bot.service.messaging.interfaces.Action;
 import com.advertisingpost.bot.service.buttonsUsers.interfaces.InputData;
-import com.advertisingpost.bot.service.processing.ProcessingUsersMessagesImpl;
 import com.advertisingpost.bot.service.processing.interfaces.MapAction;
 import com.advertisingpost.bot.service.processing.interfaces.PreparingMessages;
 import com.advertisingpost.bot.service.processing.interfaces.ProcessingUsersMessages;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -47,6 +45,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final String CREATE_POST = StringDataMessage.CREATE_POST.getMessage();
     private final String CREATE_PREVIEW = StringDataMessage.CREATE_PREVIEW.getMessage();
     private final String CREATE_ONLY_TEXT = StringDataMessage.CREATE_ONLY_TEXT.getMessage();
+    private final String VIEW_POST = StringDataMessage.VIEW_POST.getMessage();
 
     public TelegramBot(@Value("${bot.token}") String token, InputData inputData, BotConfig config,
                        ProcessingUsersMessages processingUsersMessages, MapAction mapAction, PreparingMessages preparingMessages){
@@ -168,13 +167,23 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
     private void mapContainsKeyCallbackData(Update update, Map<String, Action> map, long chatId, String callbackData){
         ArrayList<String> readMessage = processingUsersMessages.readMessage();
+        log.debug(callbackData);
         String channelChatId = "";
         if (readMessage.size() > 2){
-             channelChatId = processingUsersMessages.readMessage().get(processingUsersMessages.readMessage().size()-1);
+             channelChatId = "@"+processingUsersMessages.readMessage().get(processingUsersMessages.readMessage().size()-1);
         }
-        if (callbackData.equals(CREATE_ONLY_TEXT)){
+        if (callbackData.equals(CREATE_ONLY_TEXT)) {
             send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData));
-            //TODO убрал callbackData.equals(CREATE_POST) из-неправильной концепции (здесь сообщение отправлялось в канал)
+        } else if (callbackData.equals(CREATE_POST)) {
+            SendMessage msgChannel = preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData);
+            log.debug(readMessage);
+            msgChannel.setChatId(channelChatId);
+            //TODO  Походу нужно создать новый метод preparingMessages.sendCallbackData1
+            send(msgChannel);
+            SendMessage msg = preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData);
+            send(msg);
+
+        //TODO убрал callbackData.equals(CREATE_POST) из-неправильной концепции (здесь сообщение отправлялось в канал)
 //        } else if (callbackData.equals(CREATE_PREVIEW) || callbackData.equals(CREATE_POST)){
         } else if (callbackData.equals(CREATE_PREVIEW)){
             if (!isUrlHttp(location(callbackData,readMessage))){

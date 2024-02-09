@@ -52,7 +52,7 @@ public class PostPublishAction implements Action {
         }
         String nameButton = textLink[0].trim();
         //TODO добавить новое action и исправить StringDataMessage.CREATE_POST.getMessage() на VIEW_POST
-        String callbackName = StringDataMessage.CREATE_POST.getMessage();
+        String callbackName = StringDataMessage.VIEW_POST.getMessage();
         String link = textLink[1].trim();
         return new String[] {chatId, text, nameButton, callbackName, link, url};
     }
@@ -69,7 +69,8 @@ public class PostPublishAction implements Action {
         String nameButton = StringDataMessage.CREATE_POST_CHANNEL.getMessage();
         String text = StringDataMessage.POST_PUBLISHED_CHANNEL.getMessage();
         log.debug(textCreatePost.get(textCreatePost.size()-1));
-        return inputData.transmission(data[0], text, nameButton, data[3], textCreatePost.get(textCreatePost.size()-1), url);
+        log.debug(textCreatePost.size());
+        return inputData.transmission(data[0], data[1], data[2], data[3], data[4], url);
 //        return inputData.transmission(data[0], data[1], nameButton, data[3], data[4], url);
     }
     @Override

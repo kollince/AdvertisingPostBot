@@ -29,6 +29,7 @@ public class MapActionImpl implements MapAction {
         map.put("CREATE_PREVIEW", new PostPreviewAction(inputData));//text_image4 //text3 //image3
         map.put("CREATE_ADD_CHANNEL", new PostAddChannel(inputData));
         map.put("CREATE_POST", new PostPublishAction(inputData));
+        map.put("VIEW_POST", new PostViewAction(inputData));
         return map;
     }
     @Override
