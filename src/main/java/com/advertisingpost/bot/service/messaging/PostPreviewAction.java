@@ -12,7 +12,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -58,7 +60,7 @@ public class PostPreviewAction implements Action {
         return new String[] {chatId, text, nameButton, callbackName, link, url};
     }
     @Override
-    public SendMessage handleText(Update update, ArrayList<String> textCreatePost) {
+    public SendMessage handleText(Update update, ArrayList<String> textCreatePost, boolean isPublished) {
         boolean isTextAttach = true;
         String[] data = getData(update, textCreatePost, isTextAttach);
         URL url = null;
@@ -86,7 +88,7 @@ public class PostPreviewAction implements Action {
     }
 
     @Override
-    public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost) {
+    public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost, boolean isPublished) {
         boolean isTextAttach = false;
         URL url = null;
         String[] data = getData(update, textCreatePost, isTextAttach);
@@ -98,7 +100,7 @@ public class PostPreviewAction implements Action {
         return inputData.photoTransmission(data[0], data[1], data[2], data[3], data[4], url);
     }
     @Override
-    public SendVideo handleVideo(Update update, ArrayList<String> textCreatePost) {
+    public SendVideo handleVideo(Update update, ArrayList<String> textCreatePost, boolean isPublished) {
         boolean isTextAttach = false;
         URL url = null;
         String[] data = getData(update, textCreatePost, isTextAttach);
@@ -110,7 +112,7 @@ public class PostPreviewAction implements Action {
         return inputData.videoTransmission(data[0], data[1], data[2], data[3], data[4], url);
     }
     @Override
-    public SendAnimation handleAnimation(Update update, ArrayList<String> textCreatePost) {
+    public SendAnimation handleAnimation(Update update, ArrayList<String> textCreatePost, boolean isPublished) {
         boolean isTextAttach = false;
         URL url = null;
         String[] data = getData(update, textCreatePost, isTextAttach);
@@ -121,4 +123,5 @@ public class PostPreviewAction implements Action {
         }
         return inputData.animationTransmission(data[0], data[1], data[2], data[3], data[4], url);
     }
+
 }

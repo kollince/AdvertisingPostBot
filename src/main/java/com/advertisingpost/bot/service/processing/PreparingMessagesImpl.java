@@ -31,7 +31,7 @@ public class PreparingMessagesImpl implements PreparingMessages {
                                       ArrayList<String> readMessage, MapAction mapAction) {
         SendMessage msg = new SendMessage();
         try {
-            msg = map.get(key).handleText(update, readMessage);
+            msg = map.get(key).handleText(update, readMessage, false);
         } catch (MalformedURLException | URISyntaxException e) {
             log.debug(e);
         }
@@ -82,10 +82,11 @@ public class PreparingMessagesImpl implements PreparingMessages {
     }
 
     @Override
-    public SendPhoto sendCallbackDataPhoto(Update update, Map<String, Action> map, ArrayList<String> readMessage, MapAction mapAction, long chatId, String callbackData) {
+    public SendPhoto sendCallbackDataPhoto(Update update, Map<String, Action> map, ArrayList<String> readMessage,
+                                           MapAction mapAction, long chatId, String callbackData, boolean isPublished) {
         SendPhoto msg = new SendPhoto();
         try {
-            msg = map.get(callbackData).handlePhoto(update, readMessage);
+            msg = map.get(callbackData).handlePhoto(update, readMessage, false);
         } catch (MalformedURLException | URISyntaxException e){
             log.debug(e);
         }
@@ -94,10 +95,11 @@ public class PreparingMessagesImpl implements PreparingMessages {
     }
 
     @Override
-    public SendVideo sendCallbackDataVideo(Update update, Map<String, Action> map, ArrayList<String> readMessage, MapAction mapAction, long chatId, String callbackData) {
+    public SendVideo sendCallbackDataVideo(Update update, Map<String, Action> map, ArrayList<String> readMessage,
+                                           MapAction mapAction, long chatId, String callbackData, boolean isPublished) {
         SendVideo msg = new SendVideo();
         try {
-            msg = map.get(callbackData).handleVideo(update, readMessage);
+            msg = map.get(callbackData).handleVideo(update, readMessage, false);
         } catch (MalformedURLException | URISyntaxException e){
             log.debug(e);
         }
@@ -105,22 +107,25 @@ public class PreparingMessagesImpl implements PreparingMessages {
         return msg;
     }
     @Override
-    public SendAnimation sendCallbackDataAnimation(Update update, Map<String, Action> map, ArrayList<String> readMessage, MapAction mapAction, long chatId, String callbackData) {
+    public SendAnimation sendCallbackDataAnimation(Update update, Map<String, Action> map, ArrayList<String> readMessage,
+                                                   MapAction mapAction, long chatId, String callbackData, boolean isPublished) {
         SendAnimation msg = new SendAnimation();
         try {
-            msg = map.get(callbackData).handleAnimation(update, readMessage);
+            msg = map.get(callbackData).handleAnimation(update, readMessage, false);
         } catch (MalformedURLException | URISyntaxException e){
             log.debug(e);
         }
         mapAction.bindingByPut(chatId, callbackData);
         return msg;
     }
+
     //Загрузите изображение
     @Override
-    public SendMessage sendCallbackData(Update update, Map<String, Action> map, ArrayList<String> readMessage, MapAction mapAction, long chatId, String callbackData) {
+    public SendMessage sendCallbackData(Update update, Map<String, Action> map, ArrayList<String> readMessage,
+                                        MapAction mapAction, long chatId, String callbackData, boolean isPublished) {
         SendMessage msg = new SendMessage();
         try {
-            msg = map.get(callbackData).handleText(update, readMessage);
+            msg = map.get(callbackData).handleText(update, readMessage, isPublished);
             modeParsing.ParsingMessage(msg);
         } catch (MalformedURLException | URISyntaxException e) {
             log.debug(e);
@@ -128,6 +133,4 @@ public class PreparingMessagesImpl implements PreparingMessages {
         mapAction.bindingByPut(chatId, callbackData);
         return msg;
     }
-
-
 }

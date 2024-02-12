@@ -22,7 +22,7 @@ import java.util.ArrayList;
 public class PostAddLinkAction implements Action {
     private InputData inputData;
     @Override
-    public SendMessage handleText(Update update, ArrayList<String> textCreatePost) {
+    public SendMessage handleText(Update update, ArrayList<String> textCreatePost, boolean isPublished) {
         String chatId;
         if (update.hasMessage()){
             chatId = update.getMessage().getChatId().toString();
@@ -49,19 +49,17 @@ public class PostAddLinkAction implements Action {
     }
 
     @Override
-    public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost){
+    public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost, boolean isPublished){
         return null;
     }
 
     @Override
-    public SendVideo handleVideo(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException {
+    public SendVideo handleVideo(Update update, ArrayList<String> textCreatePost, boolean isPublished) throws MalformedURLException, URISyntaxException {
         return null;
     }
 
     @Override
-    public SendAnimation handleAnimation(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException {
+    public SendAnimation handleAnimation(Update update, ArrayList<String> textCreatePost, boolean isPublished) throws MalformedURLException, URISyntaxException {
         return null;
     }
-
-
 }

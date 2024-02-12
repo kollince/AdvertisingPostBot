@@ -18,6 +18,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.*;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.net.MalformedURLException;
@@ -162,7 +163,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         } else if (update.getMessage().hasText()){
             send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
         } else {
-            send(preparingMessages.sendCallbackData(update,map, processingUsersMessages.readMessage(),mapAction,chatId, StringDataMessage.CREATE_IMAGE.getMessage()));
+            send(preparingMessages.sendCallbackData(update,map, processingUsersMessages.readMessage(),mapAction,chatId, StringDataMessage.CREATE_IMAGE.getMessage(), false));
         }
     }
     private void mapContainsKeyCallbackData(Update update, Map<String, Action> map, long chatId, String callbackData){
@@ -172,72 +173,57 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (readMessage.size() > 2){
              channelChatId = "@"+processingUsersMessages.readMessage().get(processingUsersMessages.readMessage().size()-1);
         }
+        //TODO Исправить ошибку: Parameter sendPhoto can not be null, где-то в следующем условии
         if (callbackData.equals(CREATE_ONLY_TEXT)) {
-            send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData));
-        } else if (callbackData.equals(CREATE_POST)) {
-            SendMessage msgChannel = preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData);
+            send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, false));
+        } else if (callbackData.equals(CREATE_POST) && !isUrlHttp(location(callbackData,readMessage))) {
+            SendMessage msgChannel = preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, false);
             log.debug(readMessage);
             msgChannel.setChatId(channelChatId);
             //TODO  Походу нужно создать новый метод preparingMessages.sendCallbackData1
             send(msgChannel);
-            SendMessage msg = preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData);
+            SendMessage msg = preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, true);
             send(msg);
-
-        //TODO убрал callbackData.equals(CREATE_POST) из-неправильной концепции (здесь сообщение отправлялось в канал)
-//        } else if (callbackData.equals(CREATE_PREVIEW) || callbackData.equals(CREATE_POST)){
-        } else if (callbackData.equals(CREATE_PREVIEW)){
-            if (!isUrlHttp(location(callbackData,readMessage))){
-                if (readMessage.size() > 2 && callbackData.equals(CREATE_POST)){
-                    log.debug(readMessage.size()+"-"+callbackData);
-                    SendMessage msg = preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData);
-                    log.debug(readMessage);
-                    msg.setChatId(channelChatId);
-                    //sendTextChannel(msg);
-                    send(msg);
-                    log.debug(msg);
-                    SendMessage msg1 = preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData);
-                    msg1.setText(StringDataMessage.POST_PUBLISHED_CHANNEL.getMessage());
-                    send(msg1);
-                } else {
-                    send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData));
+        } else if(isUrlHttp(location(callbackData,readMessage))) {
+            switch (extensionFiles(readMessage, callbackData)) {
+                case "mp4" -> {
+                    if (callbackData.equals(CREATE_POST)) {
+                        SendVideo msgVideo = preparingMessages.sendCallbackDataVideo(update, map, readMessage, mapAction, chatId, callbackData, false);
+                        msgVideo.setChatId(channelChatId);
+                        sendVideo(msgVideo);
+                    } else {
+                        sendVideo(preparingMessages.sendCallbackDataVideo(update, map, readMessage, mapAction, chatId, callbackData, false));
+                    }
                 }
-            } else {
-                switch (extensionFiles(readMessage, callbackData)) {
-                    case "mp4" -> {
-                        if (callbackData.equals(CREATE_POST)) {
-                            SendVideo msgVideo = preparingMessages.sendCallbackDataVideo(update, map, readMessage, mapAction, chatId, callbackData);
-                            msgVideo.setChatId(channelChatId);
-                            sendVideo(msgVideo);
-                        } else {
-                            sendVideo(preparingMessages.sendCallbackDataVideo(update, map, readMessage, mapAction, chatId, callbackData));
-                        }
+                case "jpg" -> {
+                    if (callbackData.equals(CREATE_POST)) {
+                        SendPhoto msgPhoto = preparingMessages.sendCallbackDataPhoto(update, map, readMessage, mapAction, chatId, callbackData, false);
+                        msgPhoto.setChatId(channelChatId);
+                        log.debug("sendPhoto(msgPhoto)");
+                        sendPhoto(msgPhoto);
+                    } else {
+                        sendPhoto(preparingMessages.sendCallbackDataPhoto(update, map, readMessage, mapAction, chatId, callbackData, false));
                     }
-                    case "jpg" -> {
-                        if (callbackData.equals(CREATE_POST)) {
-                            SendPhoto msgPhoto = preparingMessages.sendCallbackDataPhoto(update, map, readMessage, mapAction, chatId, callbackData);
-                            msgPhoto.setChatId(channelChatId);
-                            sendPhoto(msgPhoto);
-                        } else {
-                            sendPhoto(preparingMessages.sendCallbackDataPhoto(update, map, readMessage, mapAction, chatId, callbackData));
-                        }
+                }
+                case "gif" -> {
+                    if (callbackData.equals(CREATE_POST)) {
+                        SendAnimation msgAnimation = preparingMessages.sendCallbackDataAnimation(update, map, readMessage, mapAction, chatId, callbackData, false);
+                        msgAnimation.setChatId(channelChatId);
+                        sendAnimation(msgAnimation);
+                    } else {
+                        sendAnimation(preparingMessages.sendCallbackDataAnimation(update, map, readMessage, mapAction, chatId, callbackData, false));
                     }
-                    case "gif" -> {
-                        if (callbackData.equals(CREATE_POST)) {
-                            SendAnimation msgAnimation = preparingMessages.sendCallbackDataAnimation(update, map, readMessage, mapAction, chatId, callbackData);
-                            msgAnimation.setChatId(channelChatId);
-                            sendAnimation(msgAnimation);
-                        } else {
-                            sendAnimation(preparingMessages.sendCallbackDataAnimation(update, map, readMessage, mapAction, chatId, callbackData));
-                        }
-                    }
-                    default -> {
-                        String key = update.getMessage().getText();
-                        send(preparingMessages.sendingMessage(update, key, map, chatId, processingUsersMessages.readMessage(), mapAction));
-                    }
+                }
+                default -> {
+                    String key = update.getMessage().getText();
+                    send(preparingMessages.sendingMessage(update, key, map, chatId, processingUsersMessages.readMessage(), mapAction));
                 }
             }
+        } else if (callbackData.equals(CREATE_PREVIEW) && !isUrlHttp(location(callbackData,readMessage))){
+                    send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, false));
+                    log.debug("test");
         } else {
-            send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData));
+            send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, false));
         }
     }
 

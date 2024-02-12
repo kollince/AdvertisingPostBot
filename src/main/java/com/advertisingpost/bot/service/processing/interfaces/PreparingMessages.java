@@ -20,8 +20,12 @@ public interface PreparingMessages {
 
     SendMessage collectingMessages(Update update, Map<String, Action> map, long chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token);
 
-    SendPhoto sendCallbackDataPhoto(Update update, Map<String, Action> map, ArrayList<String> readMessage, MapAction mapAction, long chatId, String callbackData);
-    SendVideo sendCallbackDataVideo(Update update, Map<String, Action> map, ArrayList<String> readMessage, MapAction mapAction, long chatId, String callbackData);
-    SendAnimation sendCallbackDataAnimation(Update update, Map<String, Action> map, ArrayList<String> readMessage, MapAction mapAction, long chatId, String callbackData);
-    SendMessage sendCallbackData(Update update, Map<String, Action> map, ArrayList<String> readMessage, MapAction mapAction, long chatId, String callbackData);
+    SendPhoto sendCallbackDataPhoto(Update update, Map<String, Action> map, ArrayList<String> readMessage,
+                                    MapAction mapAction, long chatId, String callbackData, boolean isPublished);
+    SendVideo sendCallbackDataVideo(Update update, Map<String, Action> map, ArrayList<String> readMessage,
+                                    MapAction mapAction, long chatId, String callbackData, boolean isPublished);
+    SendAnimation sendCallbackDataAnimation(Update update, Map<String, Action> map, ArrayList<String> readMessage,
+                                            MapAction mapAction, long chatId, String callbackData, boolean isPublished);
+    SendMessage sendCallbackData(Update update, Map<String, Action> map, ArrayList<String> readMessage, MapAction
+            mapAction, long chatId, String callbackData, boolean isPublish);
 }

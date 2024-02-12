@@ -12,10 +12,10 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public interface Action {
-    SendMessage handleText(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException;
+    SendMessage handleText(Update update, ArrayList<String> textCreatePost, boolean isPublished) throws MalformedURLException, URISyntaxException;
     SendMessage callback(Update update) throws MalformedURLException, URISyntaxException;
-    SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException;
-    SendVideo handleVideo(Update update, ArrayList<String> textCreatePost) throws MalformedURLException, URISyntaxException;
-    SendAnimation handleAnimation(Update update, ArrayList<String> textCreatePost)throws MalformedURLException, URISyntaxException;
+    SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost, boolean isPublished) throws MalformedURLException, URISyntaxException;
+    SendVideo handleVideo(Update update, ArrayList<String> textCreatePost, boolean isPublished) throws MalformedURLException, URISyntaxException;
+    SendAnimation handleAnimation(Update update, ArrayList<String> textCreatePost, boolean isPublished)throws MalformedURLException, URISyntaxException;
 
 }

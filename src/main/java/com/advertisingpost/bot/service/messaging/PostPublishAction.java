@@ -12,7 +12,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -57,7 +59,7 @@ public class PostPublishAction implements Action {
         return new String[] {chatId, text, nameButton, callbackName, link, url};
     }
     @Override
-    public SendMessage handleText(Update update, ArrayList<String> textCreatePost) {
+    public SendMessage handleText(Update update, ArrayList<String> textCreatePost, boolean isPublished) {
         boolean isTextAttach = true;
         String[] data = getData(update, textCreatePost, isTextAttach);
         URL url = null;
@@ -66,13 +68,23 @@ public class PostPublishAction implements Action {
         } catch (Exception e){
             log.debug(e);
         }
-        String nameButton = StringDataMessage.CREATE_POST_CHANNEL.getMessage();
-        String text = StringDataMessage.POST_PUBLISHED_CHANNEL.getMessage();
+        String nameButtonPublished = StringDataMessage.CREATE_POST_CHANNEL.getMessage();
+        String textPublished = StringDataMessage.POST_PUBLISHED_CHANNEL.getMessage();
+        String linkPublished = "http://t.me/"+textCreatePost.get(textCreatePost.size()-1);
+        String text = data[1];
+        String nameButton = data[2];
+        String link = data[4];
+        if (isPublished){
+            text = textPublished;
+            nameButton = nameButtonPublished;
+            link = linkPublished;
+        }
         log.debug(textCreatePost.get(textCreatePost.size()-1));
         log.debug(textCreatePost.size());
-        return inputData.transmission(data[0], data[1], data[2], data[3], data[4], url);
+        return inputData.transmission(data[0], text, nameButton, data[3], link, url);
 //        return inputData.transmission(data[0], data[1], nameButton, data[3], data[4], url);
     }
+
     @Override
     public SendMessage callback(Update update) {
         String chatId;
@@ -89,7 +101,7 @@ public class PostPublishAction implements Action {
     }
 
     @Override
-    public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost) {
+    public SendPhoto handlePhoto(Update update, ArrayList<String> textCreatePost, boolean isPublished) {
         boolean isTextAttach = false;
         URL url = null;
         String[] data = getData(update, textCreatePost, isTextAttach);
@@ -98,11 +110,22 @@ public class PostPublishAction implements Action {
         } catch (Exception e){
             log.debug(e);
         }
+        String nameButtonPublished = StringDataMessage.CREATE_POST_CHANNEL.getMessage();
+        String textPublished = StringDataMessage.POST_PUBLISHED_CHANNEL.getMessage();
+        String linkPublished = "http://t.me/"+textCreatePost.get(textCreatePost.size()-1);
+        String text = data[1];
+        String nameButton = data[2];
+        String link = data[4];
+        if (isPublished){
+            text = textPublished;
+            nameButton = nameButtonPublished;
+            link = linkPublished;
+        }
         log.debug("handlePhoto");
-        return inputData.photoTransmission(data[0], data[1], data[2], data[3], data[4], url);
+        return inputData.photoTransmission(data[0], text, nameButton, data[3], link, url);
     }
     @Override
-    public SendVideo handleVideo(Update update, ArrayList<String> textCreatePost) {
+    public SendVideo handleVideo(Update update, ArrayList<String> textCreatePost, boolean isPublished) {
         boolean isTextAttach = false;
         URL url = null;
         String[] data = getData(update, textCreatePost, isTextAttach);
@@ -114,7 +137,7 @@ public class PostPublishAction implements Action {
         return inputData.videoTransmission(data[0], data[1], data[2], data[3], data[4], url);
     }
     @Override
-    public SendAnimation handleAnimation(Update update, ArrayList<String> textCreatePost) {
+    public SendAnimation handleAnimation(Update update, ArrayList<String> textCreatePost, boolean isPublished) {
         boolean isTextAttach = false;
         URL url = null;
         String[] data = getData(update, textCreatePost, isTextAttach);
