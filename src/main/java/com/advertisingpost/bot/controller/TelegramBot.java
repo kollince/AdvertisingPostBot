@@ -44,6 +44,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     final BotConfig config;
 
     private final String CREATE_POST = StringDataMessage.CREATE_POST.getMessage();
+    private final String CREATE_ADD_CHANNEL = StringDataMessage.CREATE_ADD_CHANNEL.getMessage();
     private final String CREATE_PREVIEW = StringDataMessage.CREATE_PREVIEW.getMessage();
     private final String CREATE_ONLY_TEXT = StringDataMessage.CREATE_ONLY_TEXT.getMessage();
     private final String VIEW_POST = StringDataMessage.VIEW_POST.getMessage();
@@ -174,16 +175,16 @@ public class TelegramBot extends TelegramLongPollingBot {
              channelChatId = "@"+processingUsersMessages.readMessage().get(processingUsersMessages.readMessage().size()-1);
         }
         //TODO Исправить ошибку: Parameter sendPhoto can not be null, где-то в следующем условии
-        if (callbackData.equals(CREATE_ONLY_TEXT)) {
+        if (!isUrlHttp(location(callbackData,readMessage)) || callbackData.equals(CREATE_ADD_CHANNEL)) {
             send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, false));
         } else if (callbackData.equals(CREATE_POST) && !isUrlHttp(location(callbackData,readMessage))) {
             SendMessage msgChannel = preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, false);
             log.debug(readMessage);
             msgChannel.setChatId(channelChatId);
-            //TODO  Походу нужно создать новый метод preparingMessages.sendCallbackData1
             send(msgChannel);
             SendMessage msg = preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, true);
             send(msg);
+//        } else if (c) {
         } else if(isUrlHttp(location(callbackData,readMessage))) {
             switch (extensionFiles(readMessage, callbackData)) {
                 case "mp4" -> {
@@ -197,11 +198,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                 }
                 case "jpg" -> {
                     if (callbackData.equals(CREATE_POST)) {
-                        SendPhoto msgPhoto = preparingMessages.sendCallbackDataPhoto(update, map, readMessage, mapAction, chatId, callbackData, false);
-                        msgPhoto.setChatId(channelChatId);
+                        SendPhoto msgPhoto = preparingMessages.sendCallbackDataPhoto(update, map, readMessage, mapAction, chatId, callbackData, true);
+                        //msgPhoto.setChatId(channelChatId);
                         log.debug("sendPhoto(msgPhoto)");
                         sendPhoto(msgPhoto);
                     } else {
+                        log.debug(preparingMessages.sendCallbackDataPhoto(update, map, readMessage, mapAction, chatId, callbackData, false));
                         sendPhoto(preparingMessages.sendCallbackDataPhoto(update, map, readMessage, mapAction, chatId, callbackData, false));
                     }
                 }
@@ -219,9 +221,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                     send(preparingMessages.sendingMessage(update, key, map, chatId, processingUsersMessages.readMessage(), mapAction));
                 }
             }
-        } else if (callbackData.equals(CREATE_PREVIEW) && !isUrlHttp(location(callbackData,readMessage))){
-                    send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, false));
-                    log.debug("test");
         } else {
             send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, false));
         }

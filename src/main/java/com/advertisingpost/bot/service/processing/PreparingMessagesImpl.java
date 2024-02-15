@@ -86,7 +86,7 @@ public class PreparingMessagesImpl implements PreparingMessages {
                                            MapAction mapAction, long chatId, String callbackData, boolean isPublished) {
         SendPhoto msg = new SendPhoto();
         try {
-            msg = map.get(callbackData).handlePhoto(update, readMessage, false);
+            msg = map.get(callbackData).handlePhoto(update, readMessage, isPublished);
         } catch (MalformedURLException | URISyntaxException e){
             log.debug(e);
         }
