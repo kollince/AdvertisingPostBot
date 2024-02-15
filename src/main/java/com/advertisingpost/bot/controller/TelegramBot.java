@@ -18,7 +18,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.*;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.net.MalformedURLException;
@@ -65,11 +64,11 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        long chatId;
+        String chatId;
         mapAction.generalMapPut(inputData);
         if (update.hasMessage()) {
             String key = update.getMessage().getText();
-            chatId = update.getMessage().getChatId();
+            chatId = update.getMessage().getChatId().toString();
             if(mapAction.generalMapRead().containsKey(key)){
                 mapContainsKey(update,key,mapAction.generalMapRead(), chatId);
             } else if (mapAction.bindingByRead().containsKey(chatId)) {
@@ -84,7 +83,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
         } else if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
-            chatId = update.getCallbackQuery().getMessage().getChatId();
+            chatId = update.getCallbackQuery().getMessage().getChatId().toString();
             if (mapAction.generalMapRead().containsKey(callbackData)){
                 mapContainsKeyCallbackData(update, mapAction.generalMapRead(), chatId , callbackData);
                 AnswerCallbackQuery close = AnswerCallbackQuery.builder()
@@ -150,14 +149,14 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
         return  execute(getFile);
     }
-    private void mapContainsKey(Update update, String key, Map<String, Action> map, long chatId){
+    private void mapContainsKey(Update update, String key, Map<String, Action> map, String chatId){
 
         if (update.getMessage().hasText()){
             send(preparingMessages.sendingMessage(update, key, map, chatId,
                     processingUsersMessages.readMessage(), mapAction));
         }
     }
-    private void notMapContainsKey(Update update, Map<String, Action> map, long chatId) throws TelegramApiException {
+    private void notMapContainsKey(Update update, Map<String, Action> map, String chatId) throws TelegramApiException {
         //Отправка сообщения и фото пользователю
         if (update.getMessage().hasPhoto() || update.getMessage().hasVideo() || update.getMessage().hasAnimation()) {
             send(preparingMessages.collectingMessagesMedia(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath()));
@@ -167,14 +166,17 @@ public class TelegramBot extends TelegramLongPollingBot {
             send(preparingMessages.sendCallbackData(update,map, processingUsersMessages.readMessage(),mapAction,chatId, StringDataMessage.CREATE_IMAGE.getMessage(), false));
         }
     }
-    private void mapContainsKeyCallbackData(Update update, Map<String, Action> map, long chatId, String callbackData){
+    private void mapContainsKeyCallbackData(Update update, Map<String, Action> map, String chatId, String callbackData){
         ArrayList<String> readMessage = processingUsersMessages.readMessage();
         log.debug(callbackData);
         String channelChatId = "";
         if (readMessage.size() > 2){
              channelChatId = "@"+processingUsersMessages.readMessage().get(processingUsersMessages.readMessage().size()-1);
+
         }
-        //TODO Исправить ошибку: Parameter sendPhoto can not be null, где-то в следующем условии
+        //TODO при таком условии новость не публикуется, нужно исправить данное условие
+        //Условие (callbackData.equals(CREATE_POST) && !isUrlHttp(location(callbackData,readMessage))) невыполняется "при только тексте"
+        //Нужно другое условие, предположительно нужно делать все условия по callbackData!!!
         if (!isUrlHttp(location(callbackData,readMessage)) || callbackData.equals(CREATE_ADD_CHANNEL)) {
             send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, false));
         } else if (callbackData.equals(CREATE_POST) && !isUrlHttp(location(callbackData,readMessage))) {

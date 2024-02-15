@@ -27,7 +27,7 @@ import java.util.Map;
 public class PreparingMessagesImpl implements PreparingMessages {
     private final ModeParsing modeParsing;
     @Override
-    public SendMessage sendingMessage(Update update, String key, Map<String, Action> map, long chatId,
+    public SendMessage sendingMessage(Update update, String key, Map<String, Action> map, String chatId,
                                       ArrayList<String> readMessage, MapAction mapAction) {
         SendMessage msg = new SendMessage();
         try {
@@ -39,7 +39,7 @@ public class PreparingMessagesImpl implements PreparingMessages {
         return msg;
     }
     @Override
-    public SendMessage collectingMessagesMedia(Update update, Map<String, Action> map, long chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token, String sendFile) {
+    public SendMessage collectingMessagesMedia(Update update, Map<String, Action> map, String chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token, String sendFile) {
         SendMessage msg = new SendMessage();
         try {
             msg = map.get(mapAction.bindingByRead().get(chatId)).callback(update);
@@ -69,7 +69,7 @@ public class PreparingMessagesImpl implements PreparingMessages {
         return msg;
     }
     @Override
-    public SendMessage collectingMessages(Update update, Map<String, Action> map, long chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token) {
+    public SendMessage collectingMessages(Update update, Map<String, Action> map, String chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token) {
         SendMessage msg = new SendMessage();
         try {
             msg = map.get(mapAction.bindingByRead().get(chatId)).callback(update);
@@ -83,7 +83,7 @@ public class PreparingMessagesImpl implements PreparingMessages {
 
     @Override
     public SendPhoto sendCallbackDataPhoto(Update update, Map<String, Action> map, ArrayList<String> readMessage,
-                                           MapAction mapAction, long chatId, String callbackData, boolean isPublished) {
+                                           MapAction mapAction, String chatId, String callbackData, boolean isPublished) {
         SendPhoto msg = new SendPhoto();
         try {
             msg = map.get(callbackData).handlePhoto(update, readMessage, isPublished);
@@ -96,7 +96,7 @@ public class PreparingMessagesImpl implements PreparingMessages {
 
     @Override
     public SendVideo sendCallbackDataVideo(Update update, Map<String, Action> map, ArrayList<String> readMessage,
-                                           MapAction mapAction, long chatId, String callbackData, boolean isPublished) {
+                                           MapAction mapAction, String chatId, String callbackData, boolean isPublished) {
         SendVideo msg = new SendVideo();
         try {
             msg = map.get(callbackData).handleVideo(update, readMessage, false);
@@ -108,7 +108,7 @@ public class PreparingMessagesImpl implements PreparingMessages {
     }
     @Override
     public SendAnimation sendCallbackDataAnimation(Update update, Map<String, Action> map, ArrayList<String> readMessage,
-                                                   MapAction mapAction, long chatId, String callbackData, boolean isPublished) {
+                                                   MapAction mapAction, String chatId, String callbackData, boolean isPublished) {
         SendAnimation msg = new SendAnimation();
         try {
             msg = map.get(callbackData).handleAnimation(update, readMessage, false);
@@ -122,7 +122,7 @@ public class PreparingMessagesImpl implements PreparingMessages {
     //Загрузите изображение
     @Override
     public SendMessage sendCallbackData(Update update, Map<String, Action> map, ArrayList<String> readMessage,
-                                        MapAction mapAction, long chatId, String callbackData, boolean isPublished) {
+                                        MapAction mapAction, String chatId, String callbackData, boolean isPublished) {
         SendMessage msg = new SendMessage();
         try {
             msg = map.get(callbackData).handleText(update, readMessage, isPublished);

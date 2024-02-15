@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Data
 @Component
 public class MapActionImpl implements MapAction {
-    private final Map<Long, String> bindingBy = new ConcurrentHashMap<>();
+    private final Map<String, String> bindingBy = new ConcurrentHashMap<>();
     private final Map<String, Action> map = new HashMap<>();
     @Override
     public Map<String, Action> generalMapPut (InputData inputData) {
@@ -37,16 +37,16 @@ public class MapActionImpl implements MapAction {
         return map;
     }
     @Override
-    public Map<Long, String> bindingByRead(){
+    public Map<String, String> bindingByRead(){
         return bindingBy;
     }
     @Override
-    public Map<Long, String> bindingByRemove(long chatId){
+    public Map<String, String> bindingByRemove(String chatId){
         bindingBy.remove(chatId);
         return bindingBy;
     }
     @Override
-    public Map<Long,String> bindingByPut(long chatId, String key){
+    public Map<String,String> bindingByPut(String chatId, String key){
         bindingBy.put(chatId, key);
         return bindingBy;
     }

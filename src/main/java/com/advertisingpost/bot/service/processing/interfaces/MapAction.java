@@ -8,7 +8,7 @@ import java.util.Map;
 public interface MapAction {
     Map<String, Action> generalMapPut (InputData inputData);
     Map<String, Action> generalMapRead();
-    Map<Long, String> bindingByRead();
-    Map<Long, String> bindingByRemove(long chatId);
-    Map<Long,String> bindingByPut(long chatId, String key);
+    Map<String, String> bindingByRead();
+    Map<String, String> bindingByRemove(String chatId);
+    Map<String,String> bindingByPut(String chatId, String key);
 }
