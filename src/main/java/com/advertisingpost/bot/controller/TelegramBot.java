@@ -41,11 +41,12 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Value("${bot.token}")
     String token;
     final BotConfig config;
-
-    private final String CREATE_POST = StringDataMessage.CREATE_POST.getMessage();
-    private final String CREATE_ADD_CHANNEL = StringDataMessage.CREATE_ADD_CHANNEL.getMessage();
-    private final String CREATE_PREVIEW = StringDataMessage.CREATE_PREVIEW.getMessage();
     private final String CREATE_ONLY_TEXT = StringDataMessage.CREATE_ONLY_TEXT.getMessage();
+    private final String CREATE_IMAGE = StringDataMessage.CREATE_IMAGE.getMessage();
+    private final String CREATE_ADD_LINK = StringDataMessage.CREATE_ADD_LINK.getMessage();
+    private final String CREATE_PREVIEW = StringDataMessage.CREATE_PREVIEW.getMessage();
+    private final String CREATE_ADD_CHANNEL = StringDataMessage.CREATE_ADD_CHANNEL.getMessage();
+    private final String CREATE_POST = StringDataMessage.CREATE_POST.getMessage();
     private final String VIEW_POST = StringDataMessage.VIEW_POST.getMessage();
 
     public TelegramBot(@Value("${bot.token}") String token, InputData inputData, BotConfig config,
@@ -111,6 +112,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
     private void send(SendMessage msg) {
         try {
+            log.debug(msg.getChatId());
             execute(msg);
         } catch (TelegramApiException e) {
             log.debug(e);
@@ -162,6 +164,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             send(preparingMessages.collectingMessagesMedia(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath()));
         } else if (update.getMessage().hasText()){
             send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
+            log.debug(chatId);
         } else {
             send(preparingMessages.sendCallbackData(update,map, processingUsersMessages.readMessage(),mapAction,chatId, StringDataMessage.CREATE_IMAGE.getMessage(), false));
         }
@@ -172,20 +175,72 @@ public class TelegramBot extends TelegramLongPollingBot {
         String channelChatId = "";
         if (readMessage.size() > 2){
              channelChatId = "@"+processingUsersMessages.readMessage().get(processingUsersMessages.readMessage().size()-1);
-
+             log.debug(channelChatId);
         }
         //TODO при таком условии новость не публикуется, нужно исправить данное условие
         //Условие (callbackData.equals(CREATE_POST) && !isUrlHttp(location(callbackData,readMessage))) невыполняется "при только тексте"
         //Нужно другое условие, предположительно нужно делать все условия по callbackData!!!
-        if (!isUrlHttp(location(callbackData,readMessage)) || callbackData.equals(CREATE_ADD_CHANNEL)) {
+        if (callbackData.equals(CREATE_ONLY_TEXT)) {
             send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, false));
-        } else if (callbackData.equals(CREATE_POST) && !isUrlHttp(location(callbackData,readMessage))) {
+        } else if (callbackData.equals(CREATE_ADD_LINK)) {
+            send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, false));
+        } else if (callbackData.equals(CREATE_PREVIEW)) {
+            if (!isUrlHttp(location(callbackData,readMessage))) {
+                send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, false));
+            } else {
+                switch (extensionFiles(readMessage, callbackData)) {
+                    case "mp4" -> {
+                        if (callbackData.equals(CREATE_POST)) {
+                            SendVideo msgVideo = preparingMessages.sendCallbackDataVideo(update, map, readMessage, mapAction, chatId, callbackData, false);
+                            msgVideo.setChatId(channelChatId);
+                            sendVideo(msgVideo);
+                        } else {
+                            sendVideo(preparingMessages.sendCallbackDataVideo(update, map, readMessage, mapAction, chatId, callbackData, false));
+                        }
+                    }
+                    case "jpg" -> {
+                        if (callbackData.equals(CREATE_POST)) {
+                            SendPhoto msgPhoto = preparingMessages.sendCallbackDataPhoto(update, map, readMessage, mapAction, chatId, callbackData, true);
+                            //msgPhoto.setChatId(channelChatId);
+                            log.debug("sendPhoto(msgPhoto)");
+                            sendPhoto(msgPhoto);
+                        } else {
+                            log.debug(preparingMessages.sendCallbackDataPhoto(update, map, readMessage, mapAction, chatId, callbackData, false));
+                            sendPhoto(preparingMessages.sendCallbackDataPhoto(update, map, readMessage, mapAction, chatId, callbackData, false));
+                        }
+                    }
+                    case "gif" -> {
+                        if (callbackData.equals(CREATE_POST)) {
+                            SendAnimation msgAnimation = preparingMessages.sendCallbackDataAnimation(update, map, readMessage, mapAction, chatId, callbackData, false);
+                            msgAnimation.setChatId(channelChatId);
+                            sendAnimation(msgAnimation);
+                        } else {
+                            sendAnimation(preparingMessages.sendCallbackDataAnimation(update, map, readMessage, mapAction, chatId, callbackData, false));
+                        }
+                    }
+                    default -> {
+                        String key = update.getMessage().getText();
+                        send(preparingMessages.sendingMessage(update, key, map, chatId, processingUsersMessages.readMessage(), mapAction));
+                    }
+                }
+            }
+        } else if (callbackData.equals(CREATE_ADD_CHANNEL)) {
+            send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, false));
+        } else if (callbackData.equals(CREATE_POST)) {
             SendMessage msgChannel = preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, false);
-            log.debug(readMessage);
             msgChannel.setChatId(channelChatId);
             send(msgChannel);
             SendMessage msg = preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, true);
             send(msg);
+        } else if (callbackData.equals(CREATE_IMAGE)) {
+            send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, false));
+//        } else if (!isUrlHttp(location(callbackData, readMessage))) {
+//            SendMessage msgChannel = preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, false);
+//            log.debug(readMessage);
+//            msgChannel.setChatId(channelChatId);
+//            send(msgChannel);
+//            SendMessage msg = preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, true);
+//            send(msg);
 //        } else if (c) {
         } else if(isUrlHttp(location(callbackData,readMessage))) {
             switch (extensionFiles(readMessage, callbackData)) {

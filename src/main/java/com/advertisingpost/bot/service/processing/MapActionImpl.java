@@ -6,12 +6,13 @@ import com.advertisingpost.bot.service.messaging.interfaces.Action;
 import com.advertisingpost.bot.service.processing.interfaces.MapAction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
+@Log4j
 @AllArgsConstructor
 @Data
 @Component
