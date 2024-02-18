@@ -104,7 +104,6 @@ public class InputDataImpl implements InputData {
         String[] callbackNameArray = callbackName.split(":");
         //ChoosingAction
         String callbackNameArr = CREATE_ONLY_TEXT + ":" + CREATE_IMAGE + ":" + CREATE_BODY_AND_CREATE_IMAGE;
-//        if(nameButtonsArray.length == 3 && link == null) {
         log.debug(callbackName);
         if (callbackName.equals(callbackNameArr)) {
             for (int i = 0; i < 3; i++) {
@@ -116,7 +115,7 @@ public class InputDataImpl implements InputData {
                 rowsInline.add(rowInline);
                 log.debug(callbackName);
             }
-        } else if (callbackName.equals(CREATE_ADD_LINK) || callbackName.equals(CREATE_PREVIEW)) {
+        } else if (callbackName.equals(CREATE_ADD_LINK) || callbackName.equals(CREATE_PREVIEW) || callbackName.equals(CREATE_IMAGE)) {
             List<InlineKeyboardButton> rowInline = new ArrayList<>();
             var linkButton = new InlineKeyboardButton();
             linkButton.setText(nameButton);
@@ -161,85 +160,6 @@ public class InputDataImpl implements InputData {
             rowInline.add(linkButton);
             rowsInline.add(rowInline);
         }
-//        else if (callbackName.equals(CREATE_ONLY_TEXT) || callbackName.equals(CREATE_ADD_LINK)
-//                || callbackName.equals(CREATE_PREVIEW) || callbackName.equals(CREATE_ADD_CHANNEL)) {
-//            List<InlineKeyboardButton> rowInline = new ArrayList<>();
-//            var linkButton = new InlineKeyboardButton();
-//            linkButton.setText(nameButtonsArray[0]);
-//            linkButton.setCallbackData(callbackName);
-//            if (link != null) {
-//                linkButton.setUrl(link);
-//            }
-//            rowInline.add(linkButton);
-//            rowsInline.add(rowInline);
-//            if (link != null) {
-//                for (int i = 0; i < 2; i++) {
-//                    rowInline = new ArrayList<>();
-//                    linkButton = new InlineKeyboardButton();
-//                    if (i == 0){
-//                        linkButton.setText(nameButtonsArray[1]);
-//                        linkButton.setCallbackData(callbackNameArray[0]);
-//                    } else {
-//                        linkButton.setText(nameButtonsArray[2]);
-//                        linkButton.setCallbackData(callbackNameArray[1]);
-//                    }
-//                    rowInline.add(linkButton);
-//                    rowsInline.add(rowInline);
-//                }
-//                log.debug(callbackName);
-//            }
-
-            //PostPublishAction
-//        } else if (nameButtonsArray.length == 1 && link != null) {
-//            List<InlineKeyboardButton> rowInline = new ArrayList<>();
-//            var linkButton = new InlineKeyboardButton();
-//            linkButton.setText(nameButtonsArray[0]);
-//            linkButton.setCallbackData(callbackName);
-//            linkButton.setUrl(link);
-//            rowInline.add(linkButton);
-//            rowsInline.add(rowInline);
-//            log.debug(callbackName);
-//        } else if (nameButtonsArray.length == 1 && callbackName.equals(StringDataMessage.CREATE_POST.getMessage())) {
-//            //PostAddChannel
-//            List<InlineKeyboardButton> rowInline = new ArrayList<>();
-//            var linkButton = new InlineKeyboardButton();
-//            linkButton.setText(nameButton);
-//            linkButton.setCallbackData(callbackName);
-//            //linkButton.setUrl(link);
-//            rowInline.add(linkButton);
-//            rowsInline.add(rowInline);
-//            log.debug(callbackName);
-//        }
-            //else
-            //{
-            //PostOnlyTextAction PostAddLinkAction PostPreviewAction PostAddChannel
-//                List<InlineKeyboardButton> rowInline = new ArrayList<>();
-//                var linkButton = new InlineKeyboardButton();
-//                linkButton.setText(nameButtonsArray[0]);
-//                linkButton.setCallbackData(callbackName);
-//                    if (link != null) {
-//                        linkButton.setUrl(link);
-//                    }
-//                rowInline.add(linkButton);
-//                rowsInline.add(rowInline);
-//            if (link != null) {
-//                for (int i = 0; i < 2; i++) {
-//                    rowInline = new ArrayList<>();
-//                     linkButton = new InlineKeyboardButton();
-//                    if (i == 0){
-//                        linkButton.setText(nameButtonsArray[1]);
-//                        linkButton.setCallbackData(callbackNameArray[0]);
-//                    } else {
-//                        linkButton.setText(nameButtonsArray[2]);
-//                        linkButton.setCallbackData(callbackNameArray[1]);
-//                    }
-//                    rowInline.add(linkButton);
-//                    rowsInline.add(rowInline);
-//                }
-//                log.debug(callbackName);
-//            }
-//            log.debug(callbackName);
-            //      }
             InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
             markup.setKeyboard(rowsInline);
             return markup;
