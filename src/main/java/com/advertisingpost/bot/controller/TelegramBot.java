@@ -71,6 +71,9 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (update.hasMessage()) {
             String key = update.getMessage().getText();
             chatId = update.getMessage().getChatId().toString();
+            log.debug(key);
+            log.debug(mapAction.generalMapRead().containsKey(key));
+
             if(mapAction.generalMapRead().containsKey(key)){
                 mapContainsKey(update,key,mapAction.generalMapRead(), chatId);
             } else if (mapAction.bindingByRead().containsKey(chatId)) {
@@ -160,13 +163,18 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
     private void notMapContainsKey(Update update, Map<String, Action> map, String chatId) throws TelegramApiException {
+        log.debug(update);
+        log.debug(map);
         //Отправка сообщения и фото пользователю
         if (update.getMessage().hasPhoto() || update.getMessage().hasVideo() || update.getMessage().hasAnimation()) {
             send(preparingMessages.collectingMessagesMedia(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath()));
-            log.debug(mapAction.bindingByRead());
+            log.debug(processingUsersMessages.readMessage());
         } else if (update.getMessage().hasText()){
-            send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
-            log.debug(mapAction.bindingByRead());
+            if (!mapAction.bindingByRead().get(chatId).equals(CREATE_IMAGE)) {
+                send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
+            } else {
+                send(preparingMessages.sendCallbackData(update,map, processingUsersMessages.readMessage(),mapAction,chatId, StringDataMessage.CREATE_IMAGE.getMessage(), false));
+            }
         } else {
             send(preparingMessages.sendCallbackData(update,map, processingUsersMessages.readMessage(),mapAction,chatId, StringDataMessage.CREATE_IMAGE.getMessage(), false));
             log.debug(mapAction.bindingByRead());
