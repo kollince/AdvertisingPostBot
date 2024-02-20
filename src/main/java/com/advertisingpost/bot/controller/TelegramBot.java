@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
+import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChat;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -163,6 +164,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
     private void notMapContainsKey(Update update, Map<String, Action> map, String chatId) throws TelegramApiException {
+        ArrayList<String> readMessage = processingUsersMessages.readMessage();
         log.debug(update);
         log.debug(map);
         //Отправка сообщения и фото пользователю
@@ -172,10 +174,21 @@ public class TelegramBot extends TelegramLongPollingBot {
         } else if (update.getMessage().hasText()){
             if (!mapAction.bindingByRead().get(chatId).equals(CREATE_IMAGE)) {
                 send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
-            } else {
+                SendMessage msgChannel = new SendMessage();
+                log.debug(channelChatId(readMessage));
+                msgChannel.setChatId(channelChatId(readMessage));
+                //TODO
+                log.debug(GetChat.builder().chatId("@cryptafanat").build());
+                msgChannel.setText("ts");
+                log.debug(msgChannel);
+                //send(msgChannel);
+                log.debug(channelChatId(readMessage));
+        } else {
+                log.debug(channelChatId(readMessage));
                 send(preparingMessages.sendCallbackData(update,map, processingUsersMessages.readMessage(),mapAction,chatId, StringDataMessage.CREATE_IMAGE.getMessage(), false));
             }
         } else {
+            log.debug(channelChatId(readMessage));
             send(preparingMessages.sendCallbackData(update,map, processingUsersMessages.readMessage(),mapAction,chatId, StringDataMessage.CREATE_IMAGE.getMessage(), false));
             log.debug(mapAction.bindingByRead());
         }
