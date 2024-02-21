@@ -18,6 +18,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -115,6 +116,17 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
 
     }
+    private boolean checkChannel(SendMessage msg) {
+        boolean isChannel = false;
+        Message message = new Message();
+        try {
+            //message = execute(msg);
+            isChannel = execute(msg).isChannelMessage();
+            log.debug("test");
+        } catch (TelegramApiException e) {
+            log.debug(e);}
+        return isChannel;
+    }
     private void send(SendMessage msg) {
         try {
             //log.debug(msg.getChatId());
@@ -174,13 +186,14 @@ public class TelegramBot extends TelegramLongPollingBot {
         } else if (update.getMessage().hasText()){
             if (!mapAction.bindingByRead().get(chatId).equals(CREATE_IMAGE)) {
                 send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
-                SendMessage msgChannel = new SendMessage();
-                log.debug(channelChatId(readMessage));
-                msgChannel.setChatId(channelChatId(readMessage));
-                //TODO
-                log.debug(GetChat.builder().chatId("@cryptafanat").build());
-                msgChannel.setText("ts");
-                log.debug(msgChannel);
+                GetChat getChat = new GetChat(channelChatId(readMessage));
+                //TODO Сделать отдельный метод с проверкой на наличие канала
+                log.debug(execute(getChat));
+                if (!execute(getChat).isChannelChat()){
+                    log.debug("Канала нет");
+                } else {
+                    log.debug("Канал есть");
+                }
                 //send(msgChannel);
                 log.debug(channelChatId(readMessage));
         } else {
@@ -218,7 +231,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private String channelChatId(ArrayList<String> readMessage) {
-        String channelChatId = "";
+        String channelChatId = "default";
         if (readMessage.size() > 2){
             channelChatId = "@"+processingUsersMessages.readMessage().get(processingUsersMessages.readMessage().size()-1);
             log.debug(channelChatId);
