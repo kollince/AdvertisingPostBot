@@ -185,14 +185,25 @@ public class TelegramBot extends TelegramLongPollingBot {
             log.debug(processingUsersMessages.readMessage());
         } else if (update.getMessage().hasText()){
             if (!mapAction.bindingByRead().get(chatId).equals(CREATE_IMAGE)) {
-                send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
-                GetChat getChat = new GetChat(channelChatId(readMessage));
-                //TODO Сделать отдельный метод с проверкой на наличие канала
-                log.debug(execute(getChat));
-                if (!execute(getChat).isChannelChat()){
-                    log.debug("Канала нет");
-                } else {
-                    log.debug("Канал есть");
+                if (mapAction.bindingByRead().get(chatId).equals(CREATE_ADD_CHANNEL)) {
+                    String nameChannel = update.getMessage().getText();
+                    GetChat getChat = new GetChat("@" + nameChannel);
+                    log.debug(readMessage);
+                    log.debug(channelChatId(readMessage));
+                    //TODO Сделать отдельный метод с проверкой на наличие канала
+                    //log.debug(execute(getChat));
+                    try {
+                        if (execute(getChat).isChannelChat()) {
+                            send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
+                        }
+                    } catch (Exception e) {
+                        log.debug("Канала нет 2");
+                        send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, StringDataMessage.CREATE_ADD_CHANNEL.getMessage(), false));
+                    }
+                }
+                log.debug(mapAction.bindingByRead().get(chatId));
+                if (!mapAction.bindingByRead().get(chatId).equals(CREATE_ADD_CHANNEL)){
+                    send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
                 }
                 //send(msgChannel);
                 log.debug(channelChatId(readMessage));
