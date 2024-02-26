@@ -194,19 +194,25 @@ public class TelegramBot extends TelegramLongPollingBot {
                     //log.debug(execute(getChat));
                     try {
                         if (execute(getChat).isChannelChat()) {
+
                             send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
+                            log.debug(map);
+                            log.debug(chatId);
+                            log.debug(processingUsersMessages);
                         }
                     } catch (Exception e) {
-                        log.debug("Канала нет 2");
                         send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, StringDataMessage.CREATE_ADD_CHANNEL.getMessage(), false));
                     }
                 }
-                log.debug(mapAction.bindingByRead().get(chatId));
-                if (!mapAction.bindingByRead().get(chatId).equals(CREATE_ADD_CHANNEL)){
-                    send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
+                if(mapAction.bindingByRead().get(chatId) != null) {
+                    if (!mapAction.bindingByRead().get(chatId).equals(CREATE_ADD_CHANNEL)) {
+                        log.debug(map);
+                        log.debug(chatId);
+                        log.debug(processingUsersMessages);
+                        log.debug(mapAction);
+                        send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
+                    }
                 }
-                //send(msgChannel);
-                log.debug(channelChatId(readMessage));
         } else {
                 log.debug(channelChatId(readMessage));
                 send(preparingMessages.sendCallbackData(update,map, processingUsersMessages.readMessage(),mapAction,chatId, StringDataMessage.CREATE_IMAGE.getMessage(), false));
