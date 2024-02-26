@@ -176,53 +176,50 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
     private void notMapContainsKey(Update update, Map<String, Action> map, String chatId) throws TelegramApiException {
-        ArrayList<String> readMessage = processingUsersMessages.readMessage();
-        log.debug(update);
-        log.debug(map);
-        //Отправка сообщения и фото пользователю
+        int stateInputChannel = 0;
         if (update.getMessage().hasPhoto() || update.getMessage().hasVideo() || update.getMessage().hasAnimation()) {
+            //TODO перенести вниз на 209 строку
             send(preparingMessages.collectingMessagesMedia(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath()));
-            log.debug(processingUsersMessages.readMessage());
         } else if (update.getMessage().hasText()){
             if (!mapAction.bindingByRead().get(chatId).equals(CREATE_IMAGE)) {
                 if (mapAction.bindingByRead().get(chatId).equals(CREATE_ADD_CHANNEL)) {
                     String nameChannel = update.getMessage().getText();
                     GetChat getChat = new GetChat("@" + nameChannel);
-                    log.debug(readMessage);
-                    log.debug(channelChatId(readMessage));
-                    //TODO Сделать отдельный метод с проверкой на наличие канала
-                    //log.debug(execute(getChat));
                     try {
                         if (execute(getChat).isChannelChat()) {
-
-                            send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
-                            log.debug(map);
-                            log.debug(chatId);
-                            log.debug(processingUsersMessages);
+                            stateInputChannel = 1;
                         }
                     } catch (Exception e) {
-                        send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, StringDataMessage.CREATE_ADD_CHANNEL.getMessage(), false));
+                        stateInputChannel = 2;
                     }
                 }
-                if(mapAction.bindingByRead().get(chatId) != null) {
+                if (mapAction.bindingByRead().containsKey(chatId)){
                     if (!mapAction.bindingByRead().get(chatId).equals(CREATE_ADD_CHANNEL)) {
-                        log.debug(map);
-                        log.debug(chatId);
-                        log.debug(processingUsersMessages);
-                        log.debug(mapAction);
-                        send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
+                        stateInputChannel = 1;
                     }
                 }
         } else {
-                log.debug(channelChatId(readMessage));
-                send(preparingMessages.sendCallbackData(update,map, processingUsersMessages.readMessage(),mapAction,chatId, StringDataMessage.CREATE_IMAGE.getMessage(), false));
+                stateInputChannel = 3;
             }
-        } else {
-            log.debug(channelChatId(readMessage));
-            send(preparingMessages.sendCallbackData(update,map, processingUsersMessages.readMessage(),mapAction,chatId, StringDataMessage.CREATE_IMAGE.getMessage(), false));
-            log.debug(mapAction.bindingByRead());
         }
+//        else {
+//            stateInputChannel = 3;
+//        }
+        switch(stateInputChannel) {
+            case 1 -> send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
+            case 2 -> send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, StringDataMessage.CREATE_ADD_CHANNEL.getMessage(), false));
+            case 3 -> send(preparingMessages.sendCallbackData(update,map, processingUsersMessages.readMessage(),mapAction,chatId, StringDataMessage.CREATE_IMAGE.getMessage(), false));
+
+        }
+//        if (stateInputChannel == 1) {
+//            send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
+//        } else if (stateInputChannel == 2) {
+//            send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, StringDataMessage.CREATE_ADD_CHANNEL.getMessage(), false));
+//        } else if (stateInputChannel == 3) {
+//            send(preparingMessages.sendCallbackData(update,map, processingUsersMessages.readMessage(),mapAction,chatId, StringDataMessage.CREATE_IMAGE.getMessage(), false));
+//        }
     }
+
     private void mapContainsKeyCallbackData(Update update, Map<String, Action> map, String chatId, String callbackData){
         ArrayList<String> readMessage = processingUsersMessages.readMessage();
         log.debug(callbackData);
