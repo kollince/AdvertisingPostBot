@@ -175,12 +175,71 @@ public class TelegramBot extends TelegramLongPollingBot {
                     processingUsersMessages.readMessage(), mapAction));
         }
     }
+
     private void notMapContainsKey(Update update, Map<String, Action> map, String chatId) throws TelegramApiException {
-        int stateInputChannel = 0;
+//        int stateInputChannel = -1;
+//        if (update.getMessage().hasPhoto() || update.getMessage().hasVideo() || update.getMessage().hasAnimation()) {
+//            stateInputChannel = 0;
+//        } else if (update.getMessage().hasText()) {
+//            if (!mapAction.bindingByRead().get(chatId).equals(CREATE_IMAGE)) {
+//                if (mapAction.bindingByRead().get(chatId).equals(CREATE_ADD_CHANNEL)) {
+//                    String nameChannel = update.getMessage().getText();
+//                    GetChat getChat = new GetChat("@" + nameChannel);
+//                    try {
+//                        if (execute(getChat).isChannelChat()) {
+//                            stateInputChannel = 1;
+//                        }
+//                    } catch (Exception e) {
+//                        stateInputChannel = 2;
+//                    }
+//                }
+//                if (mapAction.bindingByRead().containsKey(chatId)) {
+//                    if (!mapAction.bindingByRead().get(chatId).equals(CREATE_ADD_CHANNEL)) {
+//                        stateInputChannel = 1;
+//                    }
+//                }
+//            } else {
+//                stateInputChannel = 3;
+//            }
+//        }
+        switch (stateInputChannelMethod(update, chatId)) {
+            case 0 -> send(preparingMessages.collectingMessagesMedia
+                    (
+                            update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update)
+                           .getFilePath()
+                    )
+            );
+            case 1 -> send(preparingMessages.collectingMessages
+                    (
+                            update, map, chatId, mapAction, processingUsersMessages, token
+                    )
+            );
+            case 2 -> send(preparingMessages.sendCallbackData
+                    (
+                            update, map, processingUsersMessages.readMessage(), mapAction, chatId,
+                            StringDataMessage.CREATE_ADD_CHANNEL.getMessage(), false
+                    )
+            );
+            case 3 -> send(preparingMessages.sendCallbackData
+                    (
+                            update, map, processingUsersMessages.readMessage(), mapAction, chatId,
+                            StringDataMessage.CREATE_IMAGE.getMessage(), false
+                    )
+            );
+        }
+    }
+
+    private int stateInputChannelMethod(Update update, String chatId) {
+        if(update.getMessage().getForwardFromChat() != null){
+            //TODO здесь поставить условие на пересылаемое сообщение
+
+            log.debug(update.getMessage().getForwardFromChat().getId());
+        }
+        //log.debug(update.getMessage().getForwardFromChat().getId());
+        int stateInputChannel = -1;
         if (update.getMessage().hasPhoto() || update.getMessage().hasVideo() || update.getMessage().hasAnimation()) {
-            //TODO перенести вниз на 209 строку
-            send(preparingMessages.collectingMessagesMedia(update, map, chatId, mapAction, processingUsersMessages, token, sendFile(update).getFilePath()));
-        } else if (update.getMessage().hasText()){
+            stateInputChannel = 0;
+        } else if (update.getMessage().hasText()) {
             if (!mapAction.bindingByRead().get(chatId).equals(CREATE_IMAGE)) {
                 if (mapAction.bindingByRead().get(chatId).equals(CREATE_ADD_CHANNEL)) {
                     String nameChannel = update.getMessage().getText();
@@ -193,31 +252,16 @@ public class TelegramBot extends TelegramLongPollingBot {
                         stateInputChannel = 2;
                     }
                 }
-                if (mapAction.bindingByRead().containsKey(chatId)){
+                if (mapAction.bindingByRead().containsKey(chatId)) {
                     if (!mapAction.bindingByRead().get(chatId).equals(CREATE_ADD_CHANNEL)) {
                         stateInputChannel = 1;
                     }
                 }
-        } else {
+            } else {
                 stateInputChannel = 3;
             }
         }
-//        else {
-//            stateInputChannel = 3;
-//        }
-        switch(stateInputChannel) {
-            case 1 -> send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
-            case 2 -> send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, StringDataMessage.CREATE_ADD_CHANNEL.getMessage(), false));
-            case 3 -> send(preparingMessages.sendCallbackData(update,map, processingUsersMessages.readMessage(),mapAction,chatId, StringDataMessage.CREATE_IMAGE.getMessage(), false));
-
-        }
-//        if (stateInputChannel == 1) {
-//            send(preparingMessages.collectingMessages(update, map, chatId, mapAction, processingUsersMessages, token));
-//        } else if (stateInputChannel == 2) {
-//            send(preparingMessages.sendCallbackData(update, map, processingUsersMessages.readMessage(), mapAction, chatId, StringDataMessage.CREATE_ADD_CHANNEL.getMessage(), false));
-//        } else if (stateInputChannel == 3) {
-//            send(preparingMessages.sendCallbackData(update,map, processingUsersMessages.readMessage(),mapAction,chatId, StringDataMessage.CREATE_IMAGE.getMessage(), false));
-//        }
+        return stateInputChannel;
     }
 
     private void mapContainsKeyCallbackData(Update update, Map<String, Action> map, String chatId, String callbackData){
