@@ -231,8 +231,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private int stateInputChannelMethod(Update update, String chatId) {
         if(update.getMessage().getForwardFromChat() != null){
-            //TODO здесь поставить условие на пересылаемое сообщение
-
             log.debug(update.getMessage().getForwardFromChat().getId());
         }
         //log.debug(update.getMessage().getForwardFromChat().getId());
@@ -242,8 +240,16 @@ public class TelegramBot extends TelegramLongPollingBot {
         } else if (update.getMessage().hasText()) {
             if (!mapAction.bindingByRead().get(chatId).equals(CREATE_IMAGE)) {
                 if (mapAction.bindingByRead().get(chatId).equals(CREATE_ADD_CHANNEL)) {
-                    String nameChannel = update.getMessage().getText();
-                    GetChat getChat = new GetChat("@" + nameChannel);
+                    String nameChannel;
+                    log.debug(update.getMessage().getForwardFromChat());
+                    //TODO неправильное условие исправить
+                    nameChannel = "@"+update.getMessage().getText();
+                    if (update.getMessage().getForwardFromChat() != null & !update.getMessage().hasText()) {
+                        nameChannel = "@"+update.getMessage().getForwardFromChat().getUserName();
+                        log.debug(update.getMessage().getForwardFromChat().getUserName());
+                    }
+                    log.debug(nameChannel);
+                    GetChat getChat = new GetChat(nameChannel);
                     try {
                         if (execute(getChat).isChannelChat()) {
                             stateInputChannel = 1;
