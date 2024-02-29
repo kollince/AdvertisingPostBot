@@ -242,14 +242,21 @@ public class TelegramBot extends TelegramLongPollingBot {
                 if (mapAction.bindingByRead().get(chatId).equals(CREATE_ADD_CHANNEL)) {
                     String nameChannel;
                     log.debug(update.getMessage().getForwardFromChat());
-                    //TODO неправильное условие исправить
-                    nameChannel = "@"+update.getMessage().getText();
-                    if (update.getMessage().getForwardFromChat() != null & !update.getMessage().hasText()) {
-                        nameChannel = "@"+update.getMessage().getForwardFromChat().getUserName();
-                        log.debug(update.getMessage().getForwardFromChat().getUserName());
-                    }
+                    log.debug(update.getMessage());
+                    //TODO неправильное условие исправить. переменная nameChannel попадает в конец list'а
+//                    nameChannel = "@"+update.getMessage().getText();
+//                    if (update.getMessage().getForwardFromChat() != null) {
+//                        nameChannel = update.getMessage().getForwardFromChat().getUserName();
+//                        log.debug(update.getMessage().getForwardFromChat().getUserName());
+//                        log.debug(nameChannel);
+//                    } else {
+//                        nameChannel = update.getMessage().getText();
+//                        log.debug(update.getMessage().getText());
+//                        log.debug(nameChannel);
+//                    }
+                    nameChannel = update.getMessage().getText();
+                    GetChat getChat = new GetChat("@"+nameChannel);
                     log.debug(nameChannel);
-                    GetChat getChat = new GetChat(nameChannel);
                     try {
                         if (execute(getChat).isChannelChat()) {
                             stateInputChannel = 1;
@@ -298,6 +305,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         String channelChatId = "default";
         if (readMessage.size() > 2){
             channelChatId = "@"+processingUsersMessages.readMessage().get(processingUsersMessages.readMessage().size()-1);
+            log.debug(processingUsersMessages.readMessage());
             log.debug(channelChatId);
         }
         return channelChatId;
