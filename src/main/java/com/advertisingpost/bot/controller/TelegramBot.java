@@ -177,31 +177,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private void notMapContainsKey(Update update, Map<String, Action> map, String chatId) throws TelegramApiException {
-//        int stateInputChannel = -1;
-//        if (update.getMessage().hasPhoto() || update.getMessage().hasVideo() || update.getMessage().hasAnimation()) {
-//            stateInputChannel = 0;
-//        } else if (update.getMessage().hasText()) {
-//            if (!mapAction.bindingByRead().get(chatId).equals(CREATE_IMAGE)) {
-//                if (mapAction.bindingByRead().get(chatId).equals(CREATE_ADD_CHANNEL)) {
-//                    String nameChannel = update.getMessage().getText();
-//                    GetChat getChat = new GetChat("@" + nameChannel);
-//                    try {
-//                        if (execute(getChat).isChannelChat()) {
-//                            stateInputChannel = 1;
-//                        }
-//                    } catch (Exception e) {
-//                        stateInputChannel = 2;
-//                    }
-//                }
-//                if (mapAction.bindingByRead().containsKey(chatId)) {
-//                    if (!mapAction.bindingByRead().get(chatId).equals(CREATE_ADD_CHANNEL)) {
-//                        stateInputChannel = 1;
-//                    }
-//                }
-//            } else {
-//                stateInputChannel = 3;
-//            }
-//        }
         switch (stateInputChannelMethod(update, chatId)) {
             case 0 -> send(preparingMessages.collectingMessagesMedia
                     (
@@ -214,6 +189,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                             update, map, chatId, mapAction, processingUsersMessages, token
                     )
             );
+
             case 2 -> send(preparingMessages.sendCallbackData
                     (
                             update, map, processingUsersMessages.readMessage(), mapAction, chatId,
@@ -230,10 +206,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private int stateInputChannelMethod(Update update, String chatId) {
-        if(update.getMessage().getForwardFromChat() != null){
-            log.debug(update.getMessage().getForwardFromChat().getId());
-        }
-        //log.debug(update.getMessage().getForwardFromChat().getId());
         int stateInputChannel = -1;
         if (update.getMessage().hasPhoto() || update.getMessage().hasVideo() || update.getMessage().hasAnimation()) {
             stateInputChannel = 0;
@@ -241,25 +213,16 @@ public class TelegramBot extends TelegramLongPollingBot {
             if (!mapAction.bindingByRead().get(chatId).equals(CREATE_IMAGE)) {
                 if (mapAction.bindingByRead().get(chatId).equals(CREATE_ADD_CHANNEL)) {
                     String nameChannel;
-                    log.debug(update.getMessage().getForwardFromChat());
-                    log.debug(update.getMessage());
-                    //TODO неправильное условие исправить. переменная nameChannel попадает в конец list'а
-//                    nameChannel = "@"+update.getMessage().getText();
-//                    if (update.getMessage().getForwardFromChat() != null) {
-//                        nameChannel = update.getMessage().getForwardFromChat().getUserName();
-//                        log.debug(update.getMessage().getForwardFromChat().getUserName());
-//                        log.debug(nameChannel);
-//                    } else {
-//                        nameChannel = update.getMessage().getText();
-//                        log.debug(update.getMessage().getText());
-//                        log.debug(nameChannel);
-//                    }
-                    nameChannel = update.getMessage().getText();
+                    if (update.getMessage().getForwardFromChat() != null) {
+                        nameChannel = update.getMessage().getForwardFromChat().getUserName();
+                    } else {
+                        nameChannel = update.getMessage().getText();
+                    }
                     GetChat getChat = new GetChat("@"+nameChannel);
-                    log.debug(nameChannel);
                     try {
                         if (execute(getChat).isChannelChat()) {
                             stateInputChannel = 1;
+                            update.getMessage().setText(nameChannel);
                         }
                     } catch (Exception e) {
                         stateInputChannel = 2;
@@ -274,12 +237,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                 stateInputChannel = 3;
             }
         }
+        log.debug(stateInputChannel);
         return stateInputChannel;
     }
 
     private void mapContainsKeyCallbackData(Update update, Map<String, Action> map, String chatId, String callbackData){
         ArrayList<String> readMessage = processingUsersMessages.readMessage();
-        log.debug(callbackData);
             if (callbackData.equals(CREATE_PREVIEW)) {
             if (!isUrlHttp(location(callbackData,readMessage))) {
                 send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, false));
@@ -305,15 +268,12 @@ public class TelegramBot extends TelegramLongPollingBot {
         String channelChatId = "default";
         if (readMessage.size() > 2){
             channelChatId = "@"+processingUsersMessages.readMessage().get(processingUsersMessages.readMessage().size()-1);
-            log.debug(processingUsersMessages.readMessage());
-            log.debug(channelChatId);
         }
         return channelChatId;
     }
 
     private void invokeMedia(Update update, Map<String, Action> map, String chatId, String callbackData, ArrayList<String> readMessage) {
         switch (extensionFiles(readMessage, callbackData)) {
-
             case "mp4" -> {
                 if (callbackData.equals(CREATE_POST)) {
                     SendVideo msgVideo = preparingMessages.sendCallbackDataVideo(update, map, readMessage, mapAction, chatId, callbackData, false);

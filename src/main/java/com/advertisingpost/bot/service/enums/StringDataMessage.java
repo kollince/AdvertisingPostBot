@@ -10,13 +10,18 @@ import lombok.Getter;
 public enum StringDataMessage {
     /*ChoosingAction*/
     CHOOSE_ACTION_BUTTON("Выберите тип поста:"),
-    CHOOSE_ACTION_CREATE_ADV_POST("Этот бот предназначен для создания статей с inline - кнопкой."),
+    CHOOSE_ACTION_CREATE_ADV_POST("Этот бот помогает создавать рекламные посты, которые могут быть использованы для " +
+            "продвижения вашего бизнеса или продукта. Для начала работы с ботом, необходимо отправить команду " +
+            "/start, вам будет предложено выбрать тип рекламного поста, который вы хотели бы создать. " +
+            "Далее просто следуйте подсказкам бота.\n"),
     CHOOSE_BUTTON1("Только текст"),
-    CHOOSE_BUTTON2("Только мультимедиа"),
-    CHOOSE_BUTTON3("Текст и мультимедиа"),
+    CHOOSE_BUTTON2("Только медиа (изображения и видео)"),
+    CHOOSE_BUTTON3("Текст и медиа"),
 
     /*PostBodyImageAction*/
-    POST_BODY_IMAGE_ACTION_ENTER_ADV_TEXT("Введите текст для статьи:"),
+    POST_BODY_IMAGE_ACTION_ENTER_ADV_TEXT("Отправьте боту текст, который хотите опубликовать. " +
+            "Бот поддерживает простую HTML разметку. Для просмотра справки по HTML разметки воспользуйтесь командой" +
+            "/help из меню."),
     POST_BODY_IMAGE_ACTION_IMAGE_UPLOAD_BUTTON("Перейти к загрузке изображения"),
     POST_BODY_IMAGE_ACTION_TEXT_ADDED("Текст добавлен, для продолжения нажмите на кнопку «"+
             POST_BODY_IMAGE_ACTION_IMAGE_UPLOAD_BUTTON.message+"»."),
@@ -27,12 +32,15 @@ public enum StringDataMessage {
     POST_IMAGE_ACTION_IMAGE_ADDED("Изображение добавлено, для продолжения нажмите на кнопку «"+
             POST_IMAGE_ACTION_ADD_LINK_BUTTON.message+"»."),
     /*PostAddLInkAction*/
-    POST_ADD_LINK_ACTION_ADD_LINK("Добавьте ссылку:   <code>название ссылки : site.com/mypage</code>"),
+    POST_ADD_LINK_ACTION_ADD_LINK("Добавьте название кнопки и для неё ссылку в следующем формате: " +
+            "<code>название ссылки : site.com/mypage</code>."),
     POST_ADD_LINK_ACTION_OPEN_ADV_POST("Открыть созданный пост"),
-    POST_ADD_LINK_ACTION_IMAGE_ADDED("Ссылка добавлена, для продолжения нажмите на кнопку «"+
+    POST_ADD_LINK_ACTION_IMAGE_ADDED("Новая кнопка была создана, для продолжения нажмите на кнопку «"+
             POST_ADD_LINK_ACTION_OPEN_ADV_POST.message+"»."),
     /*PostOnlyTextAction*/
-    POST_ONLY_TEXT_ACTION_ENTER_ADV_TEXT("Введите текст для статьи:"),
+    POST_ONLY_TEXT_ACTION_ENTER_ADV_TEXT("Отправьте боту текст, который хотите опубликовать. " +
+            "Бот поддерживает простую HTML разметку. Для просмотра справки по HTML разметки воспользуйтесь командой " +
+            "/help."),
     POST_ONLY_TEXT_ACTION_TEXT_ADDED("Текст добавлен, для продолжения нажмите на кнопку «"+
             POST_IMAGE_ACTION_ADD_LINK_BUTTON.message+"»."),
 
@@ -40,7 +48,8 @@ public enum StringDataMessage {
     POST_BUTTON_NEXT("Далее"),
     POST_BUTTON_CANCEL("Отмена"),
     /*PostAddChannel*/
-    POST_ADD_CHANNEL_ACTION("Отправьте сюда наименование своего канала, которое идет после \"t.me/\" или перешлите в этот чат любой опубликованный пост."),
+    POST_ADD_CHANNEL_ACTION("Отправьте сюда наименование своего канала, которое идет после \"t.me/\" " +
+            "или перешлите в этот чат любой опубликованный пост."),
     POST_BUTTON_PUBLISH("Опубликовать"),
     POST_CHANNEL_ADDED("Канал добавлен"),
 
