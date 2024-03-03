@@ -75,7 +75,7 @@ public class PostPublishAction implements Action {
         String nameButton = data[2];
         String link = data[4];
         if (isPublished){
-            text = textPublished;
+            text = textPublished + "@" + textCreatePost.get(textCreatePost.size()-1) + ".";
             nameButton = nameButtonPublished;
             link = linkPublished;
         }
