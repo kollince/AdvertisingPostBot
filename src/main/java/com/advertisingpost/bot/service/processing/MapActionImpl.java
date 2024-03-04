@@ -35,7 +35,7 @@ public class MapActionImpl implements MapAction {
     @Override
     public Map<String, Action> generalMapPut (InputData inputData) {
         map.put(START, new ChoosingAction(inputData));
-        map.put(HELP, new ChoosingAction(inputData));
+        map.put(HELP, new PostHelpAction(inputData));
         map.put(CANCEL_POST, new ChoosingAction(inputData));
         map.put(CREATE_ONLY_TEXT, new PostOnlyTextAction(inputData));//text1
         map.put(CREATE_BODY_AND_CREATE_IMAGE, new PostBodyImageAction(inputData));//text_image1

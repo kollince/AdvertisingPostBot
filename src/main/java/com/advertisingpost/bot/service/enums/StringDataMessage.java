@@ -59,6 +59,37 @@ public enum StringDataMessage {
     /*TelegramBot*/
     MENU_START("Чтобы приступить, в любой момент нажмите старт"),
     MENU_HELP("Помощь"),
+    /*PostHelpAction*/
+    HELP_TEXT("В настоящее время поддерживаются следующие HTML-теги: \n<b>жирный</b>, \n<strong>жирный</strong>\n" +
+            "<i>курсив</i>, \n<em>курсив</em>, \n<u>подчёркнутый</u>, \n<ins>подчёркнутый</ins>, \n" +
+            "<s>зачёркнутый</s>, \n<strike>зачёркнутый</strike>, \n<del>зачёркнутый</del>, \n" +
+            "<span class=\"tg-spoiler\">скрытый</span>, \n<tg-spoiler>скрытый</tg-spoiler>\n" +
+            "<b>\n" +
+            "   жирный \n" +
+            "       <i>жирный курсив \n" +
+            "           <s>зачёркнутый жирный курсив \n" +
+            "               <span class=\"tg-spoiler\">\n" +
+            "                   скрытый зачёркнутый жирный курсив\n" +
+            "               </span>\n" +
+            "           </s> \n" +
+            "           <u>подчёркнутый жирный курсив</u>\n" +
+            "       </i> \n" +
+            "   жирный\n" +
+            "</b>\n" +
+            "<a href=\"http://www.example.com/\">ссылка на ресурс</a>\n" +
+            "<a href=\"tg://user?id=123456789\">упоминание пользователя</a>\n" +
+            "<tg-emoji emoji-id=\"5368324170671202286\">\uD83D\uDC4D</tg-emoji>\n" +
+            "<code>моноширинный</code>\n" +
+            "<pre>предварительно форматированный текст</pre>\n" +
+            "<pre>\n" +
+            "   <code class=\"language-python\">\n" +
+            "       предварительно отформатированный блок \n" +
+            "       кода фиксированной ширины\n" +
+            "   </code>\n" +
+            "</pre>\n" +
+            "<blockquote>\n" +
+            "   Цитата \n" +
+            "</blockquote>"),
 
     /*MapAction and CallbackName*/
     START("/start"),
