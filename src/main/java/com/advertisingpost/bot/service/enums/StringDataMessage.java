@@ -20,8 +20,9 @@ public enum StringDataMessage {
 
     /*PostBodyImageAction*/
     POST_BODY_IMAGE_ACTION_ENTER_ADV_TEXT("Отправьте боту текст, который хотите опубликовать. " +
-            "Бот поддерживает простую HTML разметку. Для просмотра справки по HTML разметки воспользуйтесь командой " +
-            "/help из меню."),
+            "Бот поддерживает простую HTML разметку. Более подробную информацию о синтаксисе HTML вы можете узнать, " +
+            "выполнив команду /help. Обратите внимание, что после выполнения этой команды, вам придется " +
+            "начать заново."),
     POST_BODY_IMAGE_ACTION_IMAGE_UPLOAD_BUTTON("Перейти к загрузке медиа-файла"),
     POST_BODY_IMAGE_ACTION_TEXT_ADDED("Текст добавлен, для продолжения нажмите на кнопку «"+
             POST_BODY_IMAGE_ACTION_IMAGE_UPLOAD_BUTTON.message+"»."),
@@ -39,8 +40,9 @@ public enum StringDataMessage {
             POST_ADD_LINK_ACTION_OPEN_ADV_POST.message+"»."),
     /*PostOnlyTextAction*/
     POST_ONLY_TEXT_ACTION_ENTER_ADV_TEXT("Отправьте боту текст, который хотите опубликовать. " +
-            "Бот поддерживает простую HTML разметку. Для просмотра справки по HTML разметки воспользуйтесь командой " +
-            "/help из меню."),
+            "Бот поддерживает простую HTML разметку. Более подробную информацию о синтаксисе HTML вы можете узнать, " +
+            "выполнив команду /help. Обратите внимание, что после выполнения этой команды, вам придется " +
+            "начать заново."),
     POST_ONLY_TEXT_ACTION_TEXT_ADDED("Текст добавлен, для продолжения нажмите на кнопку «"+
             POST_IMAGE_ACTION_ADD_LINK_BUTTON.message+"»."),
 
