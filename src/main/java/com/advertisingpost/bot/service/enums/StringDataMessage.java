@@ -61,6 +61,8 @@ public enum StringDataMessage {
     MENU_HELP("Помощь"),
 
     /*MapAction and CallbackName*/
+    START("/start"),
+    HELP("/help"),
     CREATE_ONLY_TEXT("CREATE_ONLY_TEXT"),
     CREATE_BODY_AND_CREATE_IMAGE("CREATE_BODY_AND_CREATE_IMAGE"),
     CREATE_BODY("CREATE_BODY"),

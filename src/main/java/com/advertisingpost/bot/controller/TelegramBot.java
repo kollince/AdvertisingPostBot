@@ -64,17 +64,24 @@ public class TelegramBot extends TelegramLongPollingBot {
         this.processingUsersMessages = processingUsersMessages;
         this.mapAction = mapAction;
         this.preparingMessages = preparingMessages;
+        menuCommands();
+    }
+
+    private void menuCommands() {
         List<BotCommand> listOfCommands = new ArrayList<>();
+        String START = StringDataMessage.START.getMessage();
         String MENU_START = StringDataMessage.MENU_START.getMessage();
-        listOfCommands.add(new BotCommand("/start", MENU_START));
+        listOfCommands.add(new BotCommand(START, MENU_START));
+        String HELP = StringDataMessage.HELP.getMessage();
         String MENU_HELP = StringDataMessage.MENU_HELP.getMessage();
-        listOfCommands.add(new BotCommand("/help", MENU_HELP));
+        listOfCommands.add(new BotCommand(HELP, MENU_HELP));
         try {
             this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
         } catch (TelegramApiException e) {
             log.error("Error setting bot's command list: " + e.getMessage());
         }
     }
+
     @Override
     public String getBotUsername() {
         return config.getBotName();
@@ -99,7 +106,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     log.debug(e);
                 }
             }
-            if (update.getMessage().hasText() && update.getMessage().getText().equals("/start")){
+            if (update.getMessage().hasText() && update.getMessage().getText().equals(StringDataMessage.START.getMessage())){
                 processingUsersMessages.clearArrayList();
             }
         } else if (update.hasCallbackQuery()) {
