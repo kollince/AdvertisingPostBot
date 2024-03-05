@@ -17,6 +17,7 @@ import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.GetUserProfilePhotos;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChat;
+import org.telegram.telegrambots.meta.api.methods.groupadministration.SetChatPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -32,6 +33,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -67,9 +69,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         this.processingUsersMessages = processingUsersMessages;
         this.mapAction = mapAction;
         this.preparingMessages = preparingMessages;
-        GetUserProfilePhotos getUserProfilePhotos = new GetUserProfilePhotos();
-        Chat chat = new Chat();
-//        update.getMessage().getChat().setPhoto();
         menuCommands();
     }
 
@@ -100,7 +99,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (update.hasMessage()) {
             String key = update.getMessage().getText();
             chatId = update.getMessage().getChatId().toString();
-            log.debug(key);
+            log.debug(chatId);
             log.debug(mapAction.generalMapRead().containsKey(key));
 
             if(mapAction.generalMapRead().containsKey(key)){
