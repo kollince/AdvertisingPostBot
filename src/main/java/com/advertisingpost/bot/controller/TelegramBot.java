@@ -10,9 +10,11 @@ import com.advertisingpost.bot.service.processing.interfaces.ProcessingUsersMess
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
+import org.telegram.telegrambots.meta.api.methods.GetUserProfilePhotos;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChat;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
@@ -24,6 +26,7 @@ import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.generics.BotOptions;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -64,6 +67,9 @@ public class TelegramBot extends TelegramLongPollingBot {
         this.processingUsersMessages = processingUsersMessages;
         this.mapAction = mapAction;
         this.preparingMessages = preparingMessages;
+        GetUserProfilePhotos getUserProfilePhotos = new GetUserProfilePhotos();
+        Chat chat = new Chat();
+//        update.getMessage().getChat().setPhoto();
         menuCommands();
     }
 
@@ -78,7 +84,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         try {
             this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
         } catch (TelegramApiException e) {
-            log.error("Error setting bot's command list: " + e.getMessage());
+            log.error(e.getMessage());
         }
     }
 
@@ -190,7 +196,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         return  execute(getFile);
     }
     private void mapContainsKey(Update update, String key, Map<String, Action> map, String chatId){
-
+       // UserProfilePhotos userProfilePhotos = new UserProfilePhotos();
         if (update.getMessage().hasText()){
             log.debug(mapAction.bindingByRead());
             send(preparingMessages.sendingMessage(update, key, map, chatId,
