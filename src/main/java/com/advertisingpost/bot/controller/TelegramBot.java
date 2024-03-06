@@ -197,7 +197,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     private void mapContainsKey(Update update, String key, Map<String, Action> map, String chatId){
        // UserProfilePhotos userProfilePhotos = new UserProfilePhotos();
         if (update.getMessage().hasText()){
-            log.debug(mapAction.bindingByRead());
+            String user = update.getMessage().getChat().getUserName()+":"+chatId;
+
+            log.debug(update.getMessage().getChat().getUserName());
             send(preparingMessages.sendingMessage(update, key, map, chatId,
                     processingUsersMessages.readMessage(), mapAction));
         }
