@@ -42,7 +42,6 @@ public class PostAddChannel implements Action {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
         String nameButton = StringDataMessage.POST_BUTTON_NEXT_CHANNEL.getMessage();
-        //CREATE_PREVIEW
         String callbackName = StringDataMessage.CREATE_POST.getMessage();
         var text = StringDataMessage.POST_CHANNEL_ADDED.getMessage();
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
@@ -57,7 +56,6 @@ public class PostAddChannel implements Action {
     public SendVideo handleVideo(Update update, ArrayList<String> textCreatePost, boolean isPublished) throws MalformedURLException, URISyntaxException {
         return null;
     }
-
     @Override
     public SendAnimation handleAnimation(Update update, ArrayList<String> textCreatePost, boolean isPublished) throws MalformedURLException, URISyntaxException {
         return null;

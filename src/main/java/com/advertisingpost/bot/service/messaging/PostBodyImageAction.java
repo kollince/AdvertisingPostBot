@@ -42,7 +42,6 @@ public class PostBodyImageAction implements Action {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
         String nameButton = StringDataMessage.POST_BODY_IMAGE_ACTION_IMAGE_UPLOAD_BUTTON.getMessage();
-        //CREATE_IMAGE
         String callbackName = StringDataMessage.CREATE_IMAGE.getMessage();
         String text = StringDataMessage.POST_BODY_IMAGE_ACTION_TEXT_ADDED.getMessage();
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);

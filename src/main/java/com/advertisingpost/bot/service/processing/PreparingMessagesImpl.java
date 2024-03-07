@@ -39,7 +39,9 @@ public class PreparingMessagesImpl implements PreparingMessages {
         return msg;
     }
     @Override
-    public SendMessage collectingMessagesMedia(Update update, Map<String, Action> map, String chatId, MapAction mapAction, ProcessingUsersMessages processingUsersMessages, String token, String sendFile) {
+    public SendMessage collectingMessagesMedia(Update update, Map<String, Action> map, String chatId,
+                                               MapAction mapAction, ProcessingUsersMessages processingUsersMessages,
+                                               String token, String sendFile) {
         SendMessage msg = new SendMessage();
         try {
             msg = map.get(mapAction.bindingByRead().get(chatId)).callback(update);
@@ -119,7 +121,6 @@ public class PreparingMessagesImpl implements PreparingMessages {
         return msg;
     }
 
-    //Загрузите изображение
     @Override
     public SendMessage sendCallbackData(Update update, Map<String, Action> map, ArrayList<String> readMessage,
                                         MapAction mapAction, String chatId, String callbackData, boolean isPublished) {

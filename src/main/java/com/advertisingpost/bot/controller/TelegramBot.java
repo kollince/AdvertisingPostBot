@@ -10,30 +10,24 @@ import com.advertisingpost.bot.service.processing.interfaces.ProcessingUsersMess
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
-import org.telegram.telegrambots.meta.api.methods.GetUserProfilePhotos;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChat;
-import org.telegram.telegrambots.meta.api.methods.groupadministration.SetChatPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.meta.generics.BotOptions;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,20 +36,14 @@ import java.util.Map;
 @Component
 @Log4j
 public class TelegramBot extends TelegramLongPollingBot {
-    //@Autowired
     private final InputData inputData;
-    //@Autowired
     private final ProcessingUsersMessages processingUsersMessages;
-    //@Autowired
     private final MapAction mapAction;
     private final PreparingMessages preparingMessages;
     @Value("${bot.token}")
     String token;
     final BotConfig config;
-    private final String CREATE_ONLY_TEXT = StringDataMessage.CREATE_ONLY_TEXT.getMessage();
     private final String CREATE_IMAGE = StringDataMessage.CREATE_IMAGE.getMessage();
-    private final String CREATE_BODY_AND_CREATE_IMAGE = StringDataMessage.CREATE_BODY_AND_CREATE_IMAGE.getMessage();
-    private final String CREATE_ADD_LINK = StringDataMessage.CREATE_ADD_LINK.getMessage();
     private final String CREATE_PREVIEW = StringDataMessage.CREATE_PREVIEW.getMessage();
     private final String CREATE_ADD_CHANNEL = StringDataMessage.CREATE_ADD_CHANNEL.getMessage();
     private final String CREATE_POST = StringDataMessage.CREATE_POST.getMessage();
@@ -99,9 +87,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (update.hasMessage()) {
             String key = update.getMessage().getText();
             chatId = update.getMessage().getChatId().toString();
-            log.debug(chatId);
-            log.debug(mapAction.generalMapRead().containsKey(key));
-
             if(mapAction.generalMapRead().containsKey(key)){
                 mapContainsKey(update,key,mapAction.generalMapRead(), chatId);
             } else if (mapAction.bindingByRead().containsKey(chatId)) {
@@ -146,16 +131,13 @@ public class TelegramBot extends TelegramLongPollingBot {
         boolean isChannel = false;
         Message message = new Message();
         try {
-            //message = execute(msg);
             isChannel = execute(msg).isChannelMessage();
-            log.debug("test");
         } catch (TelegramApiException e) {
             log.debug(e);}
         return isChannel;
     }
     private void send(SendMessage msg) {
         try {
-            //log.debug(msg.getChatId());
             execute(msg);
         } catch (TelegramApiException e) {
             log.debug(e);
@@ -195,11 +177,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         return  execute(getFile);
     }
     private void mapContainsKey(Update update, String key, Map<String, Action> map, String chatId){
-       // UserProfilePhotos userProfilePhotos = new UserProfilePhotos();
         if (update.getMessage().hasText()){
-            String user = update.getMessage().getChat().getUserName()+":"+chatId;
-
-            log.debug(update.getMessage().getChat().getUserName());
             send(preparingMessages.sendingMessage(update, key, map, chatId,
                     processingUsersMessages.readMessage(), mapAction));
         }
@@ -266,7 +244,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                 stateInputChannel = 3;
             }
         }
-        log.debug(stateInputChannel);
         return stateInputChannel;
     }
 
@@ -322,7 +299,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                     SendMessage msg = preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, true);
                     send(msg);
                 } else {
-                    log.debug(preparingMessages.sendCallbackDataPhoto(update, map, readMessage, mapAction, chatId, callbackData, false));
                     sendPhoto(preparingMessages.sendCallbackDataPhoto(update, map, readMessage, mapAction, chatId, callbackData, false));
                 }
             }

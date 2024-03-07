@@ -30,7 +30,6 @@ public class InputDataImpl implements InputData {
 
     @Override
     public SendMessage transmission(String chatId, String text, String nameButton, String callbackName, String link, URL url) {
-        //inlineButtons(nameButton, callbackName, link);
         SendMessage message = new SendMessage(chatId, text);
         modeParsing.ParsingMessage(message);
         message.setReplyMarkup(inlineButtons(nameButton, callbackName, link));
@@ -87,7 +86,6 @@ public class InputDataImpl implements InputData {
         return sendAnimation;
     }
 
-    //TODO Здесь можно использовать условия сравнения callbackName с enum константами
     private InlineKeyboardMarkup inlineButtons(String nameButton, String callbackName, String link) {
         String CREATE_ONLY_TEXT = StringDataMessage.CREATE_ONLY_TEXT.getMessage();
         String CREATE_BODY_AND_CREATE_IMAGE = StringDataMessage.CREATE_BODY_AND_CREATE_IMAGE.getMessage();

@@ -12,9 +12,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -53,7 +51,6 @@ public class PostPublishAction implements Action {
             log.debug(textCreatePost.get(i));
         }
         String nameButton = textLink[0].trim();
-        //TODO добавить новое action и исправить StringDataMessage.CREATE_POST.getMessage() на VIEW_POST
         String callbackName = StringDataMessage.VIEW_POST.getMessage();
         String link = textLink[1].trim();
         return new String[] {chatId, text, nameButton, callbackName, link, url};
@@ -82,7 +79,6 @@ public class PostPublishAction implements Action {
         log.debug(textCreatePost.get(textCreatePost.size()-1));
         log.debug(textCreatePost.size());
         return inputData.transmission(data[0], text, nameButton, data[3], link, url);
-//        return inputData.transmission(data[0], data[1], nameButton, data[3], data[4], url);
     }
 
     @Override
@@ -121,7 +117,6 @@ public class PostPublishAction implements Action {
             nameButton = nameButtonPublished;
             link = linkPublished;
         }
-        log.debug("handlePhoto");
         return inputData.photoTransmission(data[0], text, nameButton, data[3], link, url);
     }
     @Override

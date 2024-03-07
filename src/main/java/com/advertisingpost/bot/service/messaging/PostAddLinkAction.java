@@ -42,7 +42,6 @@ public class PostAddLinkAction implements Action {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
         String nameButton = StringDataMessage.POST_ADD_LINK_ACTION_OPEN_ADV_POST.getMessage();
-        //CREATE_PREVIEW
         String callbackName = StringDataMessage.CREATE_PREVIEW.getMessage();
         var text = StringDataMessage.POST_ADD_LINK_ACTION_IMAGE_ADDED.getMessage();
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);

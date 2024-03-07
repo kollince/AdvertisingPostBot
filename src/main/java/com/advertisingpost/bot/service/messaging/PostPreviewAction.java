@@ -12,9 +12,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -49,7 +47,6 @@ public class PostPreviewAction implements Action {
         } catch (Exception e) {
             log.debug(e);
         }
-        //TODO Неправильно отдаю nameButton и callbackName на выход - исправить
         String postButtonPublish = StringDataMessage.POST_BUTTON_NEXT.getMessage();
         String postButtonCancel = StringDataMessage.POST_BUTTON_CANCEL.getMessage();
         String callbackNamePost = StringDataMessage.CREATE_ADD_CHANNEL.getMessage();
@@ -80,8 +77,6 @@ public class PostPreviewAction implements Action {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
         String nameButton = StringDataMessage.POST_ADD_LINK_ACTION_OPEN_ADV_POST.getMessage();
-        //CREATE_PREVIEW
-        log.debug("callback");
         String callbackName = StringDataMessage.CREATE_PREVIEW.getMessage();
         var text = StringDataMessage.POST_ADD_LINK_ACTION_IMAGE_ADDED.getMessage();
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);

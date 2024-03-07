@@ -42,7 +42,6 @@ public class PostViewAction implements Action {
             chatId = update.getCallbackQuery().getMessage().getChatId().toString();
         }
         String nameButton = StringDataMessage.POST_BUTTON_PUBLISH.getMessage();
-        //CREATE_PREVIEW
         String callbackName = StringDataMessage.CREATE_POST.getMessage();
         var text = StringDataMessage.POST_CHANNEL_ADDED.getMessage();
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);

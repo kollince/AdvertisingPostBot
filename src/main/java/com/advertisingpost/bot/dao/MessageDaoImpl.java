@@ -14,7 +14,6 @@ import java.util.ArrayList;
 public class MessageDaoImpl implements MessageDao {
     private final ArrayList<ArrayList<UserMessage>> arrayListArrayList = new ArrayList<>();
     private final ArrayList<String> messageList = new ArrayList<>();
-    private final ArrayList<ArrayList<String>> arrayUsers = new ArrayList<>();
     @Override
     public ArrayList<String> addArticle(String article){
         messageList.add(article);
@@ -47,10 +46,5 @@ public class MessageDaoImpl implements MessageDao {
     public ArrayList<String> readMessageList() {
         return messageList;
     }
-//    private ArrayList<ArrayList<String>> addUser (String idCustomUser) {
-//
-//        arrayUsers.add(idCustomUser);
-//        return arrayUsers;
-//    }
 
 }
