@@ -40,20 +40,6 @@ public class ChoosingAction implements Action {
         String callbackName2 = StringDataMessage.CREATE_IMAGE.getMessage();
         String callbackName3 = StringDataMessage.CREATE_BODY_AND_CREATE_IMAGE.getMessage();
         String callbackName = callbackName1+":"+callbackName2+":"+callbackName3;
-        //TODO
-        //Сделано - Добавить определение типа загружаемого файла, возможность загрузка gif, видео, картинка
-        //Сделано - Сделать рефакторинг в первую очередь для PreparingMessagesImpl, PostPreviewAction, TelegramBot, остальные проверить еще раз.
-        //Сделано - Добавить кнопки отмена, внести исправления, опубликовать
-        //Сделано -  рефакторинг в TelegramBot
-        //Сделано - Добавить проверку на ввод текста и загрузки файла, если нет текста или нет файла, повторно вызывать нужное действие.
-        //Сделано -  проверку на ввод канала, в который отсылается сообщение и добавить функцию извлечения idChat'а из пересылаемого сообщения
-        //Пока пропусьтить - Добавить авто удаление лишних сообщений
-        //Сделано - Добавить правильное описание действий и хелп
-        //Добавить иконку для бота
-        //Добавить регистрацию пользователя, для каждого пользователя свой ArrayList (article+photo, перед этим сделать тест работы
-        //без регистрации на добавление чужих элементов в ArrayList от других пользователей.
-        //Добавить управляемую рекламу на начальную страницу
-        //Добавить о боте, контакты разработчика.
         var text = StringDataMessage.CHOOSE_ACTION_CREATE_ADV_POST.getMessage()+"\n"+ out;
         return inputData.transmission(chatId, text, nameButton, callbackName, null, null);
     }
