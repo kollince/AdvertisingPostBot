@@ -48,6 +48,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final String CREATE_ADD_CHANNEL = StringDataMessage.CREATE_ADD_CHANNEL.getMessage();
     private final String CREATE_POST = StringDataMessage.CREATE_POST.getMessage();
     private final String CANCEL_POST = StringDataMessage.CANCEL_POST.getMessage();
+    private final String CREATE_ADD_LINK = StringDataMessage.CREATE_ADD_LINK.getMessage();
 
     public TelegramBot(@Value("${bot.token}") String token, InputData inputData, BotConfig config,
                        ProcessingUsersMessages processingUsersMessages, MapAction mapAction, PreparingMessages preparingMessages){
@@ -213,10 +214,19 @@ public class TelegramBot extends TelegramLongPollingBot {
                             StringDataMessage.CREATE_IMAGE.getMessage(), false
                     )
             );
+            case 4 -> send(preparingMessages.sendCallbackData
+                    (
+                            update, map, processingUsersMessages.readMessage(), mapAction, chatId,
+                            StringDataMessage.CREATE_ADD_LINK.getMessage(), false
+                    )
+            );
+
         }
     }
 
     private int stateInputChannelMethod(Update update, String chatId) {
+        ArrayList<String> readMessage = processingUsersMessages.readMessage();
+        log.debug(readMessage);
         int stateInputChannel = -1;
         if (update.getMessage().hasPhoto() || update.getMessage().hasVideo() || update.getMessage().hasAnimation()) {
             stateInputChannel = 0;
@@ -244,6 +254,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                         stateInputChannel = 1;
                     }
                 }
+            } else if (mapAction.bindingByRead().get(chatId).equals(CREATE_ADD_LINK)) {
+                log.debug(processingUsersMessages.readMessage());
             } else {
                 stateInputChannel = 3;
             }
