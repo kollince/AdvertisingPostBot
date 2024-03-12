@@ -45,7 +45,6 @@ public class PreparingMessagesImpl implements PreparingMessages {
         SendMessage msg = new SendMessage();
         try {
             msg = map.get(mapAction.bindingByRead().get(chatId)).callback(update);
-            log.debug(msg);
         } catch (MalformedURLException | URISyntaxException e) {
             log.debug(e);
         }

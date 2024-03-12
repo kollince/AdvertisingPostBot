@@ -47,7 +47,6 @@ public class InputDataImpl implements InputData {
             //sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(baos.toByteArray()), "photo.jpg"));
             sendPhoto.setPhoto(new InputFile(url.openStream(), "photo.jpg"));
             sendPhoto.setCaption(EmojiParser.parseToUnicode(text));
-            log.debug(sendPhoto);
             modeParsing.ParsingPhoto(sendPhoto);
             sendPhoto.setReplyMarkup(inlineButtons(nameButton, callbackName, link));
         } catch (Exception e) {
@@ -89,7 +88,6 @@ public class InputDataImpl implements InputData {
     private InlineKeyboardMarkup inlineButtons(String nameButton, String callbackName, String link) {
         String CREATE_ONLY_TEXT = StringDataMessage.CREATE_ONLY_TEXT.getMessage();
         String CREATE_BODY_AND_CREATE_IMAGE = StringDataMessage.CREATE_BODY_AND_CREATE_IMAGE.getMessage();
-        String CREATE_BODY = StringDataMessage.CREATE_BODY.getMessage();
         String CREATE_IMAGE = StringDataMessage.CREATE_IMAGE.getMessage();
         String CREATE_ADD_LINK = StringDataMessage.CREATE_ADD_LINK.getMessage();
         String CREATE_PREVIEW = StringDataMessage.CREATE_PREVIEW.getMessage();
@@ -102,7 +100,6 @@ public class InputDataImpl implements InputData {
         String[] callbackNameArray = callbackName.split(":");
         //ChoosingAction
         String callbackNameArr = CREATE_ONLY_TEXT + ":" + CREATE_IMAGE + ":" + CREATE_BODY_AND_CREATE_IMAGE;
-        log.debug(callbackName);
         if (callbackName.equals(callbackNameArr)) {
             for (int i = 0; i < 3; i++) {
                 List<InlineKeyboardButton> rowInline = new ArrayList<>();
@@ -111,7 +108,6 @@ public class InputDataImpl implements InputData {
                 button.setCallbackData(callbackNameArray[i]);
                 rowInline.add(button);
                 rowsInline.add(rowInline);
-                log.debug(callbackName);
             }
         } else if (callbackName.equals(CREATE_ADD_LINK) || callbackName.equals(CREATE_PREVIEW) || callbackName.equals(CREATE_IMAGE)) {
             List<InlineKeyboardButton> rowInline = new ArrayList<>();
@@ -153,7 +149,6 @@ public class InputDataImpl implements InputData {
             var linkButton = new InlineKeyboardButton();
             linkButton.setText(nameButton);
             //linkButton.setUrl("http://t.me/"+link);
-            log.debug(link);
             linkButton.setUrl(link);
             rowInline.add(linkButton);
             rowsInline.add(rowInline);

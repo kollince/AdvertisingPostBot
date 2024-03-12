@@ -47,9 +47,6 @@ public class PostPublishAction implements Action {
         } catch (Exception e) {
             log.debug(e);
         }
-        for (int i = 0; i < textCreatePost.size(); i++) {
-            log.debug(textCreatePost.get(i));
-        }
         String nameButton = textLink[0].trim();
         String callbackName = StringDataMessage.VIEW_POST.getMessage();
         String link = textLink[1].trim();
@@ -76,8 +73,6 @@ public class PostPublishAction implements Action {
             nameButton = nameButtonPublished;
             link = linkPublished;
         }
-        log.debug(textCreatePost.get(textCreatePost.size()-1));
-        log.debug(textCreatePost.size());
         return inputData.transmission(data[0], text, nameButton, data[3], link, url);
     }
 

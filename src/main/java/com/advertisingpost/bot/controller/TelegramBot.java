@@ -47,7 +47,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final String CREATE_PREVIEW = StringDataMessage.CREATE_PREVIEW.getMessage();
     private final String CREATE_ADD_CHANNEL = StringDataMessage.CREATE_ADD_CHANNEL.getMessage();
     private final String CREATE_POST = StringDataMessage.CREATE_POST.getMessage();
-    private final String VIEW_POST = StringDataMessage.VIEW_POST.getMessage();
+    private final String CANCEL_POST = StringDataMessage.CANCEL_POST.getMessage();
 
     public TelegramBot(@Value("${bot.token}") String token, InputData inputData, BotConfig config,
                        ProcessingUsersMessages processingUsersMessages, MapAction mapAction, PreparingMessages preparingMessages){
@@ -96,7 +96,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                     log.debug(e);
                 }
             }
-            if (update.getMessage().hasText() && update.getMessage().getText().equals(StringDataMessage.START.getMessage())){
+            if (
+                    update.getMessage().hasText()
+                            &&
+                    update.getMessage().getText().equals(StringDataMessage.START.getMessage())
+               )
+            {
                 processingUsersMessages.clearArrayList();
             }
         } else if (update.hasCallbackQuery()) {
@@ -129,7 +134,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
     private boolean checkChannel(SendMessage msg) {
         boolean isChannel = false;
-        Message message = new Message();
         try {
             isChannel = execute(msg).isChannelMessage();
         } catch (TelegramApiException e) {
@@ -266,6 +270,9 @@ public class TelegramBot extends TelegramLongPollingBot {
                 invokeMedia(update, map, chatId, callbackData, readMessage);
             }
         } else {
+                if (callbackData.equals(CANCEL_POST)){
+                    processingUsersMessages.clearArrayList();
+                }
             send(preparingMessages.sendCallbackData(update, map, readMessage, mapAction, chatId, callbackData, false));
         }
     }
