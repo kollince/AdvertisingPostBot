@@ -182,7 +182,9 @@ public class TelegramBot extends TelegramLongPollingBot {
         return  execute(getFile);
     }
     private void mapContainsKey(Update update, String key, Map<String, Action> map, String chatId){
+
         if (update.getMessage().hasText()){
+
             send(preparingMessages.sendingMessage(update, key, map, chatId,
                     processingUsersMessages.readMessage(), mapAction));
         }
@@ -225,8 +227,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private int stateInputChannelMethod(Update update, String chatId) {
-        ArrayList<String> readMessage = processingUsersMessages.readMessage();
-        log.debug(readMessage);
         int stateInputChannel = -1;
         if (update.getMessage().hasPhoto() || update.getMessage().hasVideo() || update.getMessage().hasAnimation()) {
             stateInputChannel = 0;
@@ -252,13 +252,24 @@ public class TelegramBot extends TelegramLongPollingBot {
                 if (mapAction.bindingByRead().containsKey(chatId)) {
                     if (!mapAction.bindingByRead().get(chatId).equals(CREATE_ADD_CHANNEL)) {
                         stateInputChannel = 1;
+                        if (mapAction.bindingByRead().get(chatId).equals(CREATE_ADD_LINK)) {
+                            String[] element = update.getMessage().getText().split(":");
+                            if (element.length < 2) {
+                                stateInputChannel = 4;
+                            } else {
+                                String url = "https://"+element[1].trim();
+                                if (isUrlHttp(url)){
+                                    stateInputChannel = 1;
+                                }else {
+                                    stateInputChannel = 4;
+                                }
+                            }
+                        }
                     }
                 }
-            } else if (mapAction.bindingByRead().get(chatId).equals(CREATE_ADD_LINK)) {
-                log.debug(processingUsersMessages.readMessage());
             } else {
                 stateInputChannel = 3;
-            }
+              }
         }
         return stateInputChannel;
     }
@@ -374,7 +385,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private boolean isUrlHttp(String location) {
-        return location != null && location.matches("^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+        return location != null && location.matches("^https?://(?:www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\\.[a-zA-Z0-9()]{2,6}\\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$");
     }
-
 }
