@@ -8,7 +8,7 @@
 так как в нем не предусмотрена возможность многопользовательского 
 использования.
 
-#![AdvertisingPostBot.png](src/main/resources/AdvertisingPostBot.png)
+[//]:![AdvertisingPostBot.png](src/main/resources/AdvertisingPostBot.png)
 
 ### Используемые инструменты:
 1. [x] Maven:
